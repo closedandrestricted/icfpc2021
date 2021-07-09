@@ -17,14 +17,16 @@ edges = problem['figure']['edges']
 vertices = problem['figure']['vertices']
 
 xs = [xy[0] for xy in hole]
-ys = [-xy[1] for xy in hole]
+ys = [xy[1] for xy in hole]
 
 plt.plot(xs + [xs[0]], ys + [ys[0]], c='r', marker='o', linewidth=5.0, markersize=10)
 plt.margins(0.1, 0.1)
+plt.gca().invert_yaxis()
+
 for i, e in enumerate(edges):
     x1, y1 = vertices[e[0]]
     x2, y2 = vertices[e[1]]
-    plt.plot([x1, x2], [-y1, -y2], c='g', marker='o', linewidth=1.0, markersize=4)
+    plt.plot([x1, x2], [y1, y2], c='g', marker='o', linewidth=1.0, markersize=4)
 
 if args.solution:
     with open(args.solution) as f:
@@ -33,6 +35,6 @@ if args.solution:
     for i, e in enumerate(edges):
         x1, y1 = v_solution[e[0]]
         x2, y2 = v_solution[e[1]]
-        plt.plot([x1, x2], [-y1, -y2], c='b', marker='o', linewidth=1.0, markersize=4)
+        plt.plot([x1, x2], [y1, y2], c='b', marker='o', linewidth=1.0, markersize=4)
 
 plt.show()
