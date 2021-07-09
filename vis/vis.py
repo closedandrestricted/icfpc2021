@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import argparse
 import json
 import matplotlib.pyplot as plt
