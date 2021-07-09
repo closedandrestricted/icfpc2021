@@ -9,7 +9,7 @@ pybind_library(
         "solver.cc",
     ],
     deps = [
-        "@box2d//:box2d",
+        "@json//:json",
         "@cgal//:cgal",
         "@xtensor//:xtensor",
     ],
@@ -22,7 +22,6 @@ cc_binary(
     ],
     deps = [
         ":solver",
-        "@json//:json",
         "@gflags//:gflags",
     ]
 )
