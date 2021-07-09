@@ -64,6 +64,7 @@ http_archive(
     urls = ["https://github.com/gflags/gflags/archive/refs/tags/v2.2.2.zip"],
     sha256 = "19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5",
     strip_prefix = "gflags-2.2.2",
+    sha256 = "8ff2fff22df038f5cd02cea8af56622bc67f5b64534f1b83b9f133b8366acff2",
 )
 
 http_archive(
