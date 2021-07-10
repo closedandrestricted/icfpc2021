@@ -28,6 +28,8 @@ def validate(problem, solution):
 
 solutions = ["feasible", "manual", "optimial", "suboptimal_backtracking"]
 
+digest = open("golden/goldenDigest.csv", "w")
+
 for problem in range(args.begin, args.end + 1):
     bestScore = 1e100
     best = ""
@@ -43,6 +45,7 @@ for problem in range(args.begin, args.end + 1):
                     bestFilename = solutionFilename
     if best:
         print("%s for %d = %d" % (best, problem, bestScore))
+        print("%s,%d" % (best, bestScore), file=digest)
         shutil.copyfile(bestFilename, "golden/%d.json" % problem)
 
-
+digest.close()
