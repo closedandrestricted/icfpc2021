@@ -67,7 +67,7 @@
 67,suboptimal_backtracking,201
 68,feasible,1863309
 69,feasible,38026
-70,suboptimal_mcmc,881
+70,suboptimal_mcmc,646
 71,feasible,354150
 72,suboptimal_mcmc,3404
 73,suboptimal_mcmc,147
@@ -76,3 +76,12 @@
 76,suboptimal_mcmc,133768
 77,optimal,0
 78,suboptimal_mcmc,69482
+79,suboptimal_mcmc,67127
+80,suboptimal_mcmc,123502
+81,suboptimal_mcmc,216
+82,suboptimal_mcmc,18146
+83,suboptimal_mcmc,12377
+84,suboptimal_mcmc,1235
+86,suboptimal_mcmc,7011
+87,suboptimal_mcmc,101408
+88,suboptimal_mcmc,16770

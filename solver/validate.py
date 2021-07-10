@@ -44,6 +44,6 @@ for p in problems:
         ]
         output = subprocess.check_output(
             ' '.join(cmdargs), shell=True, stderr=subprocess.PIPE)
-        print('%d %d' % (p, int(output.decode())))
+        print('%d %d' % (p, int(output.decode().strip().split('\n')[-1])))
     except subprocess.SubprocessError:
         print('%d FAILED' % p, file=sys.stderr)
