@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# use:
+# ./submitter.py --problem 77 --solution ../solutions/feasible/77.json
+
 import argparse
 import requests
 
