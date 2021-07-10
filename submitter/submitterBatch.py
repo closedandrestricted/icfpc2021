@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# Use:
+# ./submitterBatch.py --path ../solutions/golden
+
 import os
 import argparse
 import subprocess
