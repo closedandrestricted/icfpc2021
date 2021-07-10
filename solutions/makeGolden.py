@@ -8,7 +8,7 @@ import shutil
 parser = argparse.ArgumentParser(description='Submit ICFPC 2021 solutions.')
 parser.add_argument('--begin', type=int, default=1,
                     help='first problem number')
-parser.add_argument('--end', type=int, default=78,
+parser.add_argument('--end', type=int, default=88,
                     help='last problem number')
 
 args = parser.parse_args()
