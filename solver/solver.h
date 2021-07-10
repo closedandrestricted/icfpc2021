@@ -84,14 +84,17 @@ bool isect(Point ua, Point ub, Point va, Point vb) {
         signum(vmul(vb - va, ua - va)) * signum(vmul(vb - va, ub - va)) < 0;
 }
 
+bool between(Point a, Point mid, Point b) {
+    auto v1 = a - mid;
+    auto v2 = b - mid;
+    return vmul(v1, v2) == 0 && smul(v1, v2) <= 0;
+}
+
 bool isect(Point ua, Point ub, Poly poly) {
     for (size_t i = 0; i < poly.size(); ++i) {
         const auto& a = poly[i];
         const auto& b = poly[i + 1 == poly.size() ? 0 : i + 1];
-        if (isect(ua, ub, a, b)) {
-            return true;
-        }
-        if (vmul(ua - b, ub - b) == 0) {
+        if (between(ua, b, ub)) {
             const auto& c = poly[i + 2 >= poly.size() ? i + 2 - poly.size() : i + 2];
             auto interior = [&](Point p) {
                 if (vmul(c - b, a - b) >= 0) {
@@ -103,6 +106,18 @@ bool isect(Point ua, Point ub, Poly poly) {
             if (!interior(ua) || !interior(ub)) {
                 return true;
             }
+        } else if(between(ua, a, ub)) {
+            continue;
+        } else if(between(a, ua, b)) {
+            if (vmul(a - b, ub - b) >= 0) {
+                return true;
+            }
+        } else if(between(a, ub, b)) {
+            if (vmul(a - b, ua - b) >= 0) {
+                return true;
+            }
+        } else if (isect(ua, ub, a, b)) {
+            return true;
         }
     }
     return false;
