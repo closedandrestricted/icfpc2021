@@ -460,3 +460,56 @@ struct GibbsChain {
         }
     }
 };
+
+struct Zeroer {
+    Problem& problem;
+    double invT;
+    SolutionCandidate current;
+    int step_i = 0;
+
+    Zeroer(Problem& problem, double invT, int nPts): problem(problem), invT(invT) {
+        std::vector<int> holePoints;
+        for (int i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
+            if (problem.pointsInsideIsCorner[i]) {
+                holePoints.push_back(i);
+            }
+        }
+        for (int i = 0; i < nPts; ++i) { 
+            current.points.push_back(holePoints[std::uniform_int_distribution()(gen) % holePoints.size()]);
+        }
+        step_i = 0;
+    }
+
+    int violations() {
+        int n = 0;
+        for(int i = 0; i < problem.edgeU.size(); ++i) {
+            int u = problem.edgeU[i];
+            int v = problem.edgeV[i];
+            auto p1 = problem.pointsInside[current.points[u]];
+            auto p2 = problem.pointsInside[current.points[v]];
+            if (isect(p1, p2, problem.hole)) {
+                ++n;
+            }
+        }
+        return n;
+    }
+
+    bool step() {
+        int p1 = std::uniform_int_distribution()(gen) % current.points.size();
+        int p2 = std::uniform_int_distribution()(gen) % current.points.size();
+        int old_violations = violations();
+        if (step_i++ % 1 == 0) {
+            std::cerr << "cur bad: " << old_violations << std::endl;
+        }
+        std::swap(current.points[p1], current.points[p2]);
+        int new_violations = violations();
+        if (new_violations > old_violations) {
+            double p = 1.0 / (1.0 + std::exp(old_violations - new_violations));
+            if (std::uniform_real_distribution()(gen) > p) {
+                std::swap(current.points[p1], current.points[p2]);
+            }
+            return false;
+        }
+        return new_violations == 0;
+    }
+};

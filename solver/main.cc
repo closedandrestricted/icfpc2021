@@ -39,6 +39,10 @@ int main(int argc, char** argv) {
     for (double invT : invTsFeasible) {
         mcmcsFeasible.emplace_back(p, true, invT);
     }
+
+    // Zeroer z(p, 0.8, p.originalPoints.size());
+    // while(z.step());
+
     SolutionCandidate sol0;
     sol0.points.assign(p.originalPoints.size(), 0);
 
