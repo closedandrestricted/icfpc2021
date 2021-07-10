@@ -4,6 +4,11 @@ from pathlib import Path
 
 problems = Path("./problems")
 
+colors = {
+  "BREAK_A_LEG": "red",
+  "GLOBALIST": "green",
+}
+
 dot = Digraph()
 for p in problems.iterdir():
     if not p.name.endswith(".json"): continue
@@ -15,7 +20,7 @@ for p in problems.iterdir():
             for bonus in js["bonuses"]:
                 btype = bonus["bonus"]
                 prob = str(bonus["problem"])
-                dot.edge(pnum, prob)
+                dot.edge(pnum, prob, color = colors[btype], label=btype[0])
 
 dot.render("bonuses.gv")
 
