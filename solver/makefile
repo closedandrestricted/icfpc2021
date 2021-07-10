@@ -7,14 +7,14 @@ SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s' -
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_DIRS := $(shell find $(SRC_DIRS) -type d) '/opt/homebrew/include/'
 INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++14 -O3 -march=native -g -Wno-narrowing
-LDFLAGS ?= -lstdc++ -lm -lpthread
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP -std=c++17 -O3 -g -Wno-narrowing
+LDFLAGS ?= -L '/opt/homebrew/lib/' -lstdc++ -lm -lpthread -lgflags
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS) $(LDLIBS)
 
 # assembly
 $(BUILD_DIR)/%.s.o: %.s

@@ -10,8 +10,10 @@
 
 using json = nlohmann::json;
 
+namespace {
 std::random_device r;
 std::mt19937 gen(r());
+}
 
 struct Point {
     int x, y;
@@ -33,30 +35,30 @@ struct Point {
     }
 };
 
-std::ostream& operator<<(std::ostream& o, const Point& p) {
+inline std::ostream& operator<<(std::ostream& o, const Point& p) {
     o << "<" << p.x << ", " << p.y << ">";
     return o;
 }
 
 using Poly = std::vector<Point>;
 
-int vmul(const Point& u, const Point& v) {
+inline int vmul(const Point& u, const Point& v) {
     return u.x * v.y - u.y * v.x;
 }
 
-int smul(const Point& u, const Point& v) {
+inline int smul(const Point& u, const Point& v) {
     return u.x * v.x + u.y * v.y;
 }
 
-int dist2(Point a, Point b) {
+inline int dist2(Point a, Point b) {
     return smul(a - b, a - b);
 }
     
-int signum(int a) {
+inline int signum(int a) {
     return a > 0 ? 1 : a == 0 ? 0 : -1;
 }
 
-bool inside(Point p, const Poly& poly) {
+inline bool inside(Point p, const Poly& poly) {
     bool ret = false;
     for (size_t i = 0; i < poly.size(); ++i) {
         const auto& u = poly[i];
@@ -78,7 +80,7 @@ bool inside(Point p, const Poly& poly) {
     return ret;
 }
 
-bool isect(Point ua, Point ub, Point va, Point vb) {
+inline bool isect(Point ua, Point ub, Point va, Point vb) {
     return
         signum(vmul(ub - ua, va - ua)) * signum(vmul(ub - ua, vb - ua)) < 0 &&
         signum(vmul(vb - va, ua - va)) * signum(vmul(vb - va, ub - va)) < 0;
@@ -90,7 +92,7 @@ bool between(Point a, Point mid, Point b) {
     return vmul(v1, v2) == 0 && smul(v1, v2) <= 0;
 }
 
-bool isect(Point ua, Point ub, Poly poly) {
+inline bool isect(Point ua, Point ub, Poly poly) {
     for (size_t i = 0; i < poly.size(); ++i) {
         const auto& a = poly[i];
         const auto& b = poly[i + 1 == poly.size() ? 0 : i + 1];
