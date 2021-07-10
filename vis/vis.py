@@ -28,6 +28,7 @@ for i, e in enumerate(edges):
     x2, y2 = vertices[e[1]]
     plt.plot([x1, x2], [y1, y2], c='g', marker='o', linewidth=1.0, markersize=4)
 
+
 if args.solution:
     with open(args.solution) as f:
         solution = json.loads(f.read())
