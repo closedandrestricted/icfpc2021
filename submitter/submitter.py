@@ -6,7 +6,7 @@
 import argparse
 import requests
 
-parser = argparse.ArgumentParser(description='Submit ICFPC 2021 solutioon.')
+parser = argparse.ArgumentParser(description='Submit ICFPC 2021 solution.')
 parser.add_argument('--problem', type=int, 
                     help='problem number')
 parser.add_argument('--solution', type=str,
