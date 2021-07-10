@@ -80,10 +80,33 @@ def interesect(p1b, p1e, p2b, p2e):
     return mul1 <= 0 and mul2 <= 0
 
 
+def between(p1, pm, p2):
+    v1 = vec(pm, p1)
+    v2 = vec(pm, p2)
+    return vprod(v1, v2) == 0 and sprod(v1, v2) <= 0
+
+
+assert between([0, 0], [1, 0], [2, 0])
+assert between([0, 0], [1, 1], [2, 2])
+assert between([0, 0], [0, 0], [2, 2])
+assert not between([0, 0], [-1, -1], [2, 2])
+
 def touch(p1b, p1e, p2b, p2e):
     mul1, mul2 = itersect_stats(p1b, p1e, p2b, p2e)
     return (mul1 == 0 and mul2 <= 0) or (mul2 == 0 and mul1 <= 0)
 
+
+def touch_semiopen(p1b_excl, p1e, p2b, p2e):
+    if not between(p2b, p1b_excl, p2e):
+        return False
+    v1 = vec(p1b_excl, p1e)
+    v2 = vec(p2e, p2b)
+    if vprod(v1, v2) != 0:
+        return True
+    return not between(p2b, p1e, p2e)
+
+
+assert touch_semiopen([1, 1], [0, 0], [0, 2], [2, 0])
 
 assert interesect([1, 1], [3, 3], [1, 3], [3, 1])
 assert not touch([1, 1], [3, 3], [1, 3], [3, 1])
@@ -115,21 +138,22 @@ for i in range(len(hole)):
         sp1 = s_vertices[e[0]]
         sp2 = s_vertices[e[1]]
         args = [p1, p2, sp1, sp2]
-        if touch(*args):
+        if touch_semiopen(*args):
+            continue
+        elif touch(*args):
             vp11 = right_turn(p1, p2, sp1)
             vp12 = right_turn(p1, p2, sp2)
             a1 = vp11 and vp12
 
             vp21 = right_turn(sp1, p2, p3)
             vp22 = right_turn(sp2, p2, p3)
-            a2 = vp21 and vp22
             if right_turn(p1, p2, p3):
                 if not a1:
                     print(p1, p2, p3, sp1, sp2, vp11, vp12,
                           vp21, vp22, right_turn(p1, p2, p3), file=sys.stderr)
                     sys.exit(42)
             else:
-                if not (a1 or a2):  # КОСТЫЛЬ!! Как нормально написать?
+                if not ((vp11 or vp21) and (vp12 or vp22)):  # КОСТЫЛЬ!! Как нормально написать?
                     print(p1, p2, p3, sp1, sp2, vp11, vp12,
                           vp21, vp22, right_turn(p1, p2, p3), file=sys.stderr)
                     sys.exit(42)
