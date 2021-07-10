@@ -208,7 +208,43 @@ struct Problem {
         return sol;
     }
 
-    void rec(std::vector<int>& ps, int at, int& minOpt) {
+    void rec(std::vector<int>& ps, uint64_t mask, int& minOpt) {
+        size_t bestAt = ps.size(), bestAtCnt = pointsInside.size() + 1;
+        for (size_t at = 0; at < ps.size(); ++at) {
+            if (mask & (1ULL << at)) {
+                continue;
+            }
+            size_t cnt = 0;
+            boost::dynamic_bitset<> candidates;
+            candidates.resize(pointsInside.size(), true);
+            for (auto e : adjEdgeIds[at]) {
+                int j = edgeU[e] ^ edgeV[e] ^ at;
+                if (mask & (1ULL << j)) {
+                    candidates &= visibility[ps[j]];
+                }
+            }
+            for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+                bool good = true;
+                for (auto e : adjEdgeIds[at]) {
+                    if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
+                        edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
+                        continue;
+                    }
+                    good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
+                }
+                if (good) {
+                    cnt++;
+                }
+            }
+            if (cnt == 0) {
+                return;
+            }
+            if (cnt < bestAtCnt) {
+                bestAt = at;
+                bestAtCnt = cnt;
+            }
+        }
+        size_t at = bestAt;
         if (at == ps.size()) {
             int opt = 0;
             for (size_t i = 0; i < hole.size(); ++i) {
@@ -224,24 +260,33 @@ struct Problem {
             }
             return;
         }
-        for (ps[at] = 0; ps[at] < pointsInside.size(); ++ps[at]) {
+        boost::dynamic_bitset<> candidates;
+        candidates.resize(pointsInside.size(), true);
+        for (auto e : adjEdgeIds[at]) {
+            int j = edgeU[e] ^ edgeV[e] ^ at;
+            if (mask & (1ULL << j)) {
+                candidates &= visibility[ps[j]];
+            }
+        }
+        for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
             bool good = true;
             for (auto e : adjEdgeIds[at]) {
-                if (edgeU[e] > at || edgeV[e] > at) {
+                if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
+                    edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
                     continue;
                 }
                 good &= visibility[ps[edgeU[e]]][ps[edgeV[e]]];
                 good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
             }
             if (good) {
-                rec(ps, at + 1, minOpt);
+                rec(ps, mask | (1ULL << at), minOpt);
             }
         }
     }
 
     void recSolve() {
         int minOpt = 1000000000;
-        std::vector<int> ps(originalPoints.size());
+        std::vector<int> ps(originalPoints.size(), -1);
         rec(ps, 0, minOpt);
     }
 };
