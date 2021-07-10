@@ -86,7 +86,7 @@ inline bool isect(Point ua, Point ub, Point va, Point vb) {
         signum(vmul(vb - va, ua - va)) * signum(vmul(vb - va, ub - va)) < 0;
 }
 
-bool between(Point a, Point mid, Point b) {
+inline bool between(Point a, Point mid, Point b) {
     auto v1 = a - mid;
     auto v2 = b - mid;
     return vmul(v1, v2) == 0 && smul(v1, v2) <= 0;
