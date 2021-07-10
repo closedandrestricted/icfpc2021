@@ -10,7 +10,8 @@
 
 using json = nlohmann::json;
 
-std::mt19937 gen;
+std::random_device r;
+std::mt19937 gen(r());
 
 struct Point {
     int x, y;
@@ -145,6 +146,7 @@ struct Problem {
     }
 
     std::vector<Point> pointsInside;
+    std::vector<uint8_t> pointsInsideIsCorner;
     std::vector<boost::dynamic_bitset<>> visibility;
 
     void preprocess() {
@@ -165,14 +167,20 @@ struct Problem {
             maxy = std::max(maxy, p.y);
         }
         pointsInside.resize(0);
+        pointsInsideIsCorner.resize(0);
         for (int x = minx; x <= maxx; ++x) {
             for (int y = miny; y <= maxy; ++y) {
                 Point p(x, y);
                 if (inside(p, hole)) {
                     pointsInside.push_back(p);
+                    pointsInsideIsCorner.push_back(std::find(hole.begin(), hole.end(), p) != hole.end());
                 }
             }
         }
+        // while (true) {
+        //     std::cerr << isect(Point(45, 53), Point(38, 55), hole) << std::endl;
+        //     throw 42;
+        // }
         visibility.assign(pointsInside.size(), {});
         std::atomic<int> edges = 0;
         auto dojob = [&](int i) {
@@ -268,7 +276,17 @@ struct Problem {
                 candidates &= visibility[ps[j]];
             }
         }
-        for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+        std::vector<int> cs;
+        for (int i = candidates.find_first(); i != candidates.npos; i = candidates.find_next(i)) {
+            cs.push_back(i);
+        }
+        std::shuffle(cs.begin(), cs.end(), gen);
+        // for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+        for (int x : cs) {
+            ps[at] = x;
+            // if (!pointsInsideIsCorner[ps[at]]) {
+            //     continue;
+            // }
             bool good = true;
             for (auto e : adjEdgeIds[at]) {
                 if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
@@ -282,6 +300,23 @@ struct Problem {
                 rec(ps, mask | (1ULL << at), minOpt);
             }
         }
+        // for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+        //     if (pointsInsideIsCorner[ps[at]]) {
+        //         continue;
+        //     }
+        //     bool good = true;
+        //     for (auto e : adjEdgeIds[at]) {
+        //         if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
+        //             edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
+        //             continue;
+        //         }
+        //         good &= visibility[ps[edgeU[e]]][ps[edgeV[e]]];
+        //         good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
+        //     }
+        //     if (good) {
+        //         rec(ps, mask | (1ULL << at), minOpt);
+        //     }
+        // }
     }
 
     void recSolve() {
@@ -354,7 +389,7 @@ struct GibbsChain {
                     int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
                     // TODO cache denom
                     double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
-                    distMeasure = std::max(0.0, distMeasure - problem.eps);
+                    distMeasure = std::max(0.0, distMeasure - problem.eps - 1e-12);
                     if (onlyFeasible) {
                         if (distMeasure > 0) {
                             skip = true;
@@ -397,7 +432,7 @@ struct GibbsChain {
             int j = problem.edgeV[e];
             // TODO cache denom
             double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[current.points[i]], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
-            distMeasure = std::max(0.0, distMeasure - problem.eps);
+            distMeasure = std::max(0.0, distMeasure - problem.eps - 1e-12);
             current.constE += distMeasure;
         }
     }
