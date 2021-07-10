@@ -3,11 +3,14 @@
 #include <iostream>
 #include <fstream>
 #include <future>
+#include <random>
 
 #include <boost/dynamic_bitset.hpp>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
+
+std::mt19937 gen;
 
 struct Point {
     int x, y;
@@ -42,6 +45,10 @@ int vmul(const Point& u, const Point& v) {
 
 int smul(const Point& u, const Point& v) {
     return u.x * v.x + u.y * v.y;
+}
+
+int dist2(Point a, Point b) {
+    return smul(a - b, a - b);
 }
     
 int signum(int a) {
@@ -105,13 +112,13 @@ struct Problem {
     std::vector<Point> originalPoints;
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
-    int eps;
+    double eps;
 
     void parseJson(const std::string& fn) {
         std::ifstream is(fn);
         json rawProblem;
         is >> rawProblem;
-        eps = rawProblem["epsilon"];
+        eps = int(rawProblem["epsilon"]) / 1000000.0;
         hole.resize(rawProblem["hole"].size());
         for (size_t i = 0; i < hole.size(); ++i) {
             hole[i] = {rawProblem["hole"][i][0], rawProblem["hole"][i][1]};
@@ -175,7 +182,7 @@ struct Problem {
             }
         };
         constexpr int BLOCK_SIZE = 64;
-        for (int block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
+        for (size_t block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
             std::vector<std::future<void>> jobs;
             for (size_t i = block; i < pointsInside.size() && i < block + BLOCK_SIZE; ++i) {
                 jobs.emplace_back(std::async(std::launch::async, dojob, i));
@@ -188,14 +195,77 @@ struct Problem {
     }
 };
 
-struct EdgeInfo {
-    int64_t constraintE;
+struct SolutionCandidate {
+    std::vector<int> points;
+    double constE = 0.0, optE = 0.0;
 };
 
-struct SolutionCandidate {
-    const Problem& problem;
+struct GibbsChain {
+    Problem& problem;
+    bool onlyFeasible;
+    double invT;
+    SolutionCandidate current;
+    bool initialized = false;
 
-    int64_t constraintE, optE;
-    std::vector<Point> points;
-    std::vector<EdgeInfo> edges;
+    GibbsChain(Problem& problem, bool onlyFeasible, double invT): problem(problem), onlyFeasible(onlyFeasible), invT(invT) {
+    }
+
+    void init(SolutionCandidate initial) {
+        current = initial;
+        initialized = true;
+    }
+
+    double E(const SolutionCandidate& sc) {
+        if (onlyFeasible && sc.constE > 0) {
+            return std::numeric_limits<double>::infinity();
+        }
+        return (onlyFeasible ? sc.optE : sc.constE) * invT;
+    }
+
+    void step() {
+        if (!initialized) {
+            throw std::runtime_error("Can't step uninitialized MCMC chain");
+        }
+        current.optE = current.constE = 0.0;
+        for (size_t i = 0; i < problem.originalPoints.size(); ++i) {
+            boost::dynamic_bitset<> candidates;
+            candidates.resize(problem.pointsInside.size(), true);
+            for (auto e : problem.adjEdgeIds[i]) {
+                int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
+                candidates &= problem.visibility[current.points[j]];
+            }
+            double selW = -std::numeric_limits<double>::infinity();
+            size_t selCandidate = -1;
+            double selDeltaOptE = 0.0, selDeltaConstE = 0.0;
+            for (size_t curCandidate = candidates.find_first(); curCandidate != candidates.npos; curCandidate = candidates.find_next(curCandidate)) {
+                double curDeltaOptE = 0.0, curDeltaConstE = 0.0, w = 0.0;
+                for (auto e : problem.adjEdgeIds[i]) {
+                    size_t j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
+                    // TODO cache denom
+                    double distMeasure = std::fabs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
+                    distMeasure = std::max(0.0, distMeasure - problem.eps);
+                    if (j < i) {
+                        curDeltaConstE += distMeasure;
+                    }
+                    if (!onlyFeasible) {
+                        w += distMeasure;
+                    }
+                }
+                // TODO update optE properly
+
+                w *= -invT;
+                double mx = std::max(selW, w);
+                double p = 1.0 / (1.0 + std::exp(selW - w));
+                if (std::uniform_real_distribution()(gen) <= p) {
+                    selCandidate = curCandidate;
+                    selDeltaOptE = curDeltaOptE;
+                    selDeltaConstE = curDeltaConstE;
+                }
+                selW = std::log(std::exp(selW - mx) + std::exp(w - mx)) + mx;
+            }
+            current.points[i] = selCandidate;
+            current.optE += selDeltaOptE;
+            current.constE += selDeltaConstE;
+        }
+    }
 };
