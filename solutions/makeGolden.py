@@ -26,7 +26,7 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-solutions = ["feasible", "manual", "optimal", "suboptimal_backtracking"]
+solutions = ["feasible", "manual", "optimal", "suboptimal_backtracking", "suboptimal_mcmc"]
 
 digest = open("golden/goldenDigest.csv", "w")
 
