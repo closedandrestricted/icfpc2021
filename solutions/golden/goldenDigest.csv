@@ -1,11 +1,11 @@
-1,suboptimal_backtracking,5547
+1,suboptimal_backtracking,5501
 2,feasible,12740
 3,feasible,12227
 4,feasible,12208
-5,suboptimal_backtracking,16998
+5,suboptimal_backtracking,12192
 6,feasible,85986
 7,feasible,8089
-8,suboptimal_backtracking,1897
+8,suboptimal_backtracking,1891
 9,feasible,106183
 10,suboptimal_backtracking,10364
 11,feasible,0
@@ -39,9 +39,9 @@
 39,optimal,0
 40,optimal,3768
 41,suboptimal_backtracking,651
-42,suboptimal_backtracking,2320
-43,feasible,2661
-44,feasible,19411
+42,suboptimal_backtracking,2242
+43,optimal,0
+44,suboptimal_backtracking,8753
 45,suboptimal_backtracking,6411
 46,suboptimal_backtracking,2719
 47,optimal,0
@@ -54,8 +54,8 @@
 54,optimal,0
 55,suboptimal_backtracking,843
 56,suboptimal_backtracking,3681
-57,feasible,17103
-58,feasible,27546
+57,suboptimal_backtracking,8836
+58,suboptimal_backtracking,8998
 59,suboptimal_backtracking,8890
 60,feasible,23278
 61,suboptimal_backtracking,49908
@@ -64,7 +64,7 @@
 64,feasible,627415
 65,feasible,512152
 66,suboptimal_backtracking,31167
-67,suboptimal_backtracking,203
+67,suboptimal_backtracking,201
 68,feasible,1863309
 69,feasible,38026
 70,feasible,36788

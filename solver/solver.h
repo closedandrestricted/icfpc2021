@@ -344,6 +344,7 @@ struct GibbsChain {
                     // TODO cache denom
                     double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
                     distMeasure = std::max(0.0, distMeasure - problem.eps);
+                    distMeasure = distMeasure * distMeasure;
                     if (!first[e]) {
                         curDeltaConstE += distMeasure;
                     }
