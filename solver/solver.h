@@ -2,23 +2,103 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <future>
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_2.h>
-#include <CGAL/Polygon_2.h>
-#include <CGAL/Polygon_2_algorithms.h>
-#include <CGAL/Simple_polygon_visibility_2.h>
-#include <CGAL/Arrangement_2.h>
-#include <CGAL/Arr_segment_traits_2.h>
-#include <CGAL/Arr_naive_point_location.h>
-
+#include <boost/dynamic_bitset.hpp>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
 
-using K = CGAL::Cartesian<int>;
-using Point = CGAL::Point_2<K>;
-using Poly = CGAL::Polygon_2<K>;
+struct Point {
+    int x, y;
+
+    Point(): x(0), y(0) {}
+
+    Point(int x, int y): x(x), y(y) {}
+
+    Point operator-(const Point& o) const {
+        return {x - o.x, y - o.y};
+    }
+
+    Point operator+(const Point& o) const {
+        return {x + o.x, y + o.y};
+    }
+
+    bool operator==(const Point& o) const {
+        return x == o.x && y == o.y;
+    }
+};
+
+std::ostream& operator<<(std::ostream& o, const Point& p) {
+    o << "<" << p.x << ", " << p.y << ">";
+    return o;
+}
+
+using Poly = std::vector<Point>;
+
+int vmul(const Point& u, const Point& v) {
+    return u.x * v.y - u.y * v.x;
+}
+
+int smul(const Point& u, const Point& v) {
+    return u.x * v.x + u.y * v.y;
+}
+    
+int signum(int a) {
+    return a > 0 ? 1 : a == 0 ? 0 : -1;
+}
+
+bool inside(Point p, const Poly& poly) {
+    bool ret = false;
+    for (size_t i = 0; i < poly.size(); ++i) {
+        const auto& u = poly[i];
+        const auto& v = poly[i + 1 == poly.size() ? 0 : i + 1];
+        if (u == p) {
+            return true;
+        }
+        if (u.y == p.y && v.y == p.y && signum(u.x - p.x) * signum(v.x - p.x) <= 0) {
+            return true;
+        }
+        if ((u.y > p.y) != (v.y > p.y)) {
+            int slope = vmul(u - p, v - p);
+            if (slope == 0) {
+                return true;
+            }
+            ret ^= (slope > 0) == (u.y <= p.y);
+        }
+    }
+    return ret;
+}
+
+bool isect(Point ua, Point ub, Point va, Point vb) {
+    return
+        signum(vmul(ub - ua, va - ua)) * signum(vmul(ub - ua, vb - ua)) < 0 &&
+        signum(vmul(vb - va, ua - va)) * signum(vmul(vb - va, ub - va)) < 0;
+}
+
+bool isect(Point ua, Point ub, Poly poly) {
+    for (size_t i = 0; i < poly.size(); ++i) {
+        const auto& a = poly[i];
+        const auto& b = poly[i + 1 == poly.size() ? 0 : i + 1];
+        if (isect(ua, ub, a, b)) {
+            return true;
+        }
+        if (vmul(ua - b, ub - b) == 0) {
+            const auto& c = poly[i + 2 >= poly.size() ? i + 2 - poly.size() : i + 2];
+            auto interior = [&](Point p) {
+                if (vmul(c - b, a - b) >= 0) {
+                    return vmul(c - b, p - b) >= 0 && vmul(p - b, a - b) >= 0;
+                } else {
+                    return vmul(c - b, p - b) >= 0 || vmul(p - b, a - b) >= 0;
+                }
+            };
+            if (!interior(ua) || !interior(ub)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 struct Problem {
     Poly hole;
@@ -53,51 +133,55 @@ struct Problem {
     }
 
     std::vector<Point> pointsInside;
+    std::vector<boost::dynamic_bitset<>> visibility;
 
     void preprocess() {
-        int minx = hole[0].x(), maxx = hole[0].x(), miny = hole[0].y(), maxy = hole[0].y();
+        int sum = 0;
+        for (size_t i = 0; i < hole.size(); ++i) {
+            const auto& a = hole[i];
+            const auto& b = hole[i + 1 == hole.size() ? 0 : i + 1];
+            sum += vmul(a, b);
+        }
+        if (sum < 0) {
+            std::reverse(hole.begin(), hole.end());
+        }
+        int minx = hole[0].x, maxx = hole[0].x, miny = hole[0].y, maxy = hole[0].y;
         for (const auto& p : hole) {
-            minx = std::min(minx, p.x());
-            maxx = std::max(maxx, p.x());
-            miny = std::min(miny, p.y());
-            maxy = std::max(maxy, p.y());
+            minx = std::min(minx, p.x);
+            maxx = std::max(maxx, p.x);
+            miny = std::min(miny, p.y);
+            maxy = std::max(maxy, p.y);
         }
         pointsInside.resize(0);
         for (int x = minx; x <= maxx; ++x) {
             for (int y = miny; y <= maxy; ++y) {
                 Point p(x, y);
-                if (CGAL::bounded_side_2(hole.begin(), hole.end(), p) != CGAL::ON_UNBOUNDED_SIDE) {
+                if (inside(p, hole)) {
                     pointsInside.push_back(p);
                 }
             }
         }
-        std::vector<K::Segment_2> segments;
-        for (size_t i = 0; i < hole.size(); ++i) {
-            segments.emplace_back(hole[i], hole[(i + 1) % hole.size()]);
-        }
-        using Arrangement_2 = CGAL::Arrangement_2<CGAL::Arr_segment_traits_2<K>>;
-        Arrangement_2 env;
-        CGAL::insert_non_intersecting_curves(env, segments.begin(), segments.end());
-        int edges = 0;
-        assert(env.number_of_faces() == 2);
-        auto faceHandle = env.faces_begin();
-        while (faceHandle == env.unbounded_face()) {
-            ++faceHandle;
-        }
-        using NSPV = CGAL::Simple_polygon_visibility_2<Arrangement_2, CGAL::Tag_false>;
-        NSPV non_regular_visibility(env);
-        Arrangement_2 non_regular_output;
-        for (const auto& p : pointsInside) {
-            non_regular_visibility.compute_visibility(p, faceHandle, non_regular_output);
-            CGAL::Arr_naive_point_location<Arrangement_2> pl(non_regular_output);
-            for (const auto& q : pointsInside) {
-                auto res = pl.locate(q);
-        //         Poly line;
-        //         line.push_back(p);
-        //         line.push_back(q);
-        //         if (!CGAL::do_intersect(hole, line)) {
-        //             edges++;
-        //         }
+        visibility.assign(pointsInside.size(), {});
+        std::atomic<int> edges = 0;
+        auto dojob = [&](int i) {
+            visibility[i].resize(pointsInside.size());
+            auto p = pointsInside[i];
+            for (size_t j = 0; j < pointsInside.size(); ++j) {
+                auto q = pointsInside[j];
+                if (!isect(p, q, hole)) {
+                    visibility[i].set(j);
+                    edges++;
+                }
+            }
+        };
+        constexpr int BLOCK_SIZE = 64;
+        for (int block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
+            std::vector<std::future<void>> jobs;
+            for (size_t i = block; i < pointsInside.size() && i < block + BLOCK_SIZE; ++i) {
+                jobs.emplace_back(std::async(std::launch::async, dojob, i));
+            }
+            for (auto& f : jobs) {
+                f.wait();
             }
         }
         std::cerr << pointsInside.size() << " " << edges << "\n";

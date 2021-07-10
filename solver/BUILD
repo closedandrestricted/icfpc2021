@@ -10,8 +10,8 @@ pybind_library(
     ],
     deps = [
         "@json//:json",
-        "@cgal//:cgal",
         "@xtensor//:xtensor",
+        "@boost//:boost_container",
     ],
 )
 
