@@ -107,6 +107,11 @@ bool isect(Point ua, Point ub, Poly poly) {
     return false;
 }
 
+struct SolutionCandidate {
+    std::vector<int> points;
+    double constE = 0.0, optE = 0.0;
+};
+
 struct Problem {
     Poly hole;
     std::vector<Point> originalPoints;
@@ -193,11 +198,15 @@ struct Problem {
         }
         std::cerr << pointsInside.size() << " " << edges << "\n";
     }
-};
 
-struct SolutionCandidate {
-    std::vector<int> points;
-    double constE = 0.0, optE = 0.0;
+    json exportSol(SolutionCandidate s) {
+        json sol;
+        for (auto i : s.points) {
+            const auto& p = pointsInside[i];
+            sol["vertices"].push_back({p.x, p.y});
+        }
+        return sol;
+    }
 };
 
 struct GibbsChain {
@@ -227,7 +236,16 @@ struct GibbsChain {
             throw std::runtime_error("Can't step uninitialized MCMC chain");
         }
         current.optE = current.constE = 0.0;
-        for (size_t i = 0; i < problem.originalPoints.size(); ++i) {
+        std::vector<int> scan(problem.originalPoints.size());
+        for (size_t i = 0; i < scan.size(); ++i) {
+            scan[i] = i;
+        }
+        std::shuffle(scan.begin(), scan.end(), gen);
+        std::vector<uint8_t> first(problem.edgeU.size(), true), cnt(problem.edgeU.size(), 0);
+        for (int i : scan) {
+            for (auto e : problem.adjEdgeIds[i]) {
+                first[e] = cnt[e]++ == 0;
+            }
             boost::dynamic_bitset<> candidates;
             candidates.resize(problem.pointsInside.size(), true);
             for (auto e : problem.adjEdgeIds[i]) {
@@ -240,11 +258,11 @@ struct GibbsChain {
             for (size_t curCandidate = candidates.find_first(); curCandidate != candidates.npos; curCandidate = candidates.find_next(curCandidate)) {
                 double curDeltaOptE = 0.0, curDeltaConstE = 0.0, w = 0.0;
                 for (auto e : problem.adjEdgeIds[i]) {
-                    size_t j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
+                    int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
                     // TODO cache denom
                     double distMeasure = std::fabs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
                     distMeasure = std::max(0.0, distMeasure - problem.eps);
-                    if (j < i) {
+                    if (!first[e]) {
                         curDeltaConstE += distMeasure;
                     }
                     if (!onlyFeasible) {
