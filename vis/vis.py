@@ -29,6 +29,10 @@ def annotate_shift(v):
     return v[0] + 0.25, v[1] - 0.25
 
 
+for i, v in enumerate(hole):
+    plt.annotate(str(i), annotate_shift(v), color='red')
+
+
 for i, v in enumerate(vertices):
     plt.annotate(str(i), annotate_shift(v), color='green')
 
