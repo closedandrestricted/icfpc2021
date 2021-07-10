@@ -29,6 +29,7 @@ int main(int argc, char** argv) {
     p.preprocess();
     // p.recSolve();
     std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
+    // std::vector<double> invTs{0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.9, 1.5, 2.5, 5.0, 10.0};
     std::vector<double> invTsFeasible{0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8, 25.6, 51.2, 102.4};
     std::vector<GibbsChain> mcmcs;
     std::vector<GibbsChain> mcmcsFeasible;
@@ -40,6 +41,21 @@ int main(int argc, char** argv) {
     }
     SolutionCandidate sol0;
     sol0.points.assign(p.originalPoints.size(), 0);
+
+    {
+        std::vector<std::pair<int, int>> fixedCorners{{12, 12}, {7, 13}, {11, 14}, {19, 15}, {30, 16}, {28, 17}, {36, 18}, {43, 19}, {41, 20}};
+        boost::dynamic_bitset<> candidates;
+        candidates.resize(p.pointsInside.size(), true);
+        for (auto pr : fixedCorners) {
+            candidates &= p.visibility[p.cornerToIdx(pr.second)];
+        }
+        std::cerr << "count " << candidates.count() << std::endl;
+        sol0.points.assign(p.originalPoints.size(), candidates.find_first());
+        for (auto pr : fixedCorners) {
+            p.fixed[pr.first] = true;
+            sol0.points[pr.first] = p.cornerToIdx(pr.second);
+        }
+    }
     for (auto& mcmc : mcmcs) {
         mcmc.init(sol0);
     }

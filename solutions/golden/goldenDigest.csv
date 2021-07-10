@@ -2,7 +2,7 @@
 2,staging,291
 3,suboptimal_mcmc,333
 4,suboptimal_mcmc,7
-5,suboptimal_mcmc,796
+5,suboptimal_mcmc,368
 6,suboptimal_mcmc,7073
 7,staging,3141
 8,staging,1040
@@ -69,8 +69,8 @@
 69,feasible,38026
 70,suboptimal_mcmc,646
 71,feasible,354150
-72,suboptimal_mcmc,3404
-73,suboptimal_mcmc,147
+72,optimal,0
+73,suboptimal_mcmc,3
 74,suboptimal_mcmc,151716
 75,suboptimal_mcmc,1328418
 76,suboptimal_mcmc,133768
@@ -82,6 +82,12 @@
 82,suboptimal_mcmc,18146
 83,suboptimal_mcmc,12377
 84,suboptimal_mcmc,1235
+<<<<<<< Updated upstream
 86,suboptimal_mcmc,6065
 87,suboptimal_mcmc,78279
 88,suboptimal_mcmc,12694
+=======
+86,suboptimal_mcmc,6057
+87,suboptimal_mcmc,53279
+88,suboptimal_mcmc,30883
+>>>>>>> Stashed changes

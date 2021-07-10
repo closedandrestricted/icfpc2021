@@ -166,7 +166,14 @@ struct Problem {
     std::vector<uint8_t> pointsInsideIsCorner;
     std::vector<boost::dynamic_bitset<>> visibility;
 
+    std::vector<uint8_t> fixed;
+
+    int cornerToIdx(int i) {
+        return std::find(pointsInside.begin(), pointsInside.end(), hole[i]) - pointsInside.begin();
+    }
+
     void preprocess() {
+        fixed.assign(originalPoints.size(), 0);
         int sum = 0;
         for (size_t i = 0; i < hole.size(); ++i) {
             const auto& a = hole[i];
@@ -194,10 +201,6 @@ struct Problem {
                 }
             }
         }
-        // while (true) {
-        //     std::cerr << isect(Point(45, 53), Point(38, 55), hole) << std::endl;
-        //     throw 42;
-        // }
         visibility.assign(pointsInside.size(), {});
         std::atomic<int> edges = 0;
         auto dojob = [&](int i) {
@@ -377,6 +380,9 @@ struct GibbsChain {
         std::vector<uint8_t> first(problem.edgeU.size(), true), cnt(problem.edgeU.size(), 0);
         std::vector<int> distNotI(problem.hole.size(), 1000000000);
         for (int i : scan) {
+            if (problem.fixed[i]) {
+                continue;
+            }
             for (auto e : problem.adjEdgeIds[i]) {
                 first[e] = cnt[e]++ == 0;
             }
