@@ -8,6 +8,7 @@ with requests.Session() as session:
     # print(r.text)
     
     with open("scores.csv", "w") as fOut:
+        print("problem,score,best_score", file=fOut)
         matchTrs = re.findall(r'<tr>(.*?)</tr>', r.text)
         for index, tr in enumerate(matchTrs):
             # print(tr)
