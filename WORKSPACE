@@ -66,13 +66,17 @@ http_archive(
     strip_prefix = "gflags-2.2.2",
 )
 
-http_archive(
-    name = "boost",
-    strip_prefix = "boost_1_76_0",
-    urls = ["https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz"],
-    build_file = "//deps:boost.BUILD",
-    sha256 = "7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca",
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "com_github_nelhage_rules_boost",
+    commit = "5a2bde336dc9089025003826ba39af2a27d8b90e",
+    remote = "https://github.com/nelhage/rules_boost",
+    shallow_since = "1591047380 -0700",
 )
+
+load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")
+boost_deps()
 
 http_archive(
     name = "pybind11_bazel",
