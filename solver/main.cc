@@ -3,7 +3,25 @@
 
 DEFINE_int32(test_idx, 1, "Test number");
 
+
+void test_isect() {
+    std::vector<Point> poly = {{0, 0}, {-2, -4}, {20, 0}, {-2, 4}};
+    assert(!isect({0, 2}, {0, -2},poly ));
+    assert(isect({-1, 3}, {-1, -3}, poly));
+    assert(isect({-1, 2}, {-1, -2}, poly));
+    assert(isect({0, 0}, {-10, -2}, poly));
+    assert(isect({0, 0}, {-10, 2}, poly));
+    assert(!isect({0, 0}, {-1, -3}, poly));
+    assert(!isect({0, 0}, {-1, 3}, poly));
+    assert(!isect({20, 0}, {18, 0}, poly));
+    assert(isect({20, 0}, {18, 2}, poly));
+    assert(isect({20, 0}, {18, -2}, poly));
+    assert(isect({20, 0}, {22, -2}, poly));
+    assert(isect({20, 0}, {22, 2}, poly));
+}
+
 int main(int argc, char** argv) {
+    test_isect();
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     Problem p;
     std::cerr << FLAGS_test_idx << " ";
