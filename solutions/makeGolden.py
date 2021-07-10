@@ -26,7 +26,7 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-solutions = ["feasible", "manual"]
+solutions = ["feasible", "manual", "optimial", "suboptimal_backtracking"]
 
 for problem in range(args.begin, args.end + 1):
     bestScore = 1e100
