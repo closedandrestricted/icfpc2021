@@ -31,13 +31,23 @@ solutions = ["feasible", "manual", "optimal", "suboptimal_backtracking"]
 digest = open("golden/goldenDigest.csv", "w")
 
 for problem in range(args.begin, args.end + 1):
+    problemFilename = "../problems/%d.json" % problem
+    goldenFilename = "golden/%d.json" % problem
+    currentGoldenScore = 1e100
+    if os.path.exists(goldenFilename):
+        goldenValidationResult = validate(problemFilename, goldenFilename)
+        if goldenValidationResult[0]:
+            currentGoldenScore = goldenValidationResult[1]
+        else:
+            print("!!!Broken golden result: %s" % goldenFilename)
+
     bestScore = 1e100
     best = ""
     bestFilename = ""
     for s in solutions:
         solutionFilename = "%s/%d.json" % (s, problem)
         if os.path.exists(solutionFilename):
-            validationResult = validate("../problems/%d.json" % problem, solutionFilename)
+            validationResult = validate(problemFilename, solutionFilename)
             if validationResult[0]:
                 if validationResult[1] < bestScore:
                     bestScore = validationResult[1]
@@ -46,6 +56,9 @@ for problem in range(args.begin, args.end + 1):
     if best:
         print("%s for %d = %d" % (best, problem, bestScore))
         print("%d,%s,%d" % (problem, best, bestScore), file=digest)
-        shutil.copyfile(bestFilename, "golden/%d.json" % problem)
+        if bestScore <= currentGoldenScore:
+            shutil.copyfile(bestFilename, goldenFilename)
+        else:
+            print("!Current golden result is better for %d" % problem)
 
 digest.close()
