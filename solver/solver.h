@@ -53,7 +53,7 @@ inline int smul(const Point& u, const Point& v) {
 inline int dist2(Point a, Point b) {
     return smul(a - b, a - b);
 }
-    
+
 inline int signum(int a) {
     return a > 0 ? 1 : a == 0 ? 0 : -1;
 }
