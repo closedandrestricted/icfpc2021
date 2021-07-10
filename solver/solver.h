@@ -317,13 +317,13 @@ struct GibbsChain {
         if (!initialized) {
             throw std::runtime_error("Can't step uninitialized MCMC chain");
         }
-        current.optE = current.constE = 0.0;
         std::vector<int> scan(problem.originalPoints.size());
         for (size_t i = 0; i < scan.size(); ++i) {
             scan[i] = i;
         }
         std::shuffle(scan.begin(), scan.end(), gen);
         std::vector<uint8_t> first(problem.edgeU.size(), true), cnt(problem.edgeU.size(), 0);
+        std::vector<int> distNotI(problem.hole.size(), 1000000000);
         for (int i : scan) {
             for (auto e : problem.adjEdgeIds[i]) {
                 first[e] = cnt[e]++ == 0;
@@ -336,37 +336,69 @@ struct GibbsChain {
             }
             double selW = -std::numeric_limits<double>::infinity();
             size_t selCandidate = -1;
-            double selDeltaOptE = 0.0, selDeltaConstE = 0.0;
+            if (onlyFeasible) {
+                distNotI.assign(problem.hole.size(), 1000000000);
+                for (size_t j = 0; j < problem.originalPoints.size(); ++j) {
+                    if (i == j) {
+                        continue;
+                    }
+                    for (size_t h = 0; h < problem.hole.size(); ++h) {
+                        distNotI[h] = std::min(distNotI[h], dist2(problem.hole[h], problem.pointsInside[current.points[j]]));
+                    }
+                }
+            }
             for (size_t curCandidate = candidates.find_first(); curCandidate != candidates.npos; curCandidate = candidates.find_next(curCandidate)) {
-                double curDeltaOptE = 0.0, curDeltaConstE = 0.0, w = 0.0;
+                double w = 0.0;
+                bool skip = false;
                 for (auto e : problem.adjEdgeIds[i]) {
                     int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
                     // TODO cache denom
                     double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
                     distMeasure = std::max(0.0, distMeasure - problem.eps);
-                    distMeasure = distMeasure * distMeasure;
-                    if (!first[e]) {
-                        curDeltaConstE += distMeasure;
-                    }
-                    if (!onlyFeasible) {
+                    if (onlyFeasible) {
+                        if (distMeasure > 0) {
+                            skip = true;
+                            break;
+                        }
+                    } else {
                         w += distMeasure;
                     }
                 }
-                // TODO update optE properly
+                if (skip) {
+                    continue;
+                }
+                if (onlyFeasible) {
+                    for (size_t h = 0; h < problem.hole.size(); ++h) {
+                        w -= std::max(0, distNotI[h] - dist2(problem.hole[h], problem.pointsInside[curCandidate]));
+                    }
+                }
 
                 w *= -invT;
                 double mx = std::max(selW, w);
                 double p = 1.0 / (1.0 + std::exp(selW - w));
                 if (std::uniform_real_distribution()(gen) <= p) {
                     selCandidate = curCandidate;
-                    selDeltaOptE = curDeltaOptE;
-                    selDeltaConstE = curDeltaConstE;
                 }
                 selW = std::log(std::exp(selW - mx) + std::exp(w - mx)) + mx;
             }
             current.points[i] = selCandidate;
-            current.optE += selDeltaOptE;
-            current.constE += selDeltaConstE;
+        }
+        current.optE = 0;
+        current.constE = 0;
+        for (size_t h = 0; h < problem.hole.size(); ++h) {
+            int mind = 1000000000;
+            for (size_t i = 0; i < problem.originalPoints.size(); ++i) {
+                mind = std::min(mind, dist2(problem.hole[h], problem.pointsInside[current.points[i]]));
+            }
+            current.optE += mind;
+        }
+        for (size_t e = 0; e < problem.edgeU.size(); ++e) {
+            int i = problem.edgeU[e];
+            int j = problem.edgeV[e];
+            // TODO cache denom
+            double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[current.points[i]], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
+            distMeasure = std::max(0.0, distMeasure - problem.eps);
+            current.constE += distMeasure;
         }
     }
 };
