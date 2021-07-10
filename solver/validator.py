@@ -138,9 +138,7 @@ for i in range(len(hole)):
         sp1 = s_vertices[e[0]]
         sp2 = s_vertices[e[1]]
         args = [p1, p2, sp1, sp2]
-        if touch_semiopen(*args):
-            continue
-        elif touch(*args):
+        if between(sp1, p2, sp2):
             vp11 = right_turn(p1, p2, sp1)
             vp12 = right_turn(p1, p2, sp2)
             a1 = vp11 and vp12
@@ -149,15 +147,22 @@ for i in range(len(hole)):
             vp22 = right_turn(sp2, p2, p3)
             if right_turn(p1, p2, p3):
                 if not a1:
-                    print(p1, p2, p3, sp1, sp2, vp11, vp12,
-                          vp21, vp22, right_turn(p1, p2, p3), file=sys.stderr)
+                    print(p1, p2, p3, sp1, sp2, "between, right", file=sys.stderr)
                     sys.exit(42)
             else:
                 if not ((vp11 or vp21) and (vp12 or vp22)):  # КОСТЫЛЬ!! Как нормально написать?
-                    print(p1, p2, p3, sp1, sp2, vp11, vp12,
-                          vp21, vp22, right_turn(p1, p2, p3), file=sys.stderr)
+                    print(p1, p2, p3, sp1, sp2, "between, !right", file=sys.stderr)
                     sys.exit(42)
+        elif between(sp1, p1, sp2):
+            continue
+        elif touch(*args):
+            vp11 = right_turn(p1, p2, sp1)
+            vp12 = right_turn(p1, p2, sp2)
+            if not vp11 or not vp12:
+                print(p1, p2, p3, sp1, sp2, "touch", file=sys.stderr)
+                sys.exit(42)
         elif interesect(*args):
+            print(p1, p2, p3, sp1, sp2, "interesect", file=sys.stderr)
             print(*args, file=sys.stderr)
             sys.exit(42)
 
