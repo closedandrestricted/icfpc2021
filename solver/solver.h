@@ -199,13 +199,95 @@ struct Problem {
         std::cerr << pointsInside.size() << " " << edges << "\n";
     }
 
-    json exportSol(SolutionCandidate s) {
+    json exportSol(const std::vector<int> ps) {
         json sol;
-        for (auto i : s.points) {
+        for (auto i : ps) {
             const auto& p = pointsInside[i];
             sol["vertices"].push_back({p.x, p.y});
         }
         return sol;
+    }
+
+    void rec(std::vector<int>& ps, uint64_t mask, int& minOpt) {
+        size_t bestAt = ps.size(), bestAtCnt = pointsInside.size() + 1;
+        for (size_t at = 0; at < ps.size(); ++at) {
+            if (mask & (1ULL << at)) {
+                continue;
+            }
+            size_t cnt = 0;
+            boost::dynamic_bitset<> candidates;
+            candidates.resize(pointsInside.size(), true);
+            for (auto e : adjEdgeIds[at]) {
+                int j = edgeU[e] ^ edgeV[e] ^ at;
+                if (mask & (1ULL << j)) {
+                    candidates &= visibility[ps[j]];
+                }
+            }
+            for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+                bool good = true;
+                for (auto e : adjEdgeIds[at]) {
+                    if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
+                        edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
+                        continue;
+                    }
+                    good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
+                }
+                if (good) {
+                    cnt++;
+                }
+            }
+            if (cnt == 0) {
+                return;
+            }
+            if (cnt < bestAtCnt) {
+                bestAt = at;
+                bestAtCnt = cnt;
+            }
+        }
+        size_t at = bestAt;
+        if (at == ps.size()) {
+            int opt = 0;
+            for (size_t i = 0; i < hole.size(); ++i) {
+                int d = 1000000000;
+                for (size_t j = 0; j < ps.size(); ++j) {
+                    d = std::min(d, dist2(hole[i], pointsInside[ps[j]]));
+                }
+                opt += d;
+            }
+            if (opt < minOpt) {
+                minOpt = opt;
+                std::cerr << minOpt << " " << exportSol(ps) << std::endl;
+            }
+            return;
+        }
+        boost::dynamic_bitset<> candidates;
+        candidates.resize(pointsInside.size(), true);
+        for (auto e : adjEdgeIds[at]) {
+            int j = edgeU[e] ^ edgeV[e] ^ at;
+            if (mask & (1ULL << j)) {
+                candidates &= visibility[ps[j]];
+            }
+        }
+        for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
+            bool good = true;
+            for (auto e : adjEdgeIds[at]) {
+                if (edgeU[e] != at && (mask & (1ULL << edgeU[e])) == 0 ||
+                    edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
+                    continue;
+                }
+                good &= visibility[ps[edgeU[e]]][ps[edgeV[e]]];
+                good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
+            }
+            if (good) {
+                rec(ps, mask | (1ULL << at), minOpt);
+            }
+        }
+    }
+
+    void recSolve() {
+        int minOpt = 1000000000;
+        std::vector<int> ps(originalPoints.size(), -1);
+        rec(ps, 0, minOpt);
     }
 };
 
@@ -260,7 +342,7 @@ struct GibbsChain {
                 for (auto e : problem.adjEdgeIds[i]) {
                     int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
                     // TODO cache denom
-                    double distMeasure = std::fabs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
+                    double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[curCandidate], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
                     distMeasure = std::max(0.0, distMeasure - problem.eps);
                     if (!first[e]) {
                         curDeltaConstE += distMeasure;

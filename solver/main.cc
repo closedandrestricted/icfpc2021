@@ -9,6 +9,7 @@ int main(int argc, char** argv) {
     std::cerr << FLAGS_test_idx << " ";
     p.parseJson("problems/" + std::to_string(FLAGS_test_idx) + ".json");
     p.preprocess();
+    // p.recSolve();
     std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
     std::vector<GibbsChain> mcmcs;
     for (double invT : invTs) {
@@ -49,12 +50,11 @@ int main(int argc, char** argv) {
             avgE[i] += mcmc.current.constE;
             if (mcmc.current.constE == 0.0) {
                 std::cerr << mcmc.current.constE << "\n";
-                std::ofstream f("solutions/feasible/" + std::to_string(FLAGS_test_idx) + ".json");
-                f << p.exportSol(mcmc.current);
-                return 0;
+                // std::ofstream f("solutions/feasible/" + std::to_string(FLAGS_test_idx) + ".json");
+                // f << p.exportSol(mcmc.current.points);
+                // return 0;
             }
         }
-        // std::cerr << p.exportSol(mcmcs[invTs.size() - 2].current) << " " << p.exportSol(mcmcs[invTs.size() - 1].current) << std::endl;
         for (size_t i = 0; i < mcmcs.size() - 1; ++i) {
             auto& c1 = mcmcs[i];
             auto& c2 = mcmcs[i + 1];
