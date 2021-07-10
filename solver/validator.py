@@ -5,6 +5,16 @@ import json
 import sys
 import traceback
 
+
+# Input arguments:
+# problem, solution, bonuses
+
+# Prints to stdout:
+# <line with json array with bonus descriptions>
+# <line with a single number, score>
+# -- or returns error code 42
+# Garbage can be printed to stderr.
+
 try:
     parser = argparse.ArgumentParser()
     parser.add_argument('problem')
