@@ -40,11 +40,19 @@ int main(int argc, char** argv) {
         mcmcsFeasible.emplace_back(p, true, invT);
     }
 
-    // Zeroer z(p, 0.8, p.originalPoints.size());
-    // while(z.step());
+    Initer z(p, 0.8);
+    while(!z.step());
 
-    SolutionCandidate sol0;
-    sol0.points.assign(p.originalPoints.size(), 0);
+    {
+        std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
+        f << p.exportSol(z.current.points);
+        
+    }
+    // exit(0);
+    
+
+    SolutionCandidate sol0 = z.current;
+    // sol0.points.assign(p.originalPoints.size(), 0);
 
     // {
     //     std::vector<std::pair<int, int>> fixedCorners{{12, 12}, {7, 13}, {11, 14}, {19, 15}, {30, 16}, {28, 17}, {36, 18}, {43, 19}, {41, 20}};
