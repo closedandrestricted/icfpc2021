@@ -58,14 +58,31 @@ class TaskCache {
       }
     }
     // Valid segments
+    int64_t max_edge_square_length = 0;
+    for (unsigned u = 0; u < task.g.Size(); ++u) {
+      for (auto e : task.g.EdgesEI(u)) {
+        max_edge_square_length = std::max(max_edge_square_length, e.info.second);
+      }
+    }
     for (auto p1 : valid_points) {
       auto& vm = valid_segments_map[p1.x - box.p1.x][p1.y - box.p1.y];
-      for (auto p2: valid_points) {
-        I2ClosedSegment s(p1, p2);
-        if (geometry::d2::Inside(s, task.hole)) {
-        //   std::cout << "\t" << p1 << "\t" << p2 << std::endl;
-          vm.push_back(p2);
-          valid_segments_set.insert(s);
+      for (int64_t dx = 0; dx * dx <= max_edge_square_length; ++dx) {
+        for (int64_t dy = 0; dx * dx + dy * dy <= max_edge_square_length; ++dy) {
+          for (int64_t sx = -1; sx <= 1; sx += 2) {
+            if ((dx == 0) && (sx != -1)) continue;
+            for (int64_t sy = -1; sy <= 1; sy += 2) {
+              if ((dy == 0) && (sy != -1)) continue;
+              I2Point p2(p1.x + dx * sx, p1.y + dy * sy);
+              if (CheckPoint(p2)) {
+                I2ClosedSegment s(p1, p2);
+                if (geometry::d2::Inside(s, task.hole)) {
+                //   std::cout << "\t" << p1 << "\t" << p2 << std::endl;
+                vm.push_back(p2);
+                valid_segments_set.insert(s);
+                }                  
+              }
+            }            
+          }
         }
       }
       std::shuffle(vm.begin(), vm.end(), re);
