@@ -107,7 +107,7 @@ class PerfectScore : public FullSearch {
 
  public:
   bool Search() {
-    assert(task.hole.Size() <= task.g.Size());
+    if (task.hole.Size() < vertexes_to_cover.size()) return false;
     return SearchI(0);
   }
 };
