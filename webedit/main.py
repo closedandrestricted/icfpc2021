@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import os
+from posixpath import join
 import tornado.ioloop
 import tornado.web
 
@@ -14,7 +15,7 @@ class MainHandler(tornado.web.RequestHandler):
         self.set_header(header, body)
     
     def get(self):
-        with open(os.path.join(this_dir, 'static/index.html')) as f:
+        with open(os.path.join(this_dir, './static/index.html')) as f:
             data = f.read()
             self.write(data)
 
@@ -61,7 +62,7 @@ def make_app():
         (r"/problem", ProblemHandler),
         (r"/solution", SolutionHandler),
         (r"/save_sol", SolutionSaveHandler),
-        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": "static"}),
+        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(this_dir, "static")}),
     ], debug=True)
 
 
