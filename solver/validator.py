@@ -201,11 +201,10 @@ try:
     except Exception:
         if not wallhack:
             raise
-        ok = False
         for sv in s_vertices:
             try:
                 try_with_no_vertex(sv)
-                ok = True
+                break
             except Exception:
                 if sv is s_vertices[-1]:
                     raise
