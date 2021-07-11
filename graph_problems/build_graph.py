@@ -1,6 +1,7 @@
 from graphviz import Digraph
 import json
 from pathlib import Path
+from collections import defaultdict
 
 problems = Path("./problems")
 
@@ -12,6 +13,9 @@ colors = {
 }
 
 dot = Digraph()
+
+available_bonuses = defaultdict(list)
+
 for p in problems.iterdir():
     if not p.name.endswith(".json"): continue
     pnum = p.name.split(".")[0]
@@ -23,8 +27,14 @@ for p in problems.iterdir():
                 btype = bonus["bonus"]
                 prob = str(bonus["problem"])
                 dot.edge(pnum, prob, color = colors[btype], label=btype[0])
+                available_bonuses[int(prob)].append((pnum, btype))
 
-dot.render("bonuses.gv")
+for k, v in sorted(available_bonuses.items()):
+    print(f"Bonuses available for problem {k}:")
+    for pnum, btype in v:
+        print(f"  - from problem {pnum} - {btype}")
+
+#dot.render("bonuses.gv")
 
         
 
