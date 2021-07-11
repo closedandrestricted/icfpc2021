@@ -17,14 +17,14 @@
 class Task {
 public:
   I2Polygon hole;
-  UndirectedGraphEI<int64_t> g;
+  UndirectedGraphEI<std::pair<int64_t, int64_t>> g;
   unsigned eps;
 
   void Load(const std::string& filename) {
     std::ifstream is(filename);
     nlohmann::json raw;
     is >> raw;
-    std::cout << raw << std::endl;
+    // std::cout << raw << std::endl;
     eps = int(raw["epsilon"]);
     auto figure = raw["figure"];
     unsigned hsize = raw["hole"].size(), fsize = figure["vertices"].size();
@@ -36,12 +36,9 @@ public:
     for (auto e : figure["edges"]) {
       unsigned u0 = e[0], u1 = e[1];
       auto d = SquaredDistanceL2(vf[u0], vf[u1]);
-      g.AddEdge(u0, u1, d);
+      auto dd = (d * eps) / 1000000;
+      g.AddEdge(u0, u1, {d - dd, d + dd});
     }
-  }
-
-  bool CheckDistance(int64_t required, int64_t current) const {
-    return Abs(current - required) * 1000000ll <= required * eps;
   }
 
   bool IsValid(const Solution& s) const {
@@ -52,7 +49,7 @@ public:
         if (e.to < u) continue;
         auto p1 = s.points[e.to];
         auto d2 = SquaredDistanceL2(p0, p1);
-        if (!CheckDistance(e.info, d2)) return false;
+        if ((d2 < e.info.first) || (d2 > e.info.second)) return false;
         if (!geometry::d2::Inside(I2ClosedSegment(p0, p1), hole)) return false;
       }
     }
