@@ -30,9 +30,9 @@ for p in problems.iterdir():
                 available_bonuses[int(prob)].append((pnum, btype))
 
 for k, v in sorted(available_bonuses.items()):
-    print(f"Problem {k}:")
+    print(f"Bonuses available for problem {k}:")
     for pnum, btype in v:
-        print(f"  - problem {pnum} - {btype}")
+        print(f"  - from problem {pnum} - {btype}")
 
 #dot.render("bonuses.gv")
 
