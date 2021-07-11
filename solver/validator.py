@@ -46,6 +46,7 @@ try:
     def get_bonus(name):
         if 'bonuses' not in solution:
             return None
+        assert len(solution['bonuses']) <= 1
         for bonus in solution['bonuses']:
             if bonus['bonus'] == name:
                 return bonus
