@@ -7,6 +7,7 @@ problems = Path("./problems")
 colors = {
   "BREAK_A_LEG": "red",
   "GLOBALIST": "green",
+  "WALLHACK": "yellow",
 }
 
 dot = Digraph()
