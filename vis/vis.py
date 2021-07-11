@@ -15,6 +15,7 @@ with open(args.problem) as f:
 hole = problem['hole']
 edges = problem['figure']['edges']
 vertices = problem['figure']['vertices']
+bonuses = problem['bonuses']
 
 xs = [xy[0] for xy in hole]
 ys = [xy[1] for xy in hole]
@@ -42,6 +43,10 @@ for i, e in enumerate(edges):
     plt.plot([x1, x2], [y1, y2], c='g', marker='o',
              linewidth=1.0, markersize=4)
 
+for i, b in enumerate(bonuses):
+    x, y = b["position"]
+    plt.plot([x,x], [y,y], c='orange', marker='o', linewidth=1.0, markersize=4)
+    plt.annotate(b['bonus'] + " for " + str(b['problem']), annotate_shift(b["position"]), color="orange")
 
 if args.solution:
     with open(args.solution) as f:

@@ -2,277 +2,529 @@ digraph {
 	65
 	65 -> 42 [label=B color=red]
 	65 -> 49 [label=W color=yellow]
+	65 -> 62 [label=G color=green]
 	64
 	64 -> 85 [label=G color=green]
 	64 -> 83 [label=W color=yellow]
+	64 -> 4 [label=W color=yellow]
 	19
 	19 -> 32 [label=G color=green]
 	19 -> 33 [label=W color=yellow]
+	19 -> 71 [label=S color=orange]
+	122
+	122 -> 115 [label=G color=green]
+	122 -> 114 [label=B color=red]
+	122 -> 9 [label=W color=yellow]
+	110
+	110 -> 131 [label=G color=green]
+	110 -> 128 [label=W color=yellow]
+	110 -> 102 [label=S color=orange]
 	43
 	43 -> 66 [label=B color=red]
 	43 -> 40 [label=W color=yellow]
+	43 -> 88 [label=B color=red]
 	62
 	62 -> 22 [label=G color=green]
 	62 -> 22 [label=W color=yellow]
+	62 -> 74 [label=S color=orange]
 	84
 	84 -> 52 [label=G color=green]
+	84 -> 99 [label=S color=orange]
+	84 -> 46 [label=B color=red]
+	129
+	129 -> 110 [label=S color=orange]
+	129 -> 125 [label=B color=red]
+	129 -> 98 [label=W color=yellow]
+	127
+	127 -> 113 [label=S color=orange]
+	127 -> 112 [label=B color=red]
+	127 -> 44 [label=G color=green]
 	41
 	41 -> 54 [label=G color=green]
+	41 -> 82 [label=S color=orange]
+	41 -> 92 [label=W color=yellow]
 	75
 	75 -> 81 [label=B color=red]
+	75 -> 35 [label=S color=orange]
+	75 -> 51 [label=B color=red]
 	57
 	57 -> 33 [label=G color=green]
 	57 -> 4 [label=G color=green]
+	57 -> 14 [label=S color=orange]
 	16
 	16 -> 8 [label=B color=red]
 	16 -> 74 [label=B color=red]
+	16 -> 32 [label=G color=green]
 	82
 	82 -> 2 [label=G color=green]
+	82 -> 75 [label=S color=orange]
+	82 -> 108 [label=B color=red]
 	78
 	78 -> 56 [label=B color=red]
+	78 -> 24 [label=S color=orange]
+	78 -> 35 [label=B color=red]
 	29
 	29 -> 58 [label=G color=green]
 	29 -> 9 [label=G color=green]
+	29 -> 114 [label=B color=red]
 	49
 	49 -> 36 [label=B color=red]
 	49 -> 104 [label=B color=red]
+	49 -> 66 [label=W color=yellow]
 	99
 	99 -> 91 [label=B color=red]
 	99 -> 25 [label=G color=green]
+	99 -> 22 [label=G color=green]
 	55
 	55 -> 7 [label=G color=green]
 	55 -> 19 [label=G color=green]
+	55 -> 47 [label=W color=yellow]
+	108
+	108 -> 121 [label=W color=yellow]
+	108 -> 110 [label=B color=red]
+	108 -> 125 [label=G color=green]
+	131
+	131 -> 109 [label=S color=orange]
+	131 -> 124 [label=S color=orange]
+	131 -> 23 [label=B color=red]
 	70
 	70 -> 61 [label=B color=red]
 	70 -> 54 [label=W color=yellow]
+	70 -> 103 [label=W color=yellow]
 	45
 	45 -> 25 [label=G color=green]
 	45 -> 52 [label=W color=yellow]
+	45 -> 48 [label=S color=orange]
 	27
 	27 -> 23 [label=B color=red]
+	27 -> 47 [label=S color=orange]
+	27 -> 107 [label=W color=yellow]
 	40
 	40 -> 45 [label=G color=green]
+	40 -> 17 [label=S color=orange]
+	40 -> 109 [label=W color=yellow]
+	132
+	132 -> 123 [label=S color=orange]
+	132 -> 129 [label=W color=yellow]
+	132 -> 96 [label=W color=yellow]
 	80
 	80 -> 13 [label=G color=green]
 	80 -> 93 [label=W color=yellow]
+	80 -> 112 [label=S color=orange]
 	104
+	104 -> 105 [label=S color=orange]
+	104 -> 7 [label=S color=orange]
+	104 -> 58 [label=B color=red]
 	36
 	36 -> 82 [label=B color=red]
 	36 -> 96 [label=B color=red]
+	36 -> 75 [label=G color=green]
 	97
 	97 -> 100 [label=G color=green]
 	97 -> 61 [label=W color=yellow]
+	97 -> 1 [label=W color=yellow]
+	123
+	123 -> 114 [label=B color=red]
+	123 -> 113 [label=S color=orange]
+	123 -> 24 [label=G color=green]
 	89
 	89 -> 103 [label=B color=red]
 	89 -> 18 [label=G color=green]
+	89 -> 95 [label=S color=orange]
 	74
 	74 -> 77 [label=B color=red]
+	74 -> 56 [label=S color=orange]
+	74 -> 121 [label=W color=yellow]
+	113
+	113 -> 112 [label=G color=green]
+	113 -> 123 [label=S color=orange]
+	113 -> 90 [label=S color=orange]
 	4
 	4 -> 63 [label=B color=red]
 	4 -> 92 [label=B color=red]
+	4 -> 17 [label=B color=red]
 	81
 	81 -> 27 [label=B color=red]
 	81 -> 43 [label=W color=yellow]
+	81 -> 69 [label=S color=orange]
 	37
 	37 -> 15 [label=B color=red]
+	37 -> 1 [label=S color=orange]
+	37 -> 119 [label=B color=red]
 	22
 	22 -> 74 [label=G color=green]
 	22 -> 64 [label=W color=yellow]
+	22 -> 67 [label=G color=green]
+	119
+	119 -> 111 [label=B color=red]
+	119 -> 118 [label=W color=yellow]
+	119 -> 42 [label=G color=green]
+	126
+	126 -> 129 [label=S color=orange]
+	126 -> 122 [label=W color=yellow]
+	126 -> 61 [label=B color=red]
 	17
 	17 -> 84 [label=G color=green]
 	17 -> 67 [label=B color=red]
+	17 -> 68 [label=S color=orange]
 	100
 	100 -> 96 [label=W color=yellow]
+	100 -> 59 [label=S color=orange]
+	100 -> 85 [label=S color=orange]
 	71
 	71 -> 87 [label=B color=red]
 	71 -> 89 [label=G color=green]
+	71 -> 120 [label=W color=yellow]
 	6
 	6 -> 16 [label=G color=green]
+	6 -> 26 [label=S color=orange]
+	6 -> 50 [label=S color=orange]
 	96
 	96 -> 95 [label=B color=red]
 	96 -> 2 [label=W color=yellow]
+	96 -> 36 [label=S color=orange]
 	92
 	92 -> 99 [label=B color=red]
+	92 -> 30 [label=S color=orange]
+	92 -> 7 [label=G color=green]
+	116
+	116 -> 117 [label=S color=orange]
+	116 -> 120 [label=G color=green]
+	116 -> 89 [label=B color=red]
 	63
 	63 -> 21 [label=B color=red]
 	63 -> 38 [label=W color=yellow]
+	63 -> 18 [label=G color=green]
+	130
+	130 -> 119 [label=B color=red]
+	130 -> 127 [label=G color=green]
+	130 -> 70 [label=B color=red]
 	85
 	85 -> 48 [label=B color=red]
+	85 -> 57 [label=S color=orange]
+	85 -> 87 [label=G color=green]
 	103
 	103 -> 104 [label=G color=green]
 	103 -> 3 [label=B color=red]
+	103 -> 28 [label=W color=yellow]
 	13
 	13 -> 46 [label=G color=green]
 	13 -> 88 [label=B color=red]
+	13 -> 20 [label=G color=green]
 	32
 	32 -> 29 [label=B color=red]
 	32 -> 72 [label=B color=red]
+	32 -> 5 [label=B color=red]
 	24
 	24 -> 73 [label=B color=red]
 	24 -> 80 [label=W color=yellow]
+	24 -> 128 [label=G color=green]
 	91
 	91 -> 93 [label=G color=green]
+	91 -> 23 [label=S color=orange]
+	91 -> 54 [label=S color=orange]
 	60
 	60 -> 80 [label=G color=green]
 	60 -> 41 [label=G color=green]
+	60 -> 79 [label=G color=green]
 	54
 	54 -> 24 [label=G color=green]
+	54 -> 12 [label=S color=orange]
+	54 -> 65 [label=B color=red]
 	79
 	79 -> 1 [label=G color=green]
 	79 -> 62 [label=B color=red]
+	79 -> 83 [label=W color=yellow]
 	38
 	38 -> 76 [label=G color=green]
+	38 -> 101 [label=S color=orange]
+	38 -> 84 [label=W color=yellow]
 	35
 	35 -> 47 [label=G color=green]
 	35 -> 14 [label=W color=yellow]
+	35 -> 126 [label=W color=yellow]
 	7
 	7 -> 12 [label=G color=green]
 	7 -> 95 [label=B color=red]
+	7 -> 115 [label=W color=yellow]
 	18
 	18 -> 72 [label=G color=green]
 	18 -> 65 [label=G color=green]
+	18 -> 129 [label=G color=green]
 	73
 	73 -> 86 [label=B color=red]
 	73 -> 11 [label=B color=red]
+	73 -> 41 [label=G color=green]
 	77
 	77 -> 83 [label=G color=green]
 	77 -> 39 [label=G color=green]
+	77 -> 8 [label=S color=orange]
 	9
 	9 -> 14 [label=B color=red]
+	9 -> 60 [label=S color=orange]
+	9 -> 64 [label=G color=green]
 	58
 	58 -> 68 [label=G color=green]
 	58 -> 15 [label=W color=yellow]
+	58 -> 106 [label=B color=red]
 	26
 	26 -> 19 [label=B color=red]
+	26 -> 77 [label=S color=orange]
+	26 -> 78 [label=W color=yellow]
+	118
+	118 -> 116 [label=G color=green]
+	118 -> 132 [label=B color=red]
+	118 -> 97 [label=G color=green]
 	31
 	31 -> 75 [label=G color=green]
 	31 -> 8 [label=W color=yellow]
+	31 -> 130 [label=S color=orange]
 	15
 	15 -> 41 [label=G color=green]
+	15 -> 78 [label=S color=orange]
+	15 -> 94 [label=G color=green]
 	59
 	59 -> 3 [label=B color=red]
+	59 -> 55 [label=S color=orange]
+	59 -> 60 [label=W color=yellow]
 	61
 	61 -> 20 [label=B color=red]
+	61 -> 98 [label=S color=orange]
+	61 -> 132 [label=G color=green]
 	52
 	52 -> 55 [label=G color=green]
 	52 -> 29 [label=W color=yellow]
+	52 -> 113 [label=S color=orange]
 	83
 	83 -> 44 [label=G color=green]
+	83 -> 63 [label=S color=orange]
+	83 -> 101 [label=S color=orange]
 	69
 	69 -> 70 [label=G color=green]
 	69 -> 28 [label=W color=yellow]
+	69 -> 3 [label=W color=yellow]
 	86
 	86 -> 51 [label=B color=red]
+	86 -> 94 [label=S color=orange]
+	86 -> 55 [label=S color=orange]
 	5
 	5 -> 78 [label=B color=red]
 	5 -> 10 [label=W color=yellow]
+	5 -> 110 [label=B color=red]
 	20
 	20 -> 49 [label=G color=green]
 	20 -> 97 [label=G color=green]
+	20 -> 6 [label=W color=yellow]
 	3
 	3 -> 60 [label=G color=green]
 	3 -> 81 [label=G color=green]
+	3 -> 59 [label=W color=yellow]
 	12
 	12 -> 67 [label=B color=red]
 	12 -> 69 [label=W color=yellow]
+	12 -> 30 [label=S color=orange]
 	44
 	44 -> 88 [label=B color=red]
 	44 -> 5 [label=W color=yellow]
+	44 -> 73 [label=W color=yellow]
 	21
 	21 -> 17 [label=G color=green]
 	21 -> 73 [label=B color=red]
+	21 -> 111 [label=B color=red]
+	120
+	120 -> 132 [label=S color=orange]
+	120 -> 121 [label=S color=orange]
+	120 -> 63 [label=W color=yellow]
 	66
 	66 -> 34 [label=G color=green]
+	66 -> 103 [label=S color=orange]
+	66 -> 31 [label=G color=green]
 	34
 	34 -> 4 [label=B color=red]
 	34 -> 13 [label=G color=green]
+	34 -> 12 [label=G color=green]
 	98
 	98 -> 97 [label=G color=green]
 	98 -> 34 [label=W color=yellow]
+	98 -> 93 [label=W color=yellow]
 	11
 	11 -> 31 [label=B color=red]
 	11 -> 20 [label=G color=green]
+	11 -> 49 [label=G color=green]
+	109
+	109 -> 108 [label=B color=red]
+	109 -> 115 [label=G color=green]
+	109 -> 43 [label=S color=orange]
+	115
+	115 -> 122 [label=B color=red]
+	115 -> 131 [label=S color=orange]
+	115 -> 19 [label=G color=green]
 	48
 	48 -> 11 [label=B color=red]
+	48 -> 76 [label=S color=orange]
+	48 -> 13 [label=S color=orange]
 	101
+	101 -> 98 [label=S color=orange]
 	101 -> 84 [label=B color=red]
+	101 -> 40 [label=W color=yellow]
+	121
+	121 -> 127 [label=S color=orange]
+	121 -> 109 [label=G color=green]
+	121 -> 21 [label=G color=green]
+	117
+	117 -> 118 [label=W color=yellow]
+	117 -> 111 [label=W color=yellow]
+	117 -> 57 [label=G color=green]
+	125
+	125 -> 130 [label=G color=green]
+	125 -> 126 [label=G color=green]
+	125 -> 52 [label=W color=yellow]
 	47
 	47 -> 43 [label=B color=red]
+	47 -> 58 [label=S color=orange]
+	47 -> 27 [label=S color=orange]
 	68
 	68 -> 69 [label=B color=red]
 	68 -> 102 [label=W color=yellow]
+	68 -> 99 [label=S color=orange]
 	39
 	39 -> 37 [label=G color=green]
 	39 -> 100 [label=B color=red]
+	39 -> 29 [label=B color=red]
 	106
 	106 -> 94 [label=B color=red]
+	106 -> 51 [label=S color=orange]
+	106 -> 104 [label=B color=red]
 	67
 	67 -> 5 [label=G color=green]
+	67 -> 42 [label=S color=orange]
+	67 -> 45 [label=G color=green]
+	124
+	124 -> 120 [label=B color=red]
+	124 -> 107 [label=G color=green]
+	124 -> 56 [label=W color=yellow]
 	88
 	88 -> 59 [label=G color=green]
 	88 -> 27 [label=B color=red]
+	88 -> 123 [label=B color=red]
 	33
 	33 -> 53 [label=B color=red]
 	33 -> 71 [label=B color=red]
+	33 -> 131 [label=G color=green]
 	76
 	76 -> 64 [label=B color=red]
+	76 -> 46 [label=S color=orange]
+	76 -> 15 [label=S color=orange]
 	87
 	87 -> 26 [label=G color=green]
+	87 -> 106 [label=S color=orange]
+	87 -> 100 [label=B color=red]
 	72
 	72 -> 40 [label=G color=green]
+	72 -> 32 [label=S color=orange]
+	72 -> 117 [label=S color=orange]
 	28
 	28 -> 65 [label=G color=green]
 	28 -> 36 [label=G color=green]
+	28 -> 80 [label=S color=orange]
 	56
 	56 -> 50 [label=G color=green]
 	56 -> 90 [label=W color=yellow]
+	56 -> 11 [label=S color=orange]
 	102
 	102 -> 92 [label=G color=green]
 	102 -> 66 [label=W color=yellow]
+	102 -> 33 [label=W color=yellow]
+	112
+	112 -> 107 [label=S color=orange]
+	112 -> 108 [label=S color=orange]
+	112 -> 77 [label=G color=green]
 	90
+	90 -> 106 [label=S color=orange]
 	90 -> 6 [label=W color=yellow]
+	90 -> 53 [label=G color=green]
+	114
+	114 -> 128 [label=G color=green]
+	114 -> 116 [label=W color=yellow]
+	114 -> 86 [label=B color=red]
 	23
 	23 -> 18 [label=B color=red]
+	23 -> 37 [label=S color=orange]
+	23 -> 124 [label=B color=red]
 	1
 	1 -> 35 [label=G color=green]
 	1 -> 50 [label=W color=yellow]
+	1 -> 38 [label=B color=red]
+	107
+	107 -> 125 [label=S color=orange]
+	107 -> 130 [label=B color=red]
+	107 -> 10 [label=W color=yellow]
+	111
+	111 -> 126 [label=W color=yellow]
+	111 -> 117 [label=B color=red]
+	111 -> 26 [label=G color=green]
 	14
 	14 -> 57 [label=B color=red]
 	14 -> 53 [label=G color=green]
+	14 -> 118 [label=G color=green]
 	94
 	94 -> 102 [label=B color=red]
 	94 -> 91 [label=W color=yellow]
+	94 -> 122 [label=S color=orange]
 	51
 	51 -> 71 [label=B color=red]
+	51 -> 21 [label=S color=orange]
+	51 -> 72 [label=G color=green]
 	95
 	95 -> 101 [label=B color=red]
+	95 -> 45 [label=S color=orange]
+	95 -> 2 [label=B color=red]
 	2
 	2 -> 39 [label=B color=red]
 	2 -> 87 [label=G color=green]
+	2 -> 81 [label=B color=red]
 	10
 	10 -> 62 [label=G color=green]
+	10 -> 85 [label=S color=orange]
+	10 -> 76 [label=G color=green]
 	8
 	8 -> 6 [label=B color=red]
 	8 -> 79 [label=W color=yellow]
+	8 -> 105 [label=B color=red]
 	25
 	25 -> 30 [label=B color=red]
 	25 -> 16 [label=W color=yellow]
+	25 -> 82 [label=G color=green]
 	46
 	46 -> 28 [label=B color=red]
 	46 -> 31 [label=W color=yellow]
+	46 -> 16 [label=G color=green]
 	53
 	53 -> 38 [label=G color=green]
 	53 -> 44 [label=B color=red]
+	53 -> 116 [label=G color=green]
+	128
+	128 -> 124 [label=B color=red]
+	128 -> 119 [label=G color=green]
+	128 -> 25 [label=B color=red]
 	93
 	93 -> 90 [label=G color=green]
 	93 -> 86 [label=G color=green]
+	93 -> 39 [label=B color=red]
 	42
 	42 -> 79 [label=B color=red]
 	42 -> 48 [label=W color=yellow]
+	42 -> 127 [label=S color=orange]
 	30
 	30 -> 10 [label=B color=red]
+	30 -> 105 [label=S color=orange]
+	30 -> 34 [label=G color=green]
 	105
+	105 -> 89 [label=S color=orange]
+	105 -> 68 [label=S color=orange]
+	105 -> 37 [label=G color=green]
 	50
 	50 -> 9 [label=G color=green]
 	50 -> 70 [label=G color=green]
+	50 -> 91 [label=W color=yellow]
 }

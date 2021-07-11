@@ -8,10 +8,12 @@ import argparse
 import subprocess
 import json
 
+maxProblem = int(open("../max_problem", "r").read().strip())
+
 parser = argparse.ArgumentParser(description='Submit ICFPC 2021 solutions.')
 parser.add_argument('--begin', type=int, default=1,
                     help='first problem number')
-parser.add_argument('--end', type=int, default=106,
+parser.add_argument('--end', type=int, default=maxProblem,
                     help='last problem number')
 parser.add_argument("--path", type=str)
 parser.add_argument('--override', action="store_true",
