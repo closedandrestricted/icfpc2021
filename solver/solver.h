@@ -149,10 +149,10 @@ struct Problem {
         auto figure = rawProblem["figure"];
         size_t n = figure["vertices"].size();
         originalPoints.resize(n);
-        adjEdgeIds.resize(n);
         for (size_t i = 0; i < n; ++i) {
             originalPoints[i] = {figure["vertices"][i][0], figure["vertices"][i][1]};
         }
+        adjEdgeIds.resize(n);
         for (auto e : figure["edges"]) {
             int u = e[0], v = e[1];
             adjEdgeIds[u].push_back(edgeU.size());
@@ -422,6 +422,26 @@ struct Problem {
         std::vector<int> c2p(hole.size(), -1), p2c(originalPoints.size(), -1);
         rec2(c2p, p2c, 0);
     }
+
+    void updateE(SolutionCandidate& current) const {
+        current.optE = 0;
+        current.constE = 0;
+        for (size_t h = 0; h < hole.size(); ++h) {
+            int mind = 1000000000;
+            for (size_t i = 0; i < originalPoints.size(); ++i) {
+                mind = std::min(mind, dist2(hole[h], pointsInside[current.points[i]]));
+            }
+            current.optE += mind;
+        }
+        for (size_t e = 0; e < edgeU.size(); ++e) {
+            int i = edgeU[e];
+            int j = edgeV[e];
+            // TODO cache denom
+            double distMeasure = std::abs(1.0 * dist2(pointsInside[current.points[i]], pointsInside[current.points[j]]) / dist2(originalPoints[i], originalPoints[j]) - 1.0);
+            distMeasure = std::max(0.0, distMeasure - eps - 1e-12);
+            current.constE += distMeasure;
+        }
+    }
 };
 
 struct GibbsChain {
@@ -522,23 +542,7 @@ struct GibbsChain {
             }
             current.points[i] = selCandidate;
         }
-        current.optE = 0;
-        current.constE = 0;
-        for (size_t h = 0; h < problem.hole.size(); ++h) {
-            int mind = 1000000000;
-            for (size_t i = 0; i < problem.originalPoints.size(); ++i) {
-                mind = std::min(mind, dist2(problem.hole[h], problem.pointsInside[current.points[i]]));
-            }
-            current.optE += mind;
-        }
-        for (size_t e = 0; e < problem.edgeU.size(); ++e) {
-            int i = problem.edgeU[e];
-            int j = problem.edgeV[e];
-            // TODO cache denom
-            double distMeasure = std::abs(1.0 * dist2(problem.pointsInside[current.points[i]], problem.pointsInside[current.points[j]]) / dist2(problem.originalPoints[i], problem.originalPoints[j]) - 1.0);
-            distMeasure = std::max(0.0, distMeasure - problem.eps - 1e-12);
-            current.constE += distMeasure;
-        }
+        problem.updateE(current);
     }
 };
 
