@@ -24,7 +24,7 @@ public:
     std::ifstream is(filename);
     nlohmann::json raw;
     is >> raw;
-    std::cout << raw << std::endl;
+    // std::cout << raw << std::endl;
     eps = int(raw["epsilon"]);
     auto figure = raw["figure"];
     unsigned hsize = raw["hole"].size(), fsize = figure["vertices"].size();

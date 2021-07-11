@@ -1,6 +1,9 @@
 #include "solver.h"
 #include <gflags/gflags.h>
 
+#include "common/icfpc2021/solver/full_search.h"
+#include "common/icfpc2021/solver/perfect_score.h"
+
 DEFINE_int32(test_idx, 1, "Test number");
 
 
@@ -20,12 +23,35 @@ void test_isect() {
     assert(isect({20, 0}, {22, 2}, poly));
 }
 
+void CommonSolve(const std::string& filename) {
+  Task t;
+  t.Load(filename);
+  solver::PerfectScore slvr(t);
+  bool b = slvr.Search();
+  std::cout << "Done " << b << std::endl;
+  if (b) {
+    auto v = slvr.GetSolution();
+    Solution s{v};
+    auto js = s.ToJson();
+    std::ofstream of("temp.json");
+    of << js;
+    for (unsigned i = 0; i < v.size(); ++i) {
+      std::cout << i << "\t" << v[i] << std::endl;
+    } 
+  }
+}
+
 int main(int argc, char** argv) {
     test_isect();
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-    Problem p;
     std::cerr << FLAGS_test_idx << " ";
-    p.parseJson("problems/" + std::to_string(FLAGS_test_idx) + ".json");
+    auto fn = "problems/" + std::to_string(FLAGS_test_idx) + ".json";
+    // {
+    //     CommonSolve(fn);
+    //     return 0;
+    // }
+    Problem p;
+    p.parseJson(fn);
     p.preprocess();
     // p.recSolve();
     std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
