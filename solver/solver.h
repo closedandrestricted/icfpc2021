@@ -474,7 +474,7 @@ struct Zeroer {
                 holePoints.push_back(i);
             }
         }
-        for (int i = 0; i < nPts; ++i) { 
+        for (int i = 0; i < nPts; ++i) {
             current.points.push_back(holePoints[std::uniform_int_distribution()(gen) % holePoints.size()]);
         }
         step_i = 0;
