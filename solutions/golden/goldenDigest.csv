@@ -4,7 +4,7 @@
 4,suboptimal_mcmc,0
 5,suboptimal_mcmc,183
 6,suboptimal_mcmc,7073
-7,feasible,8089
+7,staging,783
 8,suboptimal_mcmc,1120
 9,feasible,6321
 10,suboptimal_mcmc,200
@@ -93,7 +93,7 @@
 101,suboptimal_mcmc,9957
 107,suboptimal_mcmc,63605
 108,suboptimal_mcmc,35590
-111,staging,58097
+111,staging,57428
 120,suboptimal_mcmc,76139
 121,staging,57340
 123,suboptimal_mcmc,17832
