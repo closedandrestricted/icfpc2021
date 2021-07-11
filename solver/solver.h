@@ -227,7 +227,7 @@ struct Problem {
         std::cerr << pointsInside.size() << " " << edges << "\n";
     }
 
-    json exportSol(const std::vector<int> ps) {
+    json exportSol(const std::vector<int>& ps) {
         json sol;
         for (auto i : ps) {
             const auto& p = pointsInside[i];
