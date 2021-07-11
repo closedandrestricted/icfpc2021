@@ -19,6 +19,7 @@ class FullSearch {
   std::vector<std::vector<std::vector<I2Point>>> valid_candidates;
   std::vector<unsigned> valid_candidates_index;
   std::vector<I2Point> solution;
+  bool force_stop;
 
  public:
   FullSearch(const Task& _task) {
@@ -47,6 +48,7 @@ class FullSearch {
     valid_candidates_index.clear();
     valid_candidates_index.resize(size, 0);
     solution.resize(size);
+    force_stop = false;
   }
 
   void AddPoint(unsigned index, const I2Point& p) {
@@ -78,6 +80,7 @@ class FullSearch {
             vnext.push_back(p1);
           }
         }
+        if (vnext.empty()) force_stop = true;
       }
     }
   }
@@ -91,6 +94,7 @@ class FullSearch {
       }
     }
     used_vertices.RemoveLast();
+    force_stop = false;
   }
 
 protected:
