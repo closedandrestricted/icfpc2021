@@ -22,7 +22,7 @@
 #include <gflags/gflags.h>
 
 DEFINE_int32(test_idx, 1, "Test number");
-DEFINE_string(solution_file, "<default>", "Solution file");
+DEFINE_string(solution_file, "", "Solution file");
 
 #define IMGUI_UNLIMITED_FRAME_RATE
 #ifdef _DEBUG
