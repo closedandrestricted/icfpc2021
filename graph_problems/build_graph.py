@@ -8,6 +8,7 @@ colors = {
   "BREAK_A_LEG": "red",
   "GLOBALIST": "green",
   "WALLHACK": "yellow",
+  "SUPERFLEX": "orange",
 }
 
 dot = Digraph()
