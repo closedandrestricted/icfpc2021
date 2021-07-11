@@ -17,7 +17,20 @@ class PerfectScore : public FullSearch {
   ds::UnsignedSet covered_vertexes;
 
  public:
-  PerfectScore(const Task& _task) : FullSearch(_task), vertexes_to_cover(_task.hole.v), covered_vertexes(_task.hole.Size()) {}
+  PerfectScore(const Task& _task) : FullSearch(_task) {
+    ResetSearch(_task.hole.v);
+  }
+
+  void ResetSearch() {
+    TBase::ResetSearch();
+    covered_vertexes.Clear();
+  }
+
+  void ResetSearch(const std::vector<I2Point>& _vertexes_to_cover) {
+    vertexes_to_cover = _vertexes_to_cover;
+    covered_vertexes.Resize(vertexes_to_cover.size());
+    ResetSearch();
+  }
 
   void AddPoint(unsigned index, const I2Point& p) {
     assert(!used_vertices.HasKey(index));
@@ -58,7 +71,7 @@ class PerfectScore : public FullSearch {
     unsigned bestk = vertexes_to_cover.size(), bestkvalue = used_vertices.SetSize() + 1;
     for (unsigned ik = 0; ik < vertexes_to_cover.size(); ++ik) {
       if (covered_vertexes.HasKey(ik)) continue;
-      auto p = task.hole[ik];
+      auto p = vertexes_to_cover[ik];
       unsigned count = 0;
       for (unsigned i = 0; i < used_vertices.SetSize(); ++i) {
         if (used_vertices.HasKey(i)) continue;
@@ -81,7 +94,7 @@ class PerfectScore : public FullSearch {
     // std::cout << "Best k\t" << bestk << "\t" << bestkvalue << std::endl;
     if (bestkvalue == 0) return false;
 
-    auto p = task.hole[bestk];
+    auto p = vertexes_to_cover[bestk];
     covered_vertexes.Insert(bestk);
     for (unsigned i = 0; i < used_vertices.SetSize(); ++i) {
       if (used_vertices.HasKey(i)) continue;
@@ -107,7 +120,7 @@ class PerfectScore : public FullSearch {
 
  public:
   bool Search() {
-    if (task.hole.Size() < vertexes_to_cover.size()) return false;
+    if (used_vertices.SetSize() < vertexes_to_cover.size()) return false;
     return SearchI(0);
   }
 };

@@ -1,10 +1,10 @@
 #include "solver.h"
 #include <gflags/gflags.h>
 
-#include "common/icfpc2021/solver/full_search.h"
-#include "common/icfpc2021/solver/perfect_score.h"
+#include "common/icfpc2021/solver/bonus_hunting.h"
 
 DEFINE_int32(test_idx, 1, "Test number");
+DEFINE_bool(alex, false, "Alex mode");
 
 
 void test_isect() {
@@ -23,29 +23,12 @@ void test_isect() {
     assert(isect({20, 0}, {22, 2}, poly));
 }
 
-void CommonSolve(const std::string& input, const std::string& output, bool silent) {
+void CommonSolve(unsigned index) {
+  std::string input = "problems/" + std::to_string(index) + ".json";
   Task t;
   t.Load(input);
-  solver::PerfectScore slvr(t);
-  bool b = slvr.Search();
-  std::cout << "Done " << b << std::endl;
-  if (b) {
-    auto v = slvr.GetSolution();
-    Solution s{v};
-    auto js = s.ToJson();
-    std::ofstream of(output);
-    of << js;
-    if (!silent) {
-      for (unsigned i = 0; i < v.size(); ++i) {
-        std::cout << i << "\t" << v[i] << std::endl;
-      } 
-    }
-  }
-}
-
-void CommonSolve(unsigned index, bool silent) {
-  std::cout << "Solving " << index << std::endl;
-  CommonSolve("problems/" + std::to_string(index) + ".json", "solutions/soptimal/" + std::to_string(index) + ".json", silent);
+  solver::BonusHunting slvr(t, index);
+  slvr.Search();
 }
 
 int main(int argc, char** argv) {
@@ -53,162 +36,173 @@ int main(int argc, char** argv) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     std::cerr << FLAGS_test_idx << " ";
     auto fn = "problems/" + std::to_string(FLAGS_test_idx) + ".json";
-    // {
-    //     CommonSolve(FLAGS_test_idx, false);
-    //     return 0;
-    // }
-    Problem p;
-    p.parseJson(fn);
-    p.preprocess();
-    // p.recSolve2();
-    std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
-    // std::vector<double> invTs{0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.9, 1.5, 2.5, 5.0, 10.0};
-    std::vector<double> invTsFeasible{0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8, 25.6, 51.2, 102.4};
-    std::vector<GibbsChain> mcmcs;
-    std::vector<GibbsChain> mcmcsFeasible;
-    for (double invT : invTs) {
-        mcmcs.emplace_back(p, false, invT);
-    }
-    for (double invT : invTsFeasible) {
-        mcmcsFeasible.emplace_back(p, true, invT);
-    }
-
-    Initer z(p, 0.8);
-    while(!z.step());
-
-    {
-        std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
-        f << p.exportSol(z.current.points);
-        
-    }
-    // exit(0);
-    
-
-    SolutionCandidate sol0 = z.current;
-    // sol0.points.assign(p.originalPoints.size(), 0);
-
-    if (FLAGS_test_idx == 68) {
-        std::vector<std::pair<int, int>> fixedCorners{{39, 9}, {26, 10}, {17, 11}, {12, 12}, {7, 13}, {11, 14}, {19, 15}, {30, 16}, {28, 17}, {36, 18}, {43, 19}, {41, 20}, {49, 21}, {54, 22}, {52, 23}, {55, 24}, {58, 25}, {59, 26}, {63, 27}, {64, 28}, {62, 29}, {60, 30}, {56, 31}, {61, 32}, {57, 33}, {53, 34}, {46, 35}, {45, 36}, {42, 37}, {50, 39}, {40, 40}, {18, 46}, {29, 47}, {25, 48}, {34, 49}, {27, 50}, {16, 51}, {10, 52}, {9, 53}, {6, 54}, {3, 55}, {1, 56}, {0, 0}, {4, 1}, {2, 2}, {5, 3}, {13, 4}, {22, 5}, {24, 6}, {23, 7}, {14, 8}};
-        for (auto pr : fixedCorners) {
-            if (p.fixed[pr.first]) {
-                std::cerr << "wtf " << pr.first << " " << pr.second << std::endl;
-            }
-            p.fixed[pr.first] = true;
-            sol0.points[pr.first] = p.cornerToIdx(pr.second);
+    if (FLAGS_alex) {
+        CommonSolve(FLAGS_test_idx);
+        return 0;
+    } else {
+        Problem p;
+        p.parseJson(fn);
+        p.preprocess();
+        // p.recSolve2();
+        std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
+        // std::vector<double> invTs{0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.9, 1.5, 2.5, 5.0, 10.0};
+        std::vector<double> invTsFeasible{0.0, 0.005, 0.01, 0.05, 0.1,  0.2,  0.4,  0.8,
+                                          1.6, 3.2,   6.4,  12.8, 25.6, 51.2, 102.4};
+        std::vector<GibbsChain> mcmcs;
+        std::vector<GibbsChain> mcmcsFeasible;
+        for (double invT : invTs) {
+            mcmcs.emplace_back(p, false, invT);
         }
-        for (size_t e = 0; e < p.edgeU.size(); ++e) {
-            int u = p.edgeU[e];
-            int v = p.edgeV[e];
-            if (p.fixed[u] && p.fixed[v]) {
-                double d = std::fabs(1.0 * dist2(p.pointsInside[sol0.points[u]], p.pointsInside[sol0.points[v]]) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
-                std::cerr << u << " " << v << " " << d << std::endl;
-            }
+        for (double invT : invTsFeasible) {
+            mcmcsFeasible.emplace_back(p, true, invT);
         }
-    }
-    for (auto& mcmc : mcmcs) {
-        mcmc.init(sol0);
-    }
-    std::vector<double> stats(invTs.size() - 1, 0.0);
-    std::vector<double> avgE(invTs.size(), 0.0);
-    std::vector<double> statsFeasible(invTsFeasible.size() - 1, 0.0);
-    std::vector<double> avgEFeasible(invTsFeasible.size(), 0.0);
-    double minOptE = 1e100;
-    for (int it = 0; ; it++) {
-        if (it % 1000 == 0) {
-            std::cerr << it << std::endl;
-            for (double x : stats) {
-                std::cerr << (x / 1000.0) << " ";
-            }
-            std::cerr << std::endl;
-            stats.assign(stats.size(), 0.0);
-            for (double x : avgE) {
-                std::cerr << (x / 1000.0) << " ";
-            }
-            std::cerr << std::endl;
-            avgE.assign(avgE.size(), 0.0);
-            for (double x : statsFeasible) {
-                std::cerr << (x / 1000.0) << " ";
-            }
-            std::cerr << std::endl;
-            statsFeasible.assign(statsFeasible.size(), 0.0);
-            for (double x : avgEFeasible) {
-                std::cerr << (x / 1000.0) << " ";
-            }
-            std::cerr << std::endl;
-            avgEFeasible.assign(avgEFeasible.size(), 0.0);
+
+        Initer z(p, 0.8);
+        while (!z.step())
+            ;
+
+        {
+            std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
+            f << p.exportSol(z.current.points);
         }
-        auto dojob = [&](int i) {
-            auto& mcmc = mcmcs[i];
-            mcmc.step();
-        };
-        std::vector<std::future<void>> fs;
-        for (size_t i = 0; i < mcmcs.size(); ++i) {
-            fs.emplace_back(std::async(std::launch::async, dojob, i));
-        }
-        if (mcmcsFeasible[0].initialized) {
-            auto dojobFeasible = [&](int i) {
-                auto& mcmc = mcmcsFeasible[i];
-                mcmc.step();
-            };
-            std::vector<std::future<void>> fsFeasible;
-            for (size_t i = 0; i < mcmcsFeasible.size(); ++i) {
-                fsFeasible.emplace_back(std::async(std::launch::async, dojobFeasible, i));
+        // exit(0);
+
+        SolutionCandidate sol0 = z.current;
+        // sol0.points.assign(p.originalPoints.size(), 0);
+
+        if (FLAGS_test_idx == 68) {
+            std::vector<std::pair<int, int>> fixedCorners{
+                {39, 9},  {26, 10}, {17, 11}, {12, 12}, {7, 13},  {11, 14}, {19, 15}, {30, 16}, {28, 17},
+                {36, 18}, {43, 19}, {41, 20}, {49, 21}, {54, 22}, {52, 23}, {55, 24}, {58, 25}, {59, 26},
+                {63, 27}, {64, 28}, {62, 29}, {60, 30}, {56, 31}, {61, 32}, {57, 33}, {53, 34}, {46, 35},
+                {45, 36}, {42, 37}, {50, 39}, {40, 40}, {18, 46}, {29, 47}, {25, 48}, {34, 49}, {27, 50},
+                {16, 51}, {10, 52}, {9, 53},  {6, 54},  {3, 55},  {1, 56},  {0, 0},   {4, 1},   {2, 2},
+                {5, 3},   {13, 4},  {22, 5},  {24, 6},  {23, 7},  {14, 8}};
+            for (auto pr : fixedCorners) {
+                if (p.fixed[pr.first]) {
+                    std::cerr << "wtf " << pr.first << " " << pr.second << std::endl;
+                }
+                p.fixed[pr.first] = true;
+                sol0.points[pr.first] = p.cornerToIdx(pr.second);
             }
-            for (size_t i = 0; i < mcmcsFeasible.size(); ++i) {
-                auto& mcmc = mcmcsFeasible[i];
-                fsFeasible[i].wait();
-                avgEFeasible[i] += mcmc.current.optE;
-                if (mcmc.current.optE < minOptE) {
-                    minOptE = mcmc.current.optE;
-                    std::cerr << "f" << i << " " << mcmc.current.constE << " " << mcmc.current.optE << "\n";
-                    std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
-                    f << p.exportSol(mcmc.current.points);
-                    // return 0;
+            for (size_t e = 0; e < p.edgeU.size(); ++e) {
+                int u = p.edgeU[e];
+                int v = p.edgeV[e];
+                if (p.fixed[u] && p.fixed[v]) {
+                    double d = std::fabs(1.0 * dist2(p.pointsInside[sol0.points[u]], p.pointsInside[sol0.points[v]]) /
+                                             dist2(p.originalPoints[u], p.originalPoints[v]) -
+                                         1.0);
+                    std::cerr << u << " " << v << " " << d << std::endl;
                 }
             }
-            for (size_t i = 0; i < mcmcsFeasible.size() - 1; ++i) {
-                auto& c1 = mcmcsFeasible[i];
-                auto& c2 = mcmcsFeasible[i + 1];
-                double p = std::min(1.0, std::exp((c1.E(c1.current) + c2.E(c2.current)) - (c1.E(c2.current) + c2.E(c1.current))));
+        }
+        for (auto& mcmc : mcmcs) {
+            mcmc.init(sol0);
+        }
+        std::vector<double> stats(invTs.size() - 1, 0.0);
+        std::vector<double> avgE(invTs.size(), 0.0);
+        std::vector<double> statsFeasible(invTsFeasible.size() - 1, 0.0);
+        std::vector<double> avgEFeasible(invTsFeasible.size(), 0.0);
+        double minOptE = 1e100;
+        for (int it = 0;; it++) {
+            if (it % 1000 == 0) {
+                std::cerr << it << std::endl;
+                for (double x : stats) {
+                    std::cerr << (x / 1000.0) << " ";
+                }
+                std::cerr << std::endl;
+                stats.assign(stats.size(), 0.0);
+                for (double x : avgE) {
+                    std::cerr << (x / 1000.0) << " ";
+                }
+                std::cerr << std::endl;
+                avgE.assign(avgE.size(), 0.0);
+                for (double x : statsFeasible) {
+                    std::cerr << (x / 1000.0) << " ";
+                }
+                std::cerr << std::endl;
+                statsFeasible.assign(statsFeasible.size(), 0.0);
+                for (double x : avgEFeasible) {
+                    std::cerr << (x / 1000.0) << " ";
+                }
+                std::cerr << std::endl;
+                avgEFeasible.assign(avgEFeasible.size(), 0.0);
+            }
+            auto dojob = [&](int i) {
+                auto& mcmc = mcmcs[i];
+                mcmc.step();
+            };
+            std::vector<std::future<void>> fs;
+            for (size_t i = 0; i < mcmcs.size(); ++i) {
+                fs.emplace_back(std::async(std::launch::async, dojob, i));
+            }
+            if (mcmcsFeasible[0].initialized) {
+                auto dojobFeasible = [&](int i) {
+                    auto& mcmc = mcmcsFeasible[i];
+                    mcmc.step();
+                };
+                std::vector<std::future<void>> fsFeasible;
+                for (size_t i = 0; i < mcmcsFeasible.size(); ++i) {
+                    fsFeasible.emplace_back(std::async(std::launch::async, dojobFeasible, i));
+                }
+                for (size_t i = 0; i < mcmcsFeasible.size(); ++i) {
+                    auto& mcmc = mcmcsFeasible[i];
+                    fsFeasible[i].wait();
+                    avgEFeasible[i] += mcmc.current.optE;
+                    if (mcmc.current.optE < minOptE) {
+                        minOptE = mcmc.current.optE;
+                        std::cerr << "f" << i << " " << mcmc.current.constE << " " << mcmc.current.optE << "\n";
+                        std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
+                        f << p.exportSol(mcmc.current.points);
+                        // return 0;
+                    }
+                }
+                for (size_t i = 0; i < mcmcsFeasible.size() - 1; ++i) {
+                    auto& c1 = mcmcsFeasible[i];
+                    auto& c2 = mcmcsFeasible[i + 1];
+                    double p = std::min(
+                        1.0, std::exp((c1.E(c1.current) + c2.E(c2.current)) - (c1.E(c2.current) + c2.E(c1.current))));
+                    if (std::uniform_real_distribution()(gen) <= p) {
+                        statsFeasible[i]++;
+                        std::swap(c1.current, c2.current);
+                    }
+                }
+            }
+            for (size_t i = 0; i < mcmcs.size(); ++i) {
+                auto& mcmc = mcmcs[i];
+                fs[i].wait();
+                avgE[i] += mcmc.current.constE;
+                if (mcmc.current.constE == 0.0) {
+                    if (mcmc.current.optE < minOptE) {
+                        minOptE = mcmc.current.optE;
+                        std::cerr << mcmc.current.constE << " " << mcmc.current.optE << "\n";
+                        std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
+                        f << p.exportSol(mcmc.current.points);
+                    }
+                    // return 0;
+                    if (!mcmcsFeasible[0].initialized) {
+                        for (auto& mcmcFeasible : mcmcsFeasible) {
+                            mcmcFeasible.init(mcmc.current);
+                        }
+                    } else if (i == mcmcs.size() - 1) {
+                        std::swap(mcmc.current, mcmcsFeasible[0].current);
+                    }
+                }
+            }
+            for (size_t i = 0; i < mcmcs.size() - 1; ++i) {
+                auto& c1 = mcmcs[i];
+                auto& c2 = mcmcs[i + 1];
+                double p = std::min(
+                    1.0, std::exp((c1.E(c1.current) + c2.E(c2.current)) - (c1.E(c2.current) + c2.E(c1.current))));
                 if (std::uniform_real_distribution()(gen) <= p) {
-                    statsFeasible[i]++;
+                    stats[i]++;
                     std::swap(c1.current, c2.current);
                 }
             }
-        }
-        for (size_t i = 0; i < mcmcs.size(); ++i) {
-            auto& mcmc = mcmcs[i];
-            fs[i].wait();
-            avgE[i] += mcmc.current.constE;
-            if (mcmc.current.constE == 0.0) {
-                if (mcmc.current.optE < minOptE) {
-                    minOptE = mcmc.current.optE;
-                    std::cerr << mcmc.current.constE << " " << mcmc.current.optE << "\n";
-                    std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
-                    f << p.exportSol(mcmc.current.points);
-                }
-                // return 0;
-                if (!mcmcsFeasible[0].initialized) {
-                    for (auto& mcmcFeasible : mcmcsFeasible) {
-                        mcmcFeasible.init(mcmc.current);
-                    }
-                } else if (i == mcmcs.size() - 1) {
-                    std::swap(mcmc.current, mcmcsFeasible[0].current);
-                }
+            if (minOptE == 1e100) {
+                std::ofstream f("solutions/debug/" + std::to_string(FLAGS_test_idx) + ".json");
+                f << p.exportSol(mcmcs.back().current.points);
             }
-        }
-        for (size_t i = 0; i < mcmcs.size() - 1; ++i) {
-            auto& c1 = mcmcs[i];
-            auto& c2 = mcmcs[i + 1];
-            double p = std::min(1.0, std::exp((c1.E(c1.current) + c2.E(c2.current)) - (c1.E(c2.current) + c2.E(c1.current))));
-            if (std::uniform_real_distribution()(gen) <= p) {
-                stats[i]++;
-                std::swap(c1.current, c2.current);
-            }
-        }
-        if (minOptE == 1e100) {
-            std::ofstream f("solutions/debug/" + std::to_string(FLAGS_test_idx) + ".json");
-            f << p.exportSol(mcmcs.back().current.points);
         }
     }
     return 0;

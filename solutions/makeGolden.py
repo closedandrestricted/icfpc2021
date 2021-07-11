@@ -30,8 +30,29 @@ solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtrackin
 
 digest = open("golden/goldenDigest.csv", "w")
 
+class ProblemState:
+    def __init__(self, problemFilename):
+        self.bestScore = 1e100
+        self.best = ""
+        self.bestFilename = ""
+        self.problemFilename = problemFilename
+
+    def trySolution(self, solutionFilename):
+        if os.path.exists(solutionFilename):
+            validationResult = validate(self.problemFilename, solutionFilename)
+            if validationResult[0]:
+                if validationResult[1] < self.bestScore:
+                    self.bestScore = validationResult[1]
+                    self.best = s
+                    self.bestFilename = solutionFilename
+    
+
+improvements = 0
 for problem in range(args.begin, args.end + 1):
     problemFilename = "../problems/%d.json" % problem
+    
+    state = ProblemState(problemFilename)
+
     goldenFilename = "golden/%d.json" % problem
     currentGoldenScore = 1e100
     if os.path.exists(goldenFilename):
@@ -41,24 +62,24 @@ for problem in range(args.begin, args.end + 1):
         else:
             print("!!!Broken golden result: %s" % goldenFilename)
 
-    bestScore = 1e100
-    best = ""
-    bestFilename = ""
     for s in solutions:
         solutionFilename = "%s/%d.json" % (s, problem)
-        if os.path.exists(solutionFilename):
-            validationResult = validate(problemFilename, solutionFilename)
-            if validationResult[0]:
-                if validationResult[1] < bestScore:
-                    bestScore = validationResult[1]
-                    best = s
-                    bestFilename = solutionFilename
-    if best:
-        print("%s for %d = %d" % (best, problem, bestScore))
-        print("%d,%s,%d" % (problem, best, bestScore), file=digest)
-        if bestScore <= currentGoldenScore:
-            shutil.copyfile(bestFilename, goldenFilename)
+        state.trySolution(solutionFilename)
+
+        for mask in range(1, 8):
+            solutionFilename = "%s/%d_%d.json" % (s, problem, mask)
+            state.trySolution(solutionFilename)
+
+    if state.best:
+        print("%s for %d = %d" % (state.best, problem, state.bestScore))
+        print("%d,%s,%d" % (problem, state.best, state.bestScore), file=digest)
+        if state.bestScore < currentGoldenScore:
+            improvements += 1
+        if state.bestScore <= currentGoldenScore:
+            shutil.copyfile(state.bestFilename, goldenFilename)
         else:
             print("!Current golden result is better for %d" % problem)
+
+print("Total improvements: %d" % improvements)
 
 digest.close()

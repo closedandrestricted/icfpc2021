@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 #include "../solver/solver.h"
 
@@ -18,6 +19,23 @@ int main(int argc, char* argv[]) {
     std::cerr << FLAGS_test_idx << " ";
     p.parseJson("../problems/" + std::to_string(FLAGS_test_idx) + ".json");
     p.preprocess(false);
+    cerr << endl;
+
+    double minOptE = 1e100;
+
+    static constexpr size_t NUM_CANDIDATES = 100;
+    vector<SolutionCandidate> population(NUM_CANDIDATES);
+    for (auto& c : population) {
+        vector<int> idxs(p.pointsInside.size());
+        for (int i = 0; i < p.pointsInside.size(); ++i) {
+            idxs[i] = i;
+        }
+        std::shuffle(idxs.begin(), idxs.end(), gen);
+        c.points.resize(p.originalPoints.size());
+        for (int i = 0; i < c.points.size(); ++i) {
+            c.points[i] = idxs[i];
+        }
+    }
 
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
     std::vector<int> points;

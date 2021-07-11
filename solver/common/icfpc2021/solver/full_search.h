@@ -28,16 +28,16 @@ class FullSearch {
   FullSearch(const Task& _task) {
     task = _task;
     cache.Init(task);
-    ResetSearch();
+    InitSearch();
   }
 
   FullSearch(const Task& _task, const TaskCache& _cache) {
     task = _task;
     cache = _cache;
-    ResetSearch();
+    InitSearch();
   }
 
-  void ResetSearch() {
+  void InitSearch() {
     re.seed(1);
     unsigned size = task.g.Size();
     used_vertices.Resize(size);
@@ -52,6 +52,12 @@ class FullSearch {
     valid_candidates_index.clear();
     valid_candidates_index.resize(size, 0);
     solution.resize(size);
+    force_stop = false;
+  }
+
+  void ResetSearch() {
+    used_vertices.Clear();
+    std::fill(valid_candidates_index.begin(), valid_candidates_index.end(), 0);
     force_stop = false;
   }
 
