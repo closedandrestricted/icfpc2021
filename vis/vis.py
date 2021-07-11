@@ -46,7 +46,7 @@ for i, e in enumerate(edges):
 for i, b in enumerate(bonuses):
     x, y = b["position"]
     plt.plot([x,x], [y,y], c='orange', marker='o', linewidth=1.0, markersize=4)
-    plt.annotate(b["bonus"], annotate_shift(b["position"]), color="orange")
+    plt.annotate(b['bonus'] + " for " + str(b['problem']), annotate_shift(b["position"]), color="orange")
 
 if args.solution:
     with open(args.solution) as f:
