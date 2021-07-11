@@ -22,7 +22,8 @@ class PerfectScore : public FullSearch {
         vnext.clear();
         for (auto p1 : vcurrent) {
           auto d = SquaredDistanceL2(p, p1);
-          if ((d >= cache.min_distance[index][u]) && (d <= cache.max_distance[index][u])) {
+          if (d <= cache.max_distance[index][u]) {
+        //   if ((d >= cache.min_distance[index][u]) && (d <= cache.max_distance[index][u])) {
             vnext.push_back(p1);
           }
         }

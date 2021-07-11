@@ -6,6 +6,7 @@
 #include "common/geometry/d2/polygon.h"
 #include "common/geometry/d2/location/location.h"
 #include "common/geometry/d2/location/point_polygon.h"
+#include "common/geometry/d2/utils/has_point_segment.h"
 #include "common/geometry/d2/utils/inside_iangle.h"
 #include "common/geometry/d2/utils/intersect_segment.h"
 
@@ -13,7 +14,8 @@
 
 namespace geometry {
 namespace d2 {
-inline bool Inside(const I2ClosedSegment& s, const I2Polygon& plgn, 
+namespace hidden {
+inline bool InsideI(const I2ClosedSegment& s, const I2Polygon& plgn, 
                    const location::Location& l1, const location::Location& l2) {
   if ((l1.type == location::Location::OUTSIDE) || (l2.type == location::Location::OUTSIDE)) return false;
   if (s.Empty()) return true;
@@ -58,8 +60,17 @@ inline bool Inside(const I2ClosedSegment& s, const I2Polygon& plgn,
   return true;
 }
 
+inline bool InsideI(const I2ClosedSegment& s, const I2Polygon& plgn) {
+  return InsideI(s, plgn, location::Locate(s.p1, plgn), location::Locate(s.p2, plgn));
+}
+}  // namespace hidden
+
 inline bool Inside(const I2ClosedSegment& s, const I2Polygon& plgn) {
-  return Inside(s, plgn, location::Locate(s.p1, plgn), location::Locate(s.p2, plgn));
+  for (auto& p : plgn.v) {
+    if ((p != s.p1) && (p != s.p2) && HasPoint(s, p))
+      return Inside(I2ClosedSegment(s.p1, p), plgn) && Inside(I2ClosedSegment(p, s.p2), plgn);
+  }
+  return hidden::InsideI(s, plgn);
 }
 }  // namespace d2
 }  // namespace geometry
