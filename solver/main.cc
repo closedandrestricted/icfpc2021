@@ -1,8 +1,7 @@
 #include "solver.h"
 #include <gflags/gflags.h>
 
-#include "common/icfpc2021/solver/full_search.h"
-#include "common/icfpc2021/solver/perfect_score.h"
+#include "common/icfpc2021/solver/bonus_hunting.h"
 
 DEFINE_int32(test_idx, 1, "Test number");
 
@@ -23,29 +22,12 @@ void test_isect() {
     assert(isect({20, 0}, {22, 2}, poly));
 }
 
-void CommonSolve(const std::string& input, const std::string& output, bool silent) {
+void CommonSolve(unsigned index) {
+  std::string input = "problems/" + std::to_string(index) + ".json";
   Task t;
   t.Load(input);
-  solver::PerfectScore slvr(t);
-  bool b = slvr.Search();
-  std::cout << "Done " << b << std::endl;
-  if (b) {
-    auto v = slvr.GetSolution();
-    Solution s{v};
-    auto js = s.ToJson();
-    std::ofstream of(output);
-    of << js;
-    if (!silent) {
-      for (unsigned i = 0; i < v.size(); ++i) {
-        std::cout << i << "\t" << v[i] << std::endl;
-      } 
-    }
-  }
-}
-
-void CommonSolve(unsigned index, bool silent) {
-  std::cout << "Solving " << index << std::endl;
-  CommonSolve("problems/" + std::to_string(index) + ".json", "solutions/soptimal/" + std::to_string(index) + ".json", silent);
+  solver::BonusHunting slvr(t, index);
+  slvr.Search();
 }
 
 int main(int argc, char** argv) {
@@ -54,7 +36,7 @@ int main(int argc, char** argv) {
     std::cerr << FLAGS_test_idx << " ";
     auto fn = "problems/" + std::to_string(FLAGS_test_idx) + ".json";
     // {
-    //     CommonSolve(FLAGS_test_idx, false);
+    //     CommonSolve(FLAGS_test_idx);
     //     return 0;
     // }
     Problem p;
