@@ -86,4 +86,4 @@ for problem in range(args.begin, args.end + 1):
 print("Total improvements: %d" % improvements)
 
 digest.close()
-os.shutil.move(TMPDST, "golden/goldenDigest.csv")
+shutil.move(TMPDST, "golden/goldenDigest.csv")
