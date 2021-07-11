@@ -5,9 +5,6 @@ pybind_library(
     hdrs = [
         "solver.h",
     ],
-    srcs = [
-        "solver.cc",
-    ],
     deps = [
         "@json//:json",
         "@xtensor//:xtensor",
