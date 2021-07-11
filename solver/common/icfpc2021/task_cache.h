@@ -79,9 +79,9 @@ class TaskCache {
                 //   std::cout << "\t" << p1 << "\t" << p2 << std::endl;
                 vm.push_back(p2);
                 valid_segments_set.insert(s);
-                }                  
+                }
               }
-            }            
+            }
           }
         }
       }
@@ -94,7 +94,7 @@ class TaskCache {
         gf.AddEdge(u, e.to, USqrt(e.info.second - 1) + 1);
       }
     }
-    auto vvd = DistanceAllPairsPositiveCost(gf, 1ll << 30);
+    auto vvd = DistanceAllPairsPositiveCost(gf, static_cast<int64_t>(1ll << 30));
     min_distance.clear();
     min_distance.resize(gf.Size());
     max_distance.clear();
