@@ -461,26 +461,36 @@ struct GibbsChain {
     }
 };
 
-struct Zeroer {
+struct Initer {
     Problem& problem;
     double invT;
     SolutionCandidate current;
     int step_i = 0;
+    std::vector<int> holePoints;
 
-    Zeroer(Problem& problem, double invT, int nPts): problem(problem), invT(invT) {
-        std::vector<int> holePoints;
+    Initer(Problem& p, double invT): problem(p), invT(invT) {
         for (int i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
             if (problem.pointsInsideIsCorner[i]) {
                 holePoints.push_back(i);
             }
         }
-        for (int i = 0; i < nPts; ++i) { 
-            current.points.push_back(holePoints[std::uniform_int_distribution()(gen) % holePoints.size()]);
+        for (int i = 0; i < p.originalPoints.size(); i++) {
+            bool ok = false;
+            for (int j = 0; j < p.pointsInside.size(); j++) {
+                if (p.originalPoints[i] == p.pointsInside[j]) {
+                    current.points.push_back(j);
+                    ok = true;
+                    break;
+                }
+            }
+            if (!ok) {
+                current.points.push_back(holePoints[std::uniform_int_distribution()(gen) % holePoints.size()]);
+            }
         }
         step_i = 0;
     }
 
-    int violations() {
+    int violations_bnd() {
         int n = 0;
         for(int i = 0; i < problem.edgeU.size(); ++i) {
             int u = problem.edgeU[i];
@@ -494,22 +504,41 @@ struct Zeroer {
         return n;
     }
 
+    int violations_len() {
+        int n = 0;
+        for(int i = 0; i < problem.edgeU.size(); ++i) {
+            int u = problem.edgeU[i];
+            int v = problem.edgeV[i];
+            auto p1 = problem.pointsInside[current.points[u]];
+            auto p2 = problem.pointsInside[current.points[v]];
+            double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(problem.originalPoints[u], problem.originalPoints[v]) - 1.0);
+            distMeasure = std::max(0.0, distMeasure - problem.eps - 1e-12);
+            if (distMeasure > 0) {
+                ++n;
+            }
+        }
+        return n;
+    }
+
     bool step() {
-        int p1 = std::uniform_int_distribution()(gen) % current.points.size();
-        int p2 = std::uniform_int_distribution()(gen) % current.points.size();
-        int old_violations = violations();
-        if (step_i++ % 1 == 0) {
+        int pt = std::uniform_int_distribution()(gen) % current.points.size();
+        int newp = std::uniform_int_distribution()(gen) % problem.pointsInside.size();
+        int old_violations = violations_bnd() + violations_len();
+        int oldp = current.points[pt];
+        if (step_i++ % 100 == 0) {
             std::cerr << "cur bad: " << old_violations << std::endl;
         }
-        std::swap(current.points[p1], current.points[p2]);
-        int new_violations = violations();
+        current.points[pt] = newp;
+        int new_violations = violations_bnd();
+        bool ok = new_violations == 0;
+        new_violations += violations_len();
         if (new_violations > old_violations) {
-            double p = 1.0 / (1.0 + std::exp(old_violations - new_violations));
+            double p = 1.0 / (1.0 + std::exp(new_violations - old_violations) * std::log(step_i));
             if (std::uniform_real_distribution()(gen) > p) {
-                std::swap(current.points[p1], current.points[p2]);
+                current.points[pt] = oldp;
             }
             return false;
         }
-        return new_violations == 0;
+        return ok;
     }
 };
