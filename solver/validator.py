@@ -20,10 +20,6 @@ try:
     parser.add_argument('problem')
     parser.add_argument('solution')
 
-    # set having the corresponding bonuses
-    parser.add_argument('--globalist', action='store_true')
-    parser.add_argument('--break_a_leg', type=int, nargs=2, default=None)
-
     args = parser.parse_args()
 
     with open(args.problem) as f:
@@ -47,8 +43,20 @@ try:
     p_vertices = scale(p_vertices)
     s_vertices = scale(s_vertices)
 
-    if args.break_a_leg:
-        e = args.break_a_leg
+    def get_bonus(name):
+        if 'bonuses' not in solution:
+            return None
+        for bonus in solution['bonuses']:
+            if bonus['name'] == name:
+                return bonus
+        return None
+
+    globalist   = get_bonus('globalist')
+    break_a_leg = get_bonus('break_a_leg')
+
+    if break_a_leg:
+        assert len(s_vertices) == len(p_vertices) + 1
+        e = break_a_leg['edge']
         eidx = edges.index(e)
         vidx = len(p_vertices)
         v1idx = edges[eidx][0]
@@ -72,12 +80,12 @@ try:
         p_sqrd = sqrdist(p_vertices[e[0]], p_vertices[e[1]])
         s_sqrd = sqrdist(s_vertices[e[0]], s_vertices[e[1]])
         penalty = fractions.Fraction(s_sqrd, p_sqrd) - 1
-        if args.globalist:
+        if globalist:
             total_penalty += abs(penalty)
         elif abs(penalty) > fractions.Fraction(epsilon, MLN):
             raise AssertionError(
                 str((abs(penalty), fractions.Fraction(epsilon, MLN))))
-    if args.globalist and total_penalty > fractions.Fraction(epsilon * len(edges), MLN):
+    if globalist and total_penalty > fractions.Fraction(epsilon * len(edges), MLN):
         raise AssertionError(
             str((total_penalty, fractions.Fraction(epsilon * len(edges), MLN))))
 
@@ -179,22 +187,14 @@ try:
             elif interesect(*args):
                 raise AssertionError(str((p1, p2, p3, sp1, sp2, "interesect")))
 
-    ok_bonuses = set()
+    collected_bonuses = []
     if 'bonuses' in problem:
         for bonus in problem['bonuses']:
             pos = scale([bonus['position']])[0]
             if any(v == pos for v in s_vertices):
-                k = bonus['bonus'] + str(bonus['problem'])
-                ok_bonuses.add(k)
+                collected_bonuses.append(bonus)
 
-    used_bonuses = []
-    if 'bonuses' in solution:
-        for bonus in solution['bonuses']:
-            k = bonus['bonus'] + str(bonus['problem'])
-            assert k in ok_bonuses
-            used_bonuses.append(bonus)
-
-    print(json.dumps(used_bonuses))
+    print(json.dumps(collected_bonuses))
 
     print(score() // 4)
 except Exception:
