@@ -58,8 +58,8 @@ int main(int argc, char** argv) {
         }
 
         Initer z(p, 0.8);
-        while (!z.step())
-            ;
+        while (!z.step()) {
+        }
 
         {
             std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
