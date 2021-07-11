@@ -532,7 +532,7 @@ struct Initer {
         int new_violations = violations_bnd();
         bool ok = new_violations == 0;
         new_violations += violations_len();
-        if (new_violations > old_violations) {
+        if (new_violations >= old_violations) {
             double p = 1.0 / (1.0 + std::exp(new_violations - old_violations) * std::log(step_i));
             if (std::uniform_real_distribution()(gen) > p) {
                 current.points[pt] = oldp;
