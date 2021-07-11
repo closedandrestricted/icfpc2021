@@ -13,7 +13,6 @@
 #include "common/numeric/utils/usqrt.h"
 
 #include <algorithm>
-#include <random>
 #include <unordered_map>
 #include <vector>
 
@@ -21,7 +20,6 @@
 
 class TaskCache {
  protected:
-  std::default_random_engine re;
   I2Polygon hole;
   I2ARectangle box;
   std::vector<std::vector<unsigned>> valid_points_map;
@@ -38,7 +36,6 @@ class TaskCache {
   }
 
   void Init(const Task& task) {
-    re.seed();
     hole = task.hole;
     box = Box(hole.v);
     valid_points_map.clear();

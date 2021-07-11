@@ -6,6 +6,8 @@
 #include "common/icfpc2021/task.h"
 #include "common/icfpc2021/task_cache.h"
 
+#include <algorithm>
+#include <random>
 #include <vector>
 
 #include "common/geometry/d2/point_io.h"
@@ -13,6 +15,7 @@
 namespace solver {
 class FullSearch {
  protected:
+  std::default_random_engine re;
   Task task;
   TaskCache cache;
   ds::UnsignedSet used_vertices;
@@ -25,7 +28,6 @@ class FullSearch {
   FullSearch(const Task& _task) {
     task = _task;
     cache.Init(task);
-    std::cout << "Cache finished." << std::endl;
     ResetSearch();
   }
 
@@ -36,6 +38,7 @@ class FullSearch {
   }
 
   void ResetSearch() {
+    re.seed(1);
     unsigned size = task.g.Size();
     used_vertices.Resize(size);
     used_vertices.Clear();
@@ -44,6 +47,7 @@ class FullSearch {
     for (unsigned i = 0; i < size; ++i) {
       valid_candidates[i].resize(2 * size + 1); // For safety
       valid_candidates[i][0] = cache.GetValidPoints();
+      std::shuffle(valid_candidates[i][0].begin(), valid_candidates[i][0].end(), re);
     }
     valid_candidates_index.clear();
     valid_candidates_index.resize(size, 0);
