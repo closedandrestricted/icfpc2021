@@ -15,8 +15,6 @@ parser.add_argument('--end', type=int, default=maxProblem,
 
 args = parser.parse_args()
 
-solutions = ["manual", "feasible"]
-
 def validate(problem, solution):
     process = subprocess.run(["../solver/validator.py", problem, solution], capture_output=True)
     # print(process)
@@ -28,7 +26,7 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtracking", "suboptimal_mcmc", "soptimal"]
+solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtracking", "suboptimal_mcmc", "soptimal", "optimal_with_bonus"]
 
 digest = open("golden/goldenDigest.csv", "w")
 

@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
     Problem p;
     p.parseJson(fn);
     p.preprocess();
-    // p.recSolve();
+    // p.recSolve2();
     std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
     // std::vector<double> invTs{0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.9, 1.5, 2.5, 5.0, 10.0};
     std::vector<double> invTsFeasible{0.0, 0.005, 0.01, 0.05, 0.1, 0.2, 0.4, 0.8, 1.6, 3.2, 6.4, 12.8, 25.6, 51.2, 102.4};
@@ -87,20 +87,24 @@ int main(int argc, char** argv) {
     SolutionCandidate sol0 = z.current;
     // sol0.points.assign(p.originalPoints.size(), 0);
 
-    // {
-    //     std::vector<std::pair<int, int>> fixedCorners{{12, 12}, {7, 13}, {11, 14}, {19, 15}, {30, 16}, {28, 17}, {36, 18}, {43, 19}, {41, 20}};
-    //     boost::dynamic_bitset<> candidates;
-    //     candidates.resize(p.pointsInside.size(), true);
-    //     for (auto pr : fixedCorners) {
-    //         candidates &= p.visibility[p.cornerToIdx(pr.second)];
-    //     }
-    //     std::cerr << "count " << candidates.count() << std::endl;
-    //     sol0.points.assign(p.originalPoints.size(), candidates.find_first());
-    //     for (auto pr : fixedCorners) {
-    //         p.fixed[pr.first] = true;
-    //         sol0.points[pr.first] = p.cornerToIdx(pr.second);
-    //     }
-    // }
+    if (FLAGS_test_idx == 68) {
+        std::vector<std::pair<int, int>> fixedCorners{{39, 9}, {26, 10}, {17, 11}, {12, 12}, {7, 13}, {11, 14}, {19, 15}, {30, 16}, {28, 17}, {36, 18}, {43, 19}, {41, 20}, {49, 21}, {54, 22}, {52, 23}, {55, 24}, {58, 25}, {59, 26}, {63, 27}, {64, 28}, {62, 29}, {60, 30}, {56, 31}, {61, 32}, {57, 33}, {53, 34}, {46, 35}, {45, 36}, {42, 37}, {50, 39}, {40, 40}, {18, 46}, {29, 47}, {25, 48}, {34, 49}, {27, 50}, {16, 51}, {10, 52}, {9, 53}, {6, 54}, {3, 55}, {1, 56}, {0, 0}, {4, 1}, {2, 2}, {5, 3}, {13, 4}, {22, 5}, {24, 6}, {23, 7}, {14, 8}};
+        for (auto pr : fixedCorners) {
+            if (p.fixed[pr.first]) {
+                std::cerr << "wtf " << pr.first << " " << pr.second << std::endl;
+            }
+            p.fixed[pr.first] = true;
+            sol0.points[pr.first] = p.cornerToIdx(pr.second);
+        }
+        for (size_t e = 0; e < p.edgeU.size(); ++e) {
+            int u = p.edgeU[e];
+            int v = p.edgeV[e];
+            if (p.fixed[u] && p.fixed[v]) {
+                double d = std::fabs(1.0 * dist2(p.pointsInside[sol0.points[u]], p.pointsInside[sol0.points[v]]) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
+                std::cerr << u << " " << v << " " << d << std::endl;
+            }
+        }
+    }
     for (auto& mcmc : mcmcs) {
         mcmc.init(sol0);
     }
@@ -201,6 +205,10 @@ int main(int argc, char** argv) {
                 stats[i]++;
                 std::swap(c1.current, c2.current);
             }
+        }
+        if (minOptE == 1e100) {
+            std::ofstream f("solutions/debug/" + std::to_string(FLAGS_test_idx) + ".json");
+            f << p.exportSol(mcmcs.back().current.points);
         }
     }
     return 0;
