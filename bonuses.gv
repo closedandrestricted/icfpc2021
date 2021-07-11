@@ -1,14 +1,19 @@
 digraph {
 	65
 	65 -> 42 [label=B color=red]
+	65 -> 49 [label=W color=yellow]
 	64
 	64 -> 85 [label=G color=green]
+	64 -> 83 [label=W color=yellow]
 	19
 	19 -> 32 [label=G color=green]
+	19 -> 33 [label=W color=yellow]
 	43
 	43 -> 66 [label=B color=red]
+	43 -> 40 [label=W color=yellow]
 	62
 	62 -> 22 [label=G color=green]
+	62 -> 22 [label=W color=yellow]
 	84
 	84 -> 52 [label=G color=green]
 	41
@@ -17,82 +22,131 @@ digraph {
 	75 -> 81 [label=B color=red]
 	57
 	57 -> 33 [label=G color=green]
+	57 -> 4 [label=G color=green]
 	16
 	16 -> 8 [label=B color=red]
+	16 -> 74 [label=B color=red]
 	82
 	82 -> 2 [label=G color=green]
 	78
 	78 -> 56 [label=B color=red]
 	29
 	29 -> 58 [label=G color=green]
+	29 -> 9 [label=G color=green]
 	49
 	49 -> 36 [label=B color=red]
+	49 -> 104 [label=B color=red]
+	99
+	99 -> 91 [label=B color=red]
+	99 -> 25 [label=G color=green]
 	55
 	55 -> 7 [label=G color=green]
+	55 -> 19 [label=G color=green]
 	70
 	70 -> 61 [label=B color=red]
+	70 -> 54 [label=W color=yellow]
 	45
 	45 -> 25 [label=G color=green]
+	45 -> 52 [label=W color=yellow]
 	27
 	27 -> 23 [label=B color=red]
 	40
 	40 -> 45 [label=G color=green]
 	80
 	80 -> 13 [label=G color=green]
+	80 -> 93 [label=W color=yellow]
+	104
 	36
 	36 -> 82 [label=B color=red]
+	36 -> 96 [label=B color=red]
+	97
+	97 -> 100 [label=G color=green]
+	97 -> 61 [label=W color=yellow]
+	89
+	89 -> 103 [label=B color=red]
+	89 -> 18 [label=G color=green]
 	74
 	74 -> 77 [label=B color=red]
 	4
 	4 -> 63 [label=B color=red]
+	4 -> 92 [label=B color=red]
 	81
 	81 -> 27 [label=B color=red]
+	81 -> 43 [label=W color=yellow]
 	37
 	37 -> 15 [label=B color=red]
 	22
 	22 -> 74 [label=G color=green]
+	22 -> 64 [label=W color=yellow]
 	17
 	17 -> 84 [label=G color=green]
+	17 -> 67 [label=B color=red]
+	100
+	100 -> 96 [label=W color=yellow]
 	71
 	71 -> 87 [label=B color=red]
+	71 -> 89 [label=G color=green]
 	6
 	6 -> 16 [label=G color=green]
+	96
+	96 -> 95 [label=B color=red]
+	96 -> 2 [label=W color=yellow]
+	92
+	92 -> 99 [label=B color=red]
 	63
 	63 -> 21 [label=B color=red]
+	63 -> 38 [label=W color=yellow]
 	85
 	85 -> 48 [label=B color=red]
+	103
+	103 -> 104 [label=G color=green]
+	103 -> 3 [label=B color=red]
 	13
 	13 -> 46 [label=G color=green]
+	13 -> 88 [label=B color=red]
 	32
 	32 -> 29 [label=B color=red]
+	32 -> 72 [label=B color=red]
 	24
 	24 -> 73 [label=B color=red]
+	24 -> 80 [label=W color=yellow]
+	91
+	91 -> 93 [label=G color=green]
 	60
 	60 -> 80 [label=G color=green]
+	60 -> 41 [label=G color=green]
 	54
 	54 -> 24 [label=G color=green]
 	79
 	79 -> 1 [label=G color=green]
+	79 -> 62 [label=B color=red]
 	38
 	38 -> 76 [label=G color=green]
 	35
 	35 -> 47 [label=G color=green]
+	35 -> 14 [label=W color=yellow]
 	7
 	7 -> 12 [label=G color=green]
+	7 -> 95 [label=B color=red]
 	18
 	18 -> 72 [label=G color=green]
+	18 -> 65 [label=G color=green]
 	73
 	73 -> 86 [label=B color=red]
+	73 -> 11 [label=B color=red]
 	77
 	77 -> 83 [label=G color=green]
+	77 -> 39 [label=G color=green]
 	9
 	9 -> 14 [label=B color=red]
 	58
 	58 -> 68 [label=G color=green]
+	58 -> 15 [label=W color=yellow]
 	26
 	26 -> 19 [label=B color=red]
 	31
 	31 -> 75 [label=G color=green]
+	31 -> 8 [label=W color=yellow]
 	15
 	15 -> 41 [label=G color=green]
 	59
@@ -101,44 +155,65 @@ digraph {
 	61 -> 20 [label=B color=red]
 	52
 	52 -> 55 [label=G color=green]
+	52 -> 29 [label=W color=yellow]
 	83
 	83 -> 44 [label=G color=green]
 	69
 	69 -> 70 [label=G color=green]
+	69 -> 28 [label=W color=yellow]
 	86
 	86 -> 51 [label=B color=red]
 	5
 	5 -> 78 [label=B color=red]
+	5 -> 10 [label=W color=yellow]
 	20
 	20 -> 49 [label=G color=green]
+	20 -> 97 [label=G color=green]
 	3
 	3 -> 60 [label=G color=green]
+	3 -> 81 [label=G color=green]
 	12
 	12 -> 67 [label=B color=red]
+	12 -> 69 [label=W color=yellow]
 	44
 	44 -> 88 [label=B color=red]
+	44 -> 5 [label=W color=yellow]
 	21
 	21 -> 17 [label=G color=green]
+	21 -> 73 [label=B color=red]
 	66
 	66 -> 34 [label=G color=green]
 	34
 	34 -> 4 [label=B color=red]
+	34 -> 13 [label=G color=green]
+	98
+	98 -> 97 [label=G color=green]
+	98 -> 34 [label=W color=yellow]
 	11
 	11 -> 31 [label=B color=red]
+	11 -> 20 [label=G color=green]
 	48
 	48 -> 11 [label=B color=red]
+	101
+	101 -> 84 [label=B color=red]
 	47
 	47 -> 43 [label=B color=red]
 	68
 	68 -> 69 [label=B color=red]
+	68 -> 102 [label=W color=yellow]
 	39
 	39 -> 37 [label=G color=green]
+	39 -> 100 [label=B color=red]
+	106
+	106 -> 94 [label=B color=red]
 	67
 	67 -> 5 [label=G color=green]
 	88
 	88 -> 59 [label=G color=green]
+	88 -> 27 [label=B color=red]
 	33
 	33 -> 53 [label=B color=red]
+	33 -> 71 [label=B color=red]
 	76
 	76 -> 64 [label=B color=red]
 	87
@@ -147,32 +222,57 @@ digraph {
 	72 -> 40 [label=G color=green]
 	28
 	28 -> 65 [label=G color=green]
+	28 -> 36 [label=G color=green]
 	56
 	56 -> 50 [label=G color=green]
+	56 -> 90 [label=W color=yellow]
+	102
+	102 -> 92 [label=G color=green]
+	102 -> 66 [label=W color=yellow]
+	90
+	90 -> 6 [label=W color=yellow]
 	23
 	23 -> 18 [label=B color=red]
 	1
 	1 -> 35 [label=G color=green]
+	1 -> 50 [label=W color=yellow]
 	14
 	14 -> 57 [label=B color=red]
+	14 -> 53 [label=G color=green]
+	94
+	94 -> 102 [label=B color=red]
+	94 -> 91 [label=W color=yellow]
 	51
 	51 -> 71 [label=B color=red]
+	95
+	95 -> 101 [label=B color=red]
 	2
 	2 -> 39 [label=B color=red]
+	2 -> 87 [label=G color=green]
 	10
 	10 -> 62 [label=G color=green]
 	8
 	8 -> 6 [label=B color=red]
+	8 -> 79 [label=W color=yellow]
 	25
 	25 -> 30 [label=B color=red]
+	25 -> 16 [label=W color=yellow]
 	46
 	46 -> 28 [label=B color=red]
+	46 -> 31 [label=W color=yellow]
 	53
 	53 -> 38 [label=G color=green]
+	53 -> 44 [label=B color=red]
+	93
+	93 -> 90 [label=G color=green]
+	93 -> 86 [label=G color=green]
 	42
 	42 -> 79 [label=B color=red]
+	42 -> 48 [label=W color=yellow]
 	30
 	30 -> 10 [label=B color=red]
+	105
 	50
 	50 -> 9 [label=G color=green]
+	50 -> 70 [label=G color=green]
 }
