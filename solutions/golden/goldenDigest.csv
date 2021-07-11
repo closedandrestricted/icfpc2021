@@ -57,7 +57,7 @@
 57,suboptimal_backtracking,6871
 58,suboptimal_backtracking,5040
 59,optimal,0
-60,suboptimal_mcmc,2641
+60,staging,1936
 61,suboptimal_mcmc,24827
 62,suboptimal_mcmc,125269
 63,soptimal,0
@@ -93,13 +93,14 @@
 101,suboptimal_mcmc,9957
 107,suboptimal_mcmc,63605
 108,suboptimal_mcmc,35590
-111,staging,50769
+111,staging,45097
 120,suboptimal_mcmc,76139
 121,staging,57340
 123,suboptimal_mcmc,17832
 124,staging,51637
 125,suboptimal_mcmc,585608
 127,suboptimal_mcmc,18698
+128,suboptimal_mcmc,40214
 129,suboptimal_mcmc,18546
 130,staging,10352
 131,staging,49521
