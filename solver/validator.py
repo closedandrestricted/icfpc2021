@@ -51,8 +51,8 @@ try:
                 return bonus
         return None
 
-    globalist   = get_bonus('globalist')
-    break_a_leg = get_bonus('break_a_leg')
+    globalist   = get_bonus('GLOBALIST')
+    break_a_leg = get_bonus('BREAK_A_LEG')
 
     if break_a_leg:
         assert len(s_vertices) == len(p_vertices) + 1
