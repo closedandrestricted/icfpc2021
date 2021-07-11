@@ -1,7 +1,7 @@
 import json
 import numpy as np
 
-with open('problems/80.json') as f:
+with open('problems/65.json') as f:
     p = json.load(f)
 
 def dist2(p, q):

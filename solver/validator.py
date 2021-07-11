@@ -179,19 +179,10 @@ try:
             elif interesect(*args):
                 raise AssertionError(str((p1, p2, p3, sp1, sp2, "interesect")))
 
-    ok_bonuses = set()
-    if 'bonuses' in problem:
-        for bonus in problem['bonuses']:
-            pos = scale([bonus['position']])[0]
-            if any(v == pos for v in s_vertices):
-                k = bonus['bonus'] + str(bonus['problem'])
-                ok_bonuses.add(k)
-
     used_bonuses = []
     if 'bonuses' in solution:
         for bonus in solution['bonuses']:
             k = bonus['bonus'] + str(bonus['problem'])
-            assert k in ok_bonuses
             used_bonuses.append(bonus)
 
     print(json.dumps(used_bonuses))

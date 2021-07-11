@@ -66,6 +66,12 @@ http_archive(
     strip_prefix = "gflags-2.2.2",
 )
 
+http_archive(
+    name = "imgui",
+    urls = ["https://github.com/ocornut/imgui/archive/refs/tags/v1.83.tar.gz"],
+    strip_prefix = "imgui-1.83",
+)
+
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
