@@ -47,7 +47,7 @@ try:
         if 'bonuses' not in solution:
             return None
         for bonus in solution['bonuses']:
-            if bonus['name'] == name:
+            if bonus['bonus'] == name:
                 return bonus
         return None
 
