@@ -8,7 +8,7 @@ import shutil
 parser = argparse.ArgumentParser(description='Submit ICFPC 2021 solutions.')
 parser.add_argument('--begin', type=int, default=1,
                     help='first problem number')
-parser.add_argument('--end', type=int, default=88,
+parser.add_argument('--end', type=int, default=106,
                     help='last problem number')
 
 args = parser.parse_args()
@@ -26,7 +26,7 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-solutions = ["feasible", "manual", "optimal", "suboptimal_backtracking", "suboptimal_mcmc"]
+solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtracking", "suboptimal_mcmc"]
 
 digest = open("golden/goldenDigest.csv", "w")
 
