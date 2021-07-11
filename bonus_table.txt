@@ -1,0 +1,528 @@
+Problem 1:
+  - problem 97 - WALLHACK
+  - problem 37 - SUPERFLEX
+  - problem 79 - GLOBALIST
+Problem 2:
+  - problem 82 - GLOBALIST
+  - problem 96 - WALLHACK
+  - problem 95 - BREAK_A_LEG
+Problem 3:
+  - problem 103 - BREAK_A_LEG
+  - problem 59 - BREAK_A_LEG
+  - problem 69 - WALLHACK
+Problem 4:
+  - problem 64 - WALLHACK
+  - problem 57 - GLOBALIST
+  - problem 34 - BREAK_A_LEG
+Problem 5:
+  - problem 32 - BREAK_A_LEG
+  - problem 44 - WALLHACK
+  - problem 67 - GLOBALIST
+Problem 6:
+  - problem 20 - WALLHACK
+  - problem 90 - WALLHACK
+  - problem 8 - BREAK_A_LEG
+Problem 7:
+  - problem 55 - GLOBALIST
+  - problem 104 - SUPERFLEX
+  - problem 92 - GLOBALIST
+Problem 8:
+  - problem 16 - BREAK_A_LEG
+  - problem 77 - SUPERFLEX
+  - problem 31 - WALLHACK
+Problem 9:
+  - problem 122 - WALLHACK
+  - problem 29 - GLOBALIST
+  - problem 50 - GLOBALIST
+Problem 10:
+  - problem 5 - WALLHACK
+  - problem 107 - WALLHACK
+  - problem 30 - BREAK_A_LEG
+Problem 11:
+  - problem 73 - BREAK_A_LEG
+  - problem 48 - BREAK_A_LEG
+  - problem 56 - SUPERFLEX
+Problem 12:
+  - problem 54 - SUPERFLEX
+  - problem 7 - GLOBALIST
+  - problem 34 - GLOBALIST
+Problem 13:
+  - problem 80 - GLOBALIST
+  - problem 34 - GLOBALIST
+  - problem 48 - SUPERFLEX
+Problem 14:
+  - problem 57 - SUPERFLEX
+  - problem 35 - WALLHACK
+  - problem 9 - BREAK_A_LEG
+Problem 15:
+  - problem 37 - BREAK_A_LEG
+  - problem 58 - WALLHACK
+  - problem 76 - SUPERFLEX
+Problem 16:
+  - problem 6 - GLOBALIST
+  - problem 25 - WALLHACK
+  - problem 46 - GLOBALIST
+Problem 17:
+  - problem 40 - SUPERFLEX
+  - problem 4 - BREAK_A_LEG
+  - problem 21 - GLOBALIST
+Problem 18:
+  - problem 89 - GLOBALIST
+  - problem 63 - GLOBALIST
+  - problem 23 - BREAK_A_LEG
+Problem 19:
+  - problem 55 - GLOBALIST
+  - problem 26 - BREAK_A_LEG
+  - problem 115 - GLOBALIST
+Problem 20:
+  - problem 13 - GLOBALIST
+  - problem 61 - BREAK_A_LEG
+  - problem 11 - GLOBALIST
+Problem 21:
+  - problem 63 - BREAK_A_LEG
+  - problem 121 - GLOBALIST
+  - problem 51 - SUPERFLEX
+Problem 22:
+  - problem 62 - GLOBALIST
+  - problem 62 - WALLHACK
+  - problem 99 - GLOBALIST
+Problem 23:
+  - problem 131 - BREAK_A_LEG
+  - problem 27 - BREAK_A_LEG
+  - problem 91 - SUPERFLEX
+Problem 24:
+  - problem 78 - SUPERFLEX
+  - problem 123 - GLOBALIST
+  - problem 54 - GLOBALIST
+Problem 25:
+  - problem 99 - GLOBALIST
+  - problem 45 - GLOBALIST
+  - problem 128 - BREAK_A_LEG
+Problem 26:
+  - problem 6 - SUPERFLEX
+  - problem 87 - GLOBALIST
+  - problem 111 - GLOBALIST
+Problem 27:
+  - problem 81 - BREAK_A_LEG
+  - problem 47 - SUPERFLEX
+  - problem 88 - BREAK_A_LEG
+Problem 28:
+  - problem 103 - WALLHACK
+  - problem 69 - WALLHACK
+  - problem 46 - BREAK_A_LEG
+Problem 29:
+  - problem 32 - BREAK_A_LEG
+  - problem 52 - WALLHACK
+  - problem 39 - BREAK_A_LEG
+Problem 30:
+  - problem 92 - SUPERFLEX
+  - problem 12 - SUPERFLEX
+  - problem 25 - BREAK_A_LEG
+Problem 31:
+  - problem 66 - GLOBALIST
+  - problem 11 - BREAK_A_LEG
+  - problem 46 - WALLHACK
+Problem 32:
+  - problem 19 - GLOBALIST
+  - problem 16 - GLOBALIST
+  - problem 72 - SUPERFLEX
+Problem 33:
+  - problem 19 - WALLHACK
+  - problem 57 - GLOBALIST
+  - problem 102 - WALLHACK
+Problem 34:
+  - problem 66 - GLOBALIST
+  - problem 98 - WALLHACK
+  - problem 30 - GLOBALIST
+Problem 35:
+  - problem 75 - SUPERFLEX
+  - problem 78 - BREAK_A_LEG
+  - problem 1 - GLOBALIST
+Problem 36:
+  - problem 49 - BREAK_A_LEG
+  - problem 96 - SUPERFLEX
+  - problem 28 - GLOBALIST
+Problem 37:
+  - problem 39 - GLOBALIST
+  - problem 23 - SUPERFLEX
+  - problem 105 - GLOBALIST
+Problem 38:
+  - problem 63 - WALLHACK
+  - problem 1 - BREAK_A_LEG
+  - problem 53 - GLOBALIST
+Problem 39:
+  - problem 77 - GLOBALIST
+  - problem 2 - BREAK_A_LEG
+  - problem 93 - BREAK_A_LEG
+Problem 40:
+  - problem 43 - WALLHACK
+  - problem 101 - WALLHACK
+  - problem 72 - GLOBALIST
+Problem 41:
+  - problem 60 - GLOBALIST
+  - problem 73 - GLOBALIST
+  - problem 15 - GLOBALIST
+Problem 42:
+  - problem 65 - BREAK_A_LEG
+  - problem 119 - GLOBALIST
+  - problem 67 - SUPERFLEX
+Problem 43:
+  - problem 81 - WALLHACK
+  - problem 109 - SUPERFLEX
+  - problem 47 - BREAK_A_LEG
+Problem 44:
+  - problem 127 - GLOBALIST
+  - problem 83 - GLOBALIST
+  - problem 53 - BREAK_A_LEG
+Problem 45:
+  - problem 40 - GLOBALIST
+  - problem 67 - GLOBALIST
+  - problem 95 - SUPERFLEX
+Problem 46:
+  - problem 84 - BREAK_A_LEG
+  - problem 13 - GLOBALIST
+  - problem 76 - SUPERFLEX
+Problem 47:
+  - problem 55 - WALLHACK
+  - problem 27 - SUPERFLEX
+  - problem 35 - GLOBALIST
+Problem 48:
+  - problem 45 - SUPERFLEX
+  - problem 85 - BREAK_A_LEG
+  - problem 42 - WALLHACK
+Problem 49:
+  - problem 65 - WALLHACK
+  - problem 20 - GLOBALIST
+  - problem 11 - GLOBALIST
+Problem 50:
+  - problem 6 - SUPERFLEX
+  - problem 56 - GLOBALIST
+  - problem 1 - WALLHACK
+Problem 51:
+  - problem 75 - BREAK_A_LEG
+  - problem 86 - BREAK_A_LEG
+  - problem 106 - SUPERFLEX
+Problem 52:
+  - problem 84 - GLOBALIST
+  - problem 45 - WALLHACK
+  - problem 125 - WALLHACK
+Problem 53:
+  - problem 33 - BREAK_A_LEG
+  - problem 90 - GLOBALIST
+  - problem 14 - GLOBALIST
+Problem 54:
+  - problem 41 - GLOBALIST
+  - problem 70 - WALLHACK
+  - problem 91 - SUPERFLEX
+Problem 55:
+  - problem 59 - SUPERFLEX
+  - problem 52 - GLOBALIST
+  - problem 86 - SUPERFLEX
+Problem 56:
+  - problem 78 - BREAK_A_LEG
+  - problem 74 - SUPERFLEX
+  - problem 124 - WALLHACK
+Problem 57:
+  - problem 85 - SUPERFLEX
+  - problem 117 - GLOBALIST
+  - problem 14 - BREAK_A_LEG
+Problem 58:
+  - problem 29 - GLOBALIST
+  - problem 104 - BREAK_A_LEG
+  - problem 47 - SUPERFLEX
+Problem 59:
+  - problem 100 - SUPERFLEX
+  - problem 3 - WALLHACK
+  - problem 88 - GLOBALIST
+Problem 60:
+  - problem 9 - SUPERFLEX
+  - problem 59 - WALLHACK
+  - problem 3 - GLOBALIST
+Problem 61:
+  - problem 70 - BREAK_A_LEG
+  - problem 97 - WALLHACK
+  - problem 126 - BREAK_A_LEG
+Problem 62:
+  - problem 65 - GLOBALIST
+  - problem 79 - BREAK_A_LEG
+  - problem 10 - GLOBALIST
+Problem 63:
+  - problem 4 - BREAK_A_LEG
+  - problem 83 - SUPERFLEX
+  - problem 120 - WALLHACK
+Problem 64:
+  - problem 22 - WALLHACK
+  - problem 9 - GLOBALIST
+  - problem 76 - BREAK_A_LEG
+Problem 65:
+  - problem 54 - BREAK_A_LEG
+  - problem 18 - GLOBALIST
+  - problem 28 - GLOBALIST
+Problem 66:
+  - problem 43 - BREAK_A_LEG
+  - problem 49 - WALLHACK
+  - problem 102 - WALLHACK
+Problem 67:
+  - problem 22 - GLOBALIST
+  - problem 17 - BREAK_A_LEG
+  - problem 12 - BREAK_A_LEG
+Problem 68:
+  - problem 17 - SUPERFLEX
+  - problem 58 - GLOBALIST
+  - problem 105 - SUPERFLEX
+Problem 69:
+  - problem 81 - SUPERFLEX
+  - problem 12 - WALLHACK
+  - problem 68 - BREAK_A_LEG
+Problem 70:
+  - problem 130 - BREAK_A_LEG
+  - problem 69 - GLOBALIST
+  - problem 50 - GLOBALIST
+Problem 71:
+  - problem 19 - SUPERFLEX
+  - problem 33 - BREAK_A_LEG
+  - problem 51 - BREAK_A_LEG
+Problem 72:
+  - problem 32 - BREAK_A_LEG
+  - problem 18 - GLOBALIST
+  - problem 51 - GLOBALIST
+Problem 73:
+  - problem 24 - BREAK_A_LEG
+  - problem 44 - WALLHACK
+  - problem 21 - BREAK_A_LEG
+Problem 74:
+  - problem 62 - SUPERFLEX
+  - problem 16 - BREAK_A_LEG
+  - problem 22 - GLOBALIST
+Problem 75:
+  - problem 82 - SUPERFLEX
+  - problem 36 - GLOBALIST
+  - problem 31 - GLOBALIST
+Problem 76:
+  - problem 38 - GLOBALIST
+  - problem 48 - SUPERFLEX
+  - problem 10 - GLOBALIST
+Problem 77:
+  - problem 74 - BREAK_A_LEG
+  - problem 26 - SUPERFLEX
+  - problem 112 - GLOBALIST
+Problem 78:
+  - problem 26 - WALLHACK
+  - problem 15 - SUPERFLEX
+  - problem 5 - BREAK_A_LEG
+Problem 79:
+  - problem 60 - GLOBALIST
+  - problem 8 - WALLHACK
+  - problem 42 - BREAK_A_LEG
+Problem 80:
+  - problem 24 - WALLHACK
+  - problem 60 - GLOBALIST
+  - problem 28 - SUPERFLEX
+Problem 81:
+  - problem 75 - BREAK_A_LEG
+  - problem 3 - GLOBALIST
+  - problem 2 - BREAK_A_LEG
+Problem 82:
+  - problem 41 - SUPERFLEX
+  - problem 36 - BREAK_A_LEG
+  - problem 25 - GLOBALIST
+Problem 83:
+  - problem 64 - WALLHACK
+  - problem 79 - WALLHACK
+  - problem 77 - GLOBALIST
+Problem 84:
+  - problem 17 - GLOBALIST
+  - problem 38 - WALLHACK
+  - problem 101 - BREAK_A_LEG
+Problem 85:
+  - problem 64 - GLOBALIST
+  - problem 100 - SUPERFLEX
+  - problem 10 - SUPERFLEX
+Problem 86:
+  - problem 73 - BREAK_A_LEG
+  - problem 114 - BREAK_A_LEG
+  - problem 93 - GLOBALIST
+Problem 87:
+  - problem 71 - BREAK_A_LEG
+  - problem 85 - GLOBALIST
+  - problem 2 - GLOBALIST
+Problem 88:
+  - problem 43 - BREAK_A_LEG
+  - problem 13 - BREAK_A_LEG
+  - problem 44 - BREAK_A_LEG
+Problem 89:
+  - problem 71 - GLOBALIST
+  - problem 116 - BREAK_A_LEG
+  - problem 105 - SUPERFLEX
+Problem 90:
+  - problem 113 - SUPERFLEX
+  - problem 56 - WALLHACK
+  - problem 93 - GLOBALIST
+Problem 91:
+  - problem 99 - BREAK_A_LEG
+  - problem 94 - WALLHACK
+  - problem 50 - WALLHACK
+Problem 92:
+  - problem 41 - WALLHACK
+  - problem 4 - BREAK_A_LEG
+  - problem 102 - GLOBALIST
+Problem 93:
+  - problem 80 - WALLHACK
+  - problem 91 - GLOBALIST
+  - problem 98 - WALLHACK
+Problem 94:
+  - problem 15 - GLOBALIST
+  - problem 86 - SUPERFLEX
+  - problem 106 - BREAK_A_LEG
+Problem 95:
+  - problem 89 - SUPERFLEX
+  - problem 96 - BREAK_A_LEG
+  - problem 7 - BREAK_A_LEG
+Problem 96:
+  - problem 132 - WALLHACK
+  - problem 36 - BREAK_A_LEG
+  - problem 100 - WALLHACK
+Problem 97:
+  - problem 118 - GLOBALIST
+  - problem 20 - GLOBALIST
+  - problem 98 - GLOBALIST
+Problem 98:
+  - problem 129 - WALLHACK
+  - problem 61 - SUPERFLEX
+  - problem 101 - SUPERFLEX
+Problem 99:
+  - problem 84 - SUPERFLEX
+  - problem 92 - BREAK_A_LEG
+  - problem 68 - SUPERFLEX
+Problem 100:
+  - problem 97 - GLOBALIST
+  - problem 39 - BREAK_A_LEG
+  - problem 87 - BREAK_A_LEG
+Problem 101:
+  - problem 38 - SUPERFLEX
+  - problem 83 - SUPERFLEX
+  - problem 95 - BREAK_A_LEG
+Problem 102:
+  - problem 110 - SUPERFLEX
+  - problem 68 - WALLHACK
+  - problem 94 - BREAK_A_LEG
+Problem 103:
+  - problem 70 - WALLHACK
+  - problem 89 - BREAK_A_LEG
+  - problem 66 - SUPERFLEX
+Problem 104:
+  - problem 49 - BREAK_A_LEG
+  - problem 103 - GLOBALIST
+  - problem 106 - BREAK_A_LEG
+Problem 105:
+  - problem 104 - SUPERFLEX
+  - problem 8 - BREAK_A_LEG
+  - problem 30 - SUPERFLEX
+Problem 106:
+  - problem 58 - BREAK_A_LEG
+  - problem 87 - SUPERFLEX
+  - problem 90 - SUPERFLEX
+Problem 107:
+  - problem 27 - WALLHACK
+  - problem 124 - GLOBALIST
+  - problem 112 - SUPERFLEX
+Problem 108:
+  - problem 82 - BREAK_A_LEG
+  - problem 109 - BREAK_A_LEG
+  - problem 112 - SUPERFLEX
+Problem 109:
+  - problem 131 - SUPERFLEX
+  - problem 40 - WALLHACK
+  - problem 121 - GLOBALIST
+Problem 110:
+  - problem 129 - SUPERFLEX
+  - problem 108 - BREAK_A_LEG
+  - problem 5 - BREAK_A_LEG
+Problem 111:
+  - problem 119 - BREAK_A_LEG
+  - problem 21 - BREAK_A_LEG
+  - problem 117 - WALLHACK
+Problem 112:
+  - problem 127 - BREAK_A_LEG
+  - problem 80 - SUPERFLEX
+  - problem 113 - GLOBALIST
+Problem 113:
+  - problem 127 - SUPERFLEX
+  - problem 123 - SUPERFLEX
+  - problem 52 - SUPERFLEX
+Problem 114:
+  - problem 122 - BREAK_A_LEG
+  - problem 29 - BREAK_A_LEG
+  - problem 123 - BREAK_A_LEG
+Problem 115:
+  - problem 122 - GLOBALIST
+  - problem 7 - WALLHACK
+  - problem 109 - GLOBALIST
+Problem 116:
+  - problem 118 - GLOBALIST
+  - problem 114 - WALLHACK
+  - problem 53 - GLOBALIST
+Problem 117:
+  - problem 116 - SUPERFLEX
+  - problem 72 - SUPERFLEX
+  - problem 111 - BREAK_A_LEG
+Problem 118:
+  - problem 119 - WALLHACK
+  - problem 117 - WALLHACK
+  - problem 14 - GLOBALIST
+Problem 119:
+  - problem 37 - BREAK_A_LEG
+  - problem 130 - BREAK_A_LEG
+  - problem 128 - GLOBALIST
+Problem 120:
+  - problem 71 - WALLHACK
+  - problem 116 - GLOBALIST
+  - problem 124 - BREAK_A_LEG
+Problem 121:
+  - problem 108 - WALLHACK
+  - problem 74 - WALLHACK
+  - problem 120 - SUPERFLEX
+Problem 122:
+  - problem 126 - WALLHACK
+  - problem 115 - BREAK_A_LEG
+  - problem 94 - SUPERFLEX
+Problem 123:
+  - problem 132 - SUPERFLEX
+  - problem 113 - SUPERFLEX
+  - problem 88 - BREAK_A_LEG
+Problem 124:
+  - problem 131 - SUPERFLEX
+  - problem 23 - BREAK_A_LEG
+  - problem 128 - BREAK_A_LEG
+Problem 125:
+  - problem 129 - BREAK_A_LEG
+  - problem 108 - GLOBALIST
+  - problem 107 - SUPERFLEX
+Problem 126:
+  - problem 35 - WALLHACK
+  - problem 125 - GLOBALIST
+  - problem 111 - WALLHACK
+Problem 127:
+  - problem 130 - GLOBALIST
+  - problem 121 - SUPERFLEX
+  - problem 42 - SUPERFLEX
+Problem 128:
+  - problem 110 - WALLHACK
+  - problem 24 - GLOBALIST
+  - problem 114 - GLOBALIST
+Problem 129:
+  - problem 132 - WALLHACK
+  - problem 126 - SUPERFLEX
+  - problem 18 - GLOBALIST
+Problem 130:
+  - problem 31 - SUPERFLEX
+  - problem 125 - GLOBALIST
+  - problem 107 - BREAK_A_LEG
+Problem 131:
+  - problem 110 - GLOBALIST
+  - problem 115 - SUPERFLEX
+  - problem 33 - GLOBALIST
+Problem 132:
+  - problem 118 - BREAK_A_LEG
+  - problem 61 - GLOBALIST
+  - problem 120 - SUPERFLEX
