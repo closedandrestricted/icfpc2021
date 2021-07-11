@@ -22,6 +22,6 @@ args = parser.parse_args()
 
 for problem in range(args.begin, args.end + 1, args.step):
     try:
-        subprocess.check_output(["./bazel-bin/solver/cli", "-test-idx", str(problem), "-alex"], timeout=10)
+        subprocess.check_output(["./bazel-bin/solver/cli", "-test-idx", str(problem), "-alex"], timeout=60)
     except:
         pass
