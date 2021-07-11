@@ -1,10 +1,10 @@
 1,suboptimal_mcmc,804
 2,suboptimal_mcmc,292
 3,suboptimal_mcmc,333
-4,suboptimal_mcmc,7
+4,suboptimal_mcmc,0
 5,suboptimal_mcmc,183
 6,suboptimal_mcmc,7073
-7,feasible,8089
+7,staging,4118
 8,suboptimal_mcmc,1120
 9,feasible,6321
 10,suboptimal_mcmc,200
@@ -60,7 +60,7 @@
 60,suboptimal_mcmc,2641
 61,suboptimal_mcmc,24827
 62,suboptimal_mcmc,125269
-63,suboptimal_mcmc,3933
+63,soptimal,0
 64,feasible,627415
 65,suboptimal_backtracking,336768
 66,suboptimal_mcmc,10155
@@ -73,12 +73,12 @@
 73,soptimal,0
 74,suboptimal_mcmc,151716
 75,suboptimal_mcmc,1328418
-76,suboptimal_mcmc,133768
+76,suboptimal_mcmc,9431
 77,optimal,0
 78,suboptimal_mcmc,69482
 79,suboptimal_mcmc,67127
 80,suboptimal_mcmc,259
-81,suboptimal_mcmc,216
+81,suboptimal_mcmc,0
 82,suboptimal_mcmc,18146
 83,suboptimal_mcmc,12377
 84,suboptimal_mcmc,398
@@ -86,7 +86,8 @@
 87,suboptimal_mcmc,53279
 88,suboptimal_mcmc,30883
 89,suboptimal_mcmc,86706
-95,suboptimal_mcmc,20875
+95,suboptimal_mcmc,15775
+97,staging,101968
 99,suboptimal_mcmc,11048
 100,suboptimal_mcmc,9100
 101,suboptimal_mcmc,9957
