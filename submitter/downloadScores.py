@@ -23,7 +23,8 @@ with requests.Session() as session:
             matchTds = re.findall(r'<td>(.*?)</td>', tr)
             if len(matchTds) == 3:
                 print("%d,%s,%s" % (index, matchTds[1], matchTds[2]), file=fOut)
-                if (index in status) and (matchTds[1] != status[index]):
-                    print("!issue with %d %s != %s" % (index, matchTds[1], status[index]))
+                sIndex = str(index)
+                if (sIndex in status) and (matchTds[1] != str(status[sIndex])):
+                    print("!issue with %d %s != %s" % (index, matchTds[1], status[sIndex]))
 
     subprocess.check_call(os.path.join(this_dir, 'gap.py'), shell=True)
