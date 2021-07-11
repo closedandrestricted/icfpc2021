@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common/base.h"
+#include "common/geometry/d2/point.h"
 #include "common/geometry/d2/polygon.h"
 #include "common/geometry/d2/segment.h"
 #include "common/geometry/d2/distance/distance_l2.h"
@@ -16,16 +17,17 @@
 
 class Task {
 public:
+  int eps;
   I2Polygon hole;
   UndirectedGraphEI<std::pair<int64_t, int64_t>> g;
-  unsigned eps;
+  std::vector<I2Point> bonuses_to_unlock;
 
   void Load(const std::string& filename) {
     std::ifstream is(filename);
     nlohmann::json raw;
     is >> raw;
     // std::cout << raw << std::endl;
-    eps = int(raw["epsilon"]);
+    eps = raw["epsilon"];
     auto figure = raw["figure"];
     unsigned hsize = raw["hole"].size(), fsize = figure["vertices"].size();
     std::vector<I2Point> vh, vf;
@@ -38,6 +40,12 @@ public:
       auto d = SquaredDistanceL2(vf[u0], vf[u1]);
       auto dd = (d * eps) / 1000000;
       g.AddEdge(u0, u1, {d - dd, d + dd});
+    }
+    auto bonuses = raw["bonuses"];
+    for (auto b : bonuses) {
+      auto pos = b["position"];
+      bonuses_to_unlock.push_back({pos[0], pos[1]});
+      // std::cout << "BTU = " << bonuses_to_unlock.back() << std::endl;
     }
   }
 
