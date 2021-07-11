@@ -76,7 +76,7 @@ class FullSearch {
         vnext.clear();
         for (auto p1 : vcurrent) {
           auto d = SquaredDistanceL2(p, p1);
-          if ((d >= e.info.first) && (d <= e.info.second) && cache.CheckSegment(I2ClosedSegment(p, p1))) {
+          if ((d >= e.info.first) && (d <= e.info.second) && cache.CheckSegmentI(I2ClosedSegment(p, p1))) {
             vnext.push_back(p1);
           }
         }

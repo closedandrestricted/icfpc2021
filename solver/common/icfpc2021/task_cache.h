@@ -14,7 +14,7 @@
 
 #include <algorithm>
 #include <random>
-#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 #include "common/geometry/d2/point_io.h"
@@ -22,11 +22,11 @@
 class TaskCache {
  protected:
   std::default_random_engine re;
+  I2Polygon hole;
   I2ARectangle box;
   std::vector<std::vector<unsigned>> valid_points_map;
   std::vector<I2Point> valid_points;
-  std::vector<std::vector<std::vector<I2Point>>> valid_segments_map;
-  std::unordered_set<I2ClosedSegment> valid_segments_set;
+  std::unordered_map<I2ClosedSegment, bool> valid_segments_map;
 
  public:
   std::vector<std::vector<int64_t>> min_distance;
@@ -39,53 +39,21 @@ class TaskCache {
 
   void Init(const Task& task) {
     re.seed();
-    box = Box(task.hole.v);
+    hole = task.hole;
+    box = Box(hole.v);
     valid_points_map.clear();
     valid_points_map.resize(box.p2.x - box.p1.x + 1);
-    valid_segments_map.clear();
-    valid_segments_map.resize(valid_points_map.size());
     // Valid points
     for (unsigned i = 0; i < valid_points_map.size(); ++i) {
       valid_points_map[i].resize(box.p2.y - box.p1.y + 1, 0);
-      valid_segments_map[i].resize(valid_points_map[i].size());
       for (unsigned j = 0; j < valid_points_map[i].size(); ++j) {
         I2Point p0(box.p1.x + i, box.p1.y + j);
-        if (geometry::d2::Inside(p0, task.hole)) {
+        if (geometry::d2::Inside(p0, hole)) {
           valid_points_map[i][j] = 1;
           valid_points.push_back(p0);
         //   std::cout << p0 << std::endl;
         }
       }
-    }
-    // Valid segments
-    int64_t max_edge_square_length = 0;
-    for (unsigned u = 0; u < task.g.Size(); ++u) {
-      for (auto e : task.g.EdgesEI(u)) {
-        max_edge_square_length = std::max(max_edge_square_length, e.info.second);
-      }
-    }
-    for (auto p1 : valid_points) {
-      auto& vm = valid_segments_map[p1.x - box.p1.x][p1.y - box.p1.y];
-      for (int64_t dx = 0; dx * dx <= max_edge_square_length; ++dx) {
-        for (int64_t dy = 0; dx * dx + dy * dy <= max_edge_square_length; ++dy) {
-          for (int64_t sx = -1; sx <= 1; sx += 2) {
-            if ((dx == 0) && (sx != -1)) continue;
-            for (int64_t sy = -1; sy <= 1; sy += 2) {
-              if ((dy == 0) && (sy != -1)) continue;
-              I2Point p2(p1.x + dx * sx, p1.y + dy * sy);
-              if (CheckPoint(p2)) {
-                I2ClosedSegment s(p1, p2);
-                if (geometry::d2::Inside(s, task.hole)) {
-                //   std::cout << "\t" << p1 << "\t" << p2 << std::endl;
-                vm.push_back(p2);
-                valid_segments_set.insert(s);
-                }
-              }
-            }
-          }
-        }
-      }
-      std::shuffle(vm.begin(), vm.end(), re);
     }
     // Init min/max distance between vertexes for figure.
     UndirectedGraphEI<int64_t> gf(task.g.Size());
@@ -118,7 +86,15 @@ class TaskCache {
     return valid_points_map[p.x - box.p1.x][p.y - box.p1.y];
   }
 
-  bool CheckSegment(const I2ClosedSegment& s) const {
-    return valid_segments_set.find(s) != valid_segments_set.end();
+  bool CheckSegmentI(const I2ClosedSegment& s) {
+    auto it = valid_segments_map.find(s);
+    if (it != valid_segments_map.end()) return it->second;
+    bool b = geometry::d2::Inside(s, hole);
+    valid_segments_map.insert({s, b});
+    return b;
+  }
+
+  bool CheckSegment(const I2ClosedSegment& s) {
+    return CheckPoint(s.p1) && CheckPoint(s.p2) && CheckSegmentI(s);
   }
 };
