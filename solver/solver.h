@@ -174,7 +174,7 @@ struct Problem {
 
     std::vector<std::vector<double>> g;
 
-    void preprocess() {
+    void preprocess(bool calcVisibility = true) {
         fixed.assign(originalPoints.size(), 0);
         int sum = 0;
         for (size_t i = 0; i < hole.size(); ++i) {
@@ -219,30 +219,32 @@ struct Problem {
                 }
             }
         }
-        visibility.assign(pointsInside.size(), {});
-        std::atomic<int> edges = 0;
-        auto dojob = [&](int i) {
-            visibility[i].resize(pointsInside.size());
-            auto p = pointsInside[i];
-            for (size_t j = 0; j < pointsInside.size(); ++j) {
-                auto q = pointsInside[j];
-                if (!isect(p, q, hole)) {
-                    visibility[i].set(j);
-                    edges++;
+        if (calcVisibility) {
+            visibility.assign(pointsInside.size(), {});
+            std::atomic<int> edges = 0;
+            auto dojob = [&](int i) {
+                visibility[i].resize(pointsInside.size());
+                auto p = pointsInside[i];
+                for (size_t j = 0; j < pointsInside.size(); ++j) {
+                    auto q = pointsInside[j];
+                    if (!isect(p, q, hole)) {
+                        visibility[i].set(j);
+                        edges++;
+                    }
+                }
+            };
+            constexpr int BLOCK_SIZE = 64;
+            for (size_t block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
+                std::vector<std::future<void>> jobs;
+                for (size_t i = block; i < pointsInside.size() && i < block + BLOCK_SIZE; ++i) {
+                    jobs.emplace_back(std::async(std::launch::async, dojob, i));
+                }
+                for (auto& f : jobs) {
+                    f.wait();
                 }
             }
-        };
-        constexpr int BLOCK_SIZE = 64;
-        for (size_t block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
-            std::vector<std::future<void>> jobs;
-            for (size_t i = block; i < pointsInside.size() && i < block + BLOCK_SIZE; ++i) {
-                jobs.emplace_back(std::async(std::launch::async, dojob, i));
-            }
-            for (auto& f : jobs) {
-                f.wait();
-            }
+            std::cerr << pointsInside.size() << " " << edges << "\n";
         }
-        std::cerr << pointsInside.size() << " " << edges << "\n";
     }
 
     json exportSol(const std::vector<int>& ps) {
