@@ -16,8 +16,12 @@ int main(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     Problem p;
     std::cerr << FLAGS_test_idx << " ";
-    p.parseJson("problems/" + std::to_string(FLAGS_test_idx) + ".json");
+    p.parseJson("../problems/" + std::to_string(FLAGS_test_idx) + ".json");
     p.preprocess();
+
+    std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
+    std::vector<int> points;
+    f << p.exportSol(points);
 
     return 0;
 }
