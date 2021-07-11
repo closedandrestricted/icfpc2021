@@ -37,9 +37,23 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    Initer init(p, 0.8);
+    cerr << "points1: " << init.current.points.size() << endl;
+    while (!init.step()) {
+
+    }
+
+    cerr << "points2: " << init.current.points.size() << endl;
+
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
-    std::vector<int> points;
-    f << p.exportSol(points);
+    f << p.exportSol(init.current.points);
+
+    population[0].points = init.current.points;
+
+    /*
+    std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
+    f << p.exportSol(population[0].points);
+    */
 
     return 0;
 }

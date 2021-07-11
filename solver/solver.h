@@ -248,6 +248,8 @@ struct Problem {
                 }
             }
             std::cerr << pointsInside.size() << " " << edges << "\n";
+        } else {
+            std::cerr << pointsInside.size() << "\n";
         }
     }
 

@@ -84,8 +84,9 @@
 84,soptimal,0
 86,suboptimal_mcmc,6057
 87,suboptimal_mcmc,53279
-88,suboptimal_mcmc,30883
+88,staging,18567
 89,suboptimal_mcmc,86706
+94,staging,18666
 95,suboptimal_mcmc,15775
 97,soptimal,0
 99,suboptimal_mcmc,11048
@@ -95,12 +96,11 @@
 108,suboptimal_mcmc,35590
 111,staging,45097
 120,suboptimal_mcmc,76139
-121,staging,57340
+121,suboptimal_mcmc,39503
 123,suboptimal_mcmc,17832
 124,staging,51637
 125,suboptimal_mcmc,585608
 127,suboptimal_mcmc,18698
 128,suboptimal_mcmc,40214
 129,suboptimal_mcmc,18546
-130,staging,10352
 131,staging,49521

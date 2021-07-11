@@ -26,9 +26,10 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtracking", "suboptimal_mcmc", "soptimal", "optimal_with_bonus"]
+solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtracking", "suboptimal_mcmc", "soptimal", "optimal_with_bonus", "gradient"]
 
-digest = open("golden/goldenDigest.csv", "w")
+TMPDST = "golden/goldenDigest.tmp.csv"
+digest = open(TMPDST, "w")
 
 class ProblemState:
     def __init__(self, problemFilename):
@@ -45,6 +46,8 @@ class ProblemState:
                     self.bestScore = validationResult[1]
                     self.best = s
                     self.bestFilename = solutionFilename
+            else:
+                print("!!!Validation failed for %s" % solutionFilename)
     
 
 improvements = 0
@@ -83,3 +86,4 @@ for problem in range(args.begin, args.end + 1):
 print("Total improvements: %d" % improvements)
 
 digest.close()
+shutil.move(TMPDST, "golden/goldenDigest.csv")
