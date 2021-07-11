@@ -47,6 +47,7 @@ class ProblemState:
                     self.bestFilename = solutionFilename
     
 
+improvements = 0
 for problem in range(args.begin, args.end + 1):
     problemFilename = "../problems/%d.json" % problem
     
@@ -72,9 +73,13 @@ for problem in range(args.begin, args.end + 1):
     if state.best:
         print("%s for %d = %d" % (state.best, problem, state.bestScore))
         print("%d,%s,%d" % (problem, state.best, state.bestScore), file=digest)
+        if state.bestScore < currentGoldenScore:
+            improvements += 1
         if state.bestScore <= currentGoldenScore:
             shutil.copyfile(state.bestFilename, goldenFilename)
         else:
             print("!Current golden result is better for %d" % problem)
+
+print("Total improvements: %d" % improvements)
 
 digest.close()

@@ -17,11 +17,15 @@ parser.add_argument('--override', action="store_true",
                     help='submit unconditionally')
 parser.add_argument('--step', type=int, default=1,
                     help='for step')
+parser.add_argument('--mcmc', action="store_true",
+                    help='run MCMC solver')
+parser.add_argument('--timeout', type=int, default=60,
+                    help='run timeout')
 
 args = parser.parse_args()
 
 for problem in range(args.begin, args.end + 1, args.step):
     try:
-        subprocess.check_output(["./bazel-bin/solver/cli", "-test-idx", str(problem), "-alex"], timeout=60)
+        subprocess.check_output(["./bazel-bin/solver/cli", "-test-idx", str(problem), "-alex" if not args.mcmc else ""], timeout=args.timeout)
     except:
         pass
