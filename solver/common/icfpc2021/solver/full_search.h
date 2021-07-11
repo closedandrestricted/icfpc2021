@@ -17,12 +17,14 @@ class FullSearch {
   TaskCache cache;
   ds::UnsignedSet used_vertices;
   std::vector<std::vector<std::vector<I2Point>>> valid_candidates;
+  std::vector<unsigned> valid_candidates_index;
   std::vector<I2Point> solution;
 
  public:
   FullSearch(const Task& _task) {
     task = _task;
     cache.Init(task);
+    std::cout << "Cache finished." << std::endl;
     ResetSearch();
   }
 
@@ -39,15 +41,18 @@ class FullSearch {
     valid_candidates.clear();
     valid_candidates.resize(size);
     for (unsigned i = 0; i < size; ++i) {
-      valid_candidates[i].push_back(cache.GetValidPoints());
+      valid_candidates[i].resize(2 * size + 1); // For safety
+      valid_candidates[i][0] = cache.GetValidPoints();
     }
+    valid_candidates_index.clear();
+    valid_candidates_index.resize(size, 0);
     solution.resize(size);
   }
 
   void AddPoint(unsigned index, const I2Point& p) {
     // {
     //   for (unsigned i = 0; i < used_vertices.Size(); ++i) std::cout << "\t";
-    //   std::cout << index << "\t" << p << std::endl;
+    //   std::cout << index << "\t" << valid_candidates_index[index] << "\t" << p << std::endl;
     // }
     assert(!used_vertices.HasKey(index));
     used_vertices.Insert(index);
@@ -58,22 +63,21 @@ class FullSearch {
         // Verify only
         auto p1 = solution[u];
         auto d = SquaredDistanceL2(p, p1);
-        if (!task.CheckDistance(e.info, d) || !cache.CheckSegment(I2ClosedSegment(p, p1))) {
+        if ((d < e.info.first) || (d > e.info.second) || !cache.CheckSegment(I2ClosedSegment(p, p1))) {
           std::cout << "SUS!" << std::endl;
           assert(false);    
         }
       } else {
         // Filter points
-        std::vector<I2Point> vnext;
-        auto& vcurrent = valid_candidates[u].back();
-        vnext.reserve(vcurrent.size());
+        auto& vcurrent = valid_candidates[u][valid_candidates_index[u]];
+        auto& vnext = valid_candidates[u][++valid_candidates_index[u]];
+        vnext.clear();
         for (auto p1 : vcurrent) {
           auto d = SquaredDistanceL2(p, p1);
-          if (task.CheckDistance(e.info, d) && cache.CheckSegment(I2ClosedSegment(p, p1))) {
+          if ((d >= e.info.first) && (d <= e.info.second) && cache.CheckSegment(I2ClosedSegment(p, p1))) {
             vnext.push_back(p1);
           }
         }
-        valid_candidates[u].push_back(vnext);
       }
     }
   }
@@ -83,7 +87,7 @@ class FullSearch {
     for (auto e : task.g.EdgesEI(index)) {
       unsigned u = e.to;
       if (!used_vertices.HasKey(u)) {
-        valid_candidates[u].pop_back();
+        --valid_candidates_index[u];
       }
     }
     used_vertices.RemoveLast();
@@ -98,15 +102,15 @@ protected:
     unsigned min_index = used_vertices.SetSize();
     for (unsigned i = 0; i < used_vertices.SetSize(); ++i) {
       if (used_vertices.HasKey(i)) continue;
-      if (valid_candidates[i].back().size() < min_size) {
-        min_size = valid_candidates[i].back().size();
+      if (valid_candidates[i][valid_candidates_index[i]].size() < min_size) {
+        min_size = valid_candidates[i][valid_candidates_index[i]].size();
         min_index = i;
       }
     }
     // std::cout << "\t" << min_index << "\t" << min_size << std::endl;
     assert(min_index < used_vertices.SetSize());
     if (min_size == 0) return false;
-    auto v = valid_candidates[min_index].back(); // for safety
+    auto& v = valid_candidates[min_index][valid_candidates_index[min_index]];
     for (auto& p : v) {
       AddPoint(min_index, p);
       if (SearchI()) return true;
