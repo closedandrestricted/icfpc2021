@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import json
 import os
 from posixpath import join
 import tornado.ioloop
@@ -49,11 +50,11 @@ class SolutionHandler(tornado.web.RequestHandler):
 
 class SolutionSaveHandler(tornado.web.RequestHandler):
 
-    def get(self):
+    def post(self):
         id = self.get_argument('id')
-        sol = self.get_argument('sol')
+        sol = json.loads(self.request.body)
         with open(os.path.join(this_dir, '../solutions/webedit/%s.json' % id), 'w') as f:
-            f.write(sol)
+            f.write(json.dumps(sol))
 
 
 def make_app():

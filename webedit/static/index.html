@@ -2,7 +2,7 @@
 
 <head>
     <title>
-        Closed and Restricted Boltzmann Machine - WebEdit
+        Closed and Restricted Boltzmann Machine - MeatBag Solver
     </title>
     <script type="text/javascript" src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript" src="./static/editor.js"></script>
@@ -18,9 +18,16 @@
     <div id="main_div">
         <form>
             Problem:
-            <input type="text" id="problem_id"/>
-            <input type="submit" id="submit"/>
+            <input type="text" id="problem_id" />
+            <input type="submit" id="submit" />
         </form>
+        <form>
+            <input type="submit" value="Save Solution" id="export" />
+            <div id="export_response">
+
+            </div>
+        </form>
+
     </div>
 </body>
 
