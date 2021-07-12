@@ -448,6 +448,36 @@ struct Problem {
             current.constE += distMeasure;
         }
     }
+
+    int violationsBnd(const SolutionCandidate& current) const {
+        int n = 0;
+        for (int i = 0; i < edgeU.size(); ++i) {
+            int u = edgeU[i];
+            int v = edgeV[i];
+            auto p1 = pointsInside[current.points[u]];
+            auto p2 = pointsInside[current.points[v]];
+            if (isect(p1, p2, hole)) {
+                ++n;
+            }
+        }
+        return n;
+    }
+
+    int violationsLen(const SolutionCandidate& current) const {
+        int n = 0;
+        for (int i = 0; i < edgeU.size(); ++i) {
+            int u = edgeU[i];
+            int v = edgeV[i];
+            auto p1 = pointsInside[current.points[u]];
+            auto p2 = pointsInside[current.points[v]];
+            double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(originalPoints[u], originalPoints[v]) - 1.0);
+            distMeasure = std::max(0.0, distMeasure - eps - 1e-12);
+            if (distMeasure > 0) {
+                ++n;
+            }
+        }
+        return n;
+    }
 };
 
 struct GibbsChain {
@@ -582,48 +612,18 @@ struct Initer {
         }
     }
 
-    int violations_bnd() {
-        int n = 0;
-        for(int i = 0; i < problem.edgeU.size(); ++i) {
-            int u = problem.edgeU[i];
-            int v = problem.edgeV[i];
-            auto p1 = problem.pointsInside[current.points[u]];
-            auto p2 = problem.pointsInside[current.points[v]];
-            if (isect(p1, p2, problem.hole)) {
-                ++n;
-            }
-        }
-        return n;
-    }
-
-    int violations_len() {
-        int n = 0;
-        for(int i = 0; i < problem.edgeU.size(); ++i) {
-            int u = problem.edgeU[i];
-            int v = problem.edgeV[i];
-            auto p1 = problem.pointsInside[current.points[u]];
-            auto p2 = problem.pointsInside[current.points[v]];
-            double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(problem.originalPoints[u], problem.originalPoints[v]) - 1.0);
-            distMeasure = std::max(0.0, distMeasure - problem.eps - 1e-12);
-            if (distMeasure > 0) {
-                ++n;
-            }
-        }
-        return n;
-    }
-
     bool step() {
         int pt = std::uniform_int_distribution()(gen) % current.points.size();
         int newp = std::uniform_int_distribution()(gen) % problem.pointsInside.size();
-        int old_violations = violations_bnd() + violations_len();
+        int old_violations = problem.violationsBnd(current) + problem.violationsLen(current);
         int oldp = current.points[pt];
         if (step_i++ % 100 == 0) {
             std::cerr << "cur bad: " << old_violations << std::endl;
         }
         current.points[pt] = newp;
-        int new_violations = violations_bnd();
+        int new_violations = problem.violationsBnd(current);
         bool ok = new_violations == 0;
-        new_violations += violations_len();
+        new_violations += problem.violationsLen(current);
         if (new_violations >= old_violations) {
             double p = 1.0 / (1.0 + std::exp(new_violations - old_violations) * std::log(step_i));
             if (std::uniform_real_distribution()(gen) > p) {

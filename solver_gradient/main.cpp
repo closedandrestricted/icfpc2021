@@ -13,6 +13,20 @@ using namespace std;
 
 using json = nlohmann::json;
 
+double e(const Problem& p, SolutionCandidate& sc) {
+    double result = 0;
+
+    for (size_t h = 0; h < p.hole.size(); ++h) {
+        int mind = 1000000000;
+        for (size_t i = 0; i < p.originalPoints.size(); ++i) {
+            mind = std::min(mind, dist2(p.hole[h], p.pointsInside[sc.points[i]]));
+        }
+        result += mind;
+    }
+
+    return result;
+}
+
 int main(int argc, char* argv[]) {
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     Problem p;
@@ -35,12 +49,12 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < c.points.size(); ++i) {
             c.points[i] = idxs[i];
         }
-        Initer init(p, 0.8);
+        Initer init(p);
         init.current.points = c.points;
         while (!init.step()) {
         }
         c.points = init.current.points;
-        p.updateE(c);
+        c.optE = e(p, c);
         cerr << c.optE << endl;
     }
 
