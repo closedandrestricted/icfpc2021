@@ -142,9 +142,20 @@ struct SolutionCandidate {
     double constE = 0.0, optE = 0.0;
 };
 
+Point massCenter(const Poly& poly) {
+    Point result(0, 0);
+    for (const auto& p: poly) {
+        result.x += p.x;
+        result.y += p.y;
+    }
+    result.x /= poly.size();
+    result.y /= poly.size();
+    return result;
+}
+
 struct Problem {
     Poly hole;
-    std::vector<Point> originalPoints;
+    Poly originalPoints;
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
     double eps;
