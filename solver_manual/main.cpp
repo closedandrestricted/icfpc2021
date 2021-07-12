@@ -61,6 +61,21 @@ int main(int argc, char* argv[]) {
         }
     };
 
+    auto swapXY = [&]() {
+        for (size_t i = 0; i < points.size(); ++i) {
+            auto& pp = points[i];
+            int tempX = pp.x;
+            pp.x = pp.y;
+            pp.y = p.maxx - tempX;
+        }
+    };
+
+    if (FLAGS_test_idx == 122) {
+        swapXY();
+        shiftX(-40);
+        shiftY(-40);
+    }
+
     if (FLAGS_test_idx == 132) {
         reflectX(141);
         reflectX(100);

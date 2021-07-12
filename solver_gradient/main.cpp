@@ -14,6 +14,22 @@ using namespace std;
 
 using json = nlohmann::json;
 
+double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
+    double n = 0;
+    for (int i = 0; i < p.edgeU.size(); ++i) {
+        int u = p.edgeU[i];
+        int v = p.edgeV[i];
+        auto p1 = p.pointsInside[current.points[u]];
+        auto p2 = p.pointsInside[current.points[v]];
+        double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
+        distMeasure = std::max(0.0, distMeasure - p.eps - 1e-12);
+        if (distMeasure > 0) {
+            n = n + 1.0 + distMeasure;
+        }
+    }
+    return n;
+}
+
 double e(const Problem& p, const SolutionCandidate& sc) {
     double result = 0;
 
@@ -25,7 +41,7 @@ double e(const Problem& p, const SolutionCandidate& sc) {
         result += mind;
     }
 
-    return result + static_cast<double>(p.violationsBnd(sc) + p.violationsLen(sc)) * 1000000.0;
+    return result + (static_cast<double>(p.violationsBnd(sc) + violationsLenSoft(p, sc))) * 1000000.0;
 }
 
 int main(int argc, char* argv[]) {
@@ -188,7 +204,8 @@ int main(int argc, char* argv[]) {
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
-        cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << endl;
+        cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
+             << p.violationsBnd(population.front()) << ", " << violationsLenSoft(p, population.front()) << "]" << endl;
 
         if (population[0].optE < bestE) {
             bestE = population[0].optE;
