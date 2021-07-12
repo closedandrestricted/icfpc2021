@@ -39,7 +39,8 @@ int main(int argc, char* argv[]) {
 
     static constexpr size_t NUM_CANDIDATES = 100;
     vector<SolutionCandidate> population(NUM_CANDIDATES);
-    for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+    std::vector<std::future<void>> jobs;
+    auto genRandomCandidate = [&](size_t i) {
         auto& c = population[i];
         vector<int> idxs(p.pointsInside.size());
         for (int i = 0; i < p.pointsInside.size(); ++i) {
@@ -57,9 +58,15 @@ int main(int argc, char* argv[]) {
         c.points = init.current.points;
         c.optE = e(p, c);
         cerr << i << "/" << NUM_CANDIDATES << " " << c.optE << endl;
+    };
+    for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+        jobs.emplace_back(std::async(std::launch::async, genRandomCandidate, i));
     }
-    const int numPoints = population[0].points.size();
+    for (auto& f : jobs) {
+        f.wait();
+    }
 
+    const int numPoints = population[0].points.size();
     std::uniform_int_distribution<int> deltaDistr10(-10, 10);
     std::uniform_int_distribution<int> pointDistr(0, numPoints - 1);
     std::uniform_int_distribution<int> candDistr(0, NUM_CANDIDATES);
@@ -116,7 +123,7 @@ int main(int argc, char* argv[]) {
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
-        cerr << population.front().optE << " - " << population.back().optE << endl;
+        cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << endl;
     }
 
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
