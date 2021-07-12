@@ -1,11 +1,10 @@
+#include <gflags/gflags.h>
+
 #include <iostream>
 #include <random>
 
 #include "../solver/solver.h"
-
 #include "json.hpp"
-
-#include <gflags/gflags.h>
 
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_string(init, "", "file from initialization");
@@ -166,7 +165,7 @@ int main(int argc, char* argv[]) {
         move(0, -1);
         move(0, 1);
 
-        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = candDistr(gen);
             auto idx2 = candDistr(gen);
             if (idx1 == idx2) {
@@ -182,7 +181,7 @@ int main(int argc, char* argv[]) {
             population.emplace_back(newC);
         }
 
-        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
             newC.points[pointDistr(gen)] = insideDistr(gen);
@@ -247,7 +246,6 @@ int main(int argc, char* argv[]) {
             }
         }
     }
-
 
     /*
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
