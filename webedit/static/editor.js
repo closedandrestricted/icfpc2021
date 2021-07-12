@@ -117,6 +117,7 @@ function refresh_svg(d, problem_id) {
     var figdata = d.hole.map(to_obj);
     figdata.push(figdata[0]);
 
+    var globalist_problem_id = undefined;
 
     const svg = d3.select("#svg");
 
@@ -187,6 +188,7 @@ function refresh_svg(d, problem_id) {
                 .attr('d', line);
         });
         svg.selectAll("." + cls + "-v").moveToFront();
+        recompute_globalist();
     }
 
 
@@ -201,6 +203,31 @@ function refresh_svg(d, problem_id) {
 
     function snap_to_corners_set() {
         return d3.select("#check_snap").property("checked");
+    }
+
+
+    function recompute_globalist() {
+        if (!globalist_problem_id) {
+            return;
+        }
+        var n_edges = 0;
+        var old_dist = 0;
+        var new_dist = 0;
+        figure.edges.forEach(uv => {
+            const oldV1 = figure.vertices[uv[0]];
+            const oldV2 = figure.vertices[uv[1]];
+            const newV1 = solution[uv[0]];
+            const newV2 = solution[uv[1]];
+            old_dist += dist2(oldV1, oldV2);
+            new_dist += dist2(newV1, newV2);
+            n_edges += 1;
+        })
+        console.log(new_dist, old_dist, (problem.epsilon + 1e-12) * n_edges / 1000000.0);
+        if (Math.abs(1.0 * new_dist / old_dist - 1.0) <= (problem.epsilon + 1e-12) * n_edges / 1000000.0) {
+            d3.select("#globalist_id").style("background-color", "lightgreen");
+        } else {
+            d3.select("#globalist_id").style("background-color", "red");
+        }
     }
 
 
@@ -358,10 +385,15 @@ function refresh_svg(d, problem_id) {
     d3.select('#export').on('click', function (e) {
         e.stopPropagation();
         e.preventDefault();
+        var json_sol = { "vertices": solution }
+        if (globalist_problem_id) {
+            json_sol["bonuses"] = [{ "bonus": "GLOBALIST", "problem": globalist_problem_id }]
+        }
+        globalist_problem_id
         d3.text("/save_sol?id=" + problem_id, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ "vertices": solution }),
+            body: JSON.stringify(json_sol),
         }).then(function (data, error) {
             if (error) {
                 d3.select("#export_response").text("Error!")
@@ -412,6 +444,19 @@ function refresh_svg(d, problem_id) {
         const xmax = d3.max(solution, x => x[0]);
         solution.forEach((d, i) => { solution[i][0] = xmax - (d[0] - xmin) });
         draw_solution();
+    })
+
+    d3.select('#globalist_set').on('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var globalist_id = d3.select("#globalist_id").node().value;
+        if (globalist_id) {
+            globalist_problem_id = parseInt(globalist_id);
+            recompute_globalist();
+        } else {
+            globalist_problem_id = undefined;
+            d3.select("#globalist_id").style("background-color", null);
+        }
     })
 }
 
