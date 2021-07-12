@@ -95,6 +95,8 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> insideDistr(0, p.pointsInside.size() - 1);
     std::uniform_int_distribution<int> deltaDistr3(-3, 3);
     std::uniform_int_distribution<int> edgeDistr(0, p.edgeU.size() - 1);
+    std::uniform_int_distribution<int> xDistr(p.minx, p.maxx);
+    std::uniform_int_distribution<int> yDistr(p.miny, p.maxy);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {

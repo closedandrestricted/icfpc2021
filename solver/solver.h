@@ -180,6 +180,7 @@ struct Problem {
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
     double eps;
+    int minx, maxx, miny, maxy;
 
     void parseJson(const std::string& fn) {
         std::ifstream is(fn);
@@ -230,7 +231,10 @@ struct Problem {
         if (sum < 0) {
             std::reverse(hole.begin(), hole.end());
         }
-        int minx = hole[0].x, maxx = hole[0].x, miny = hole[0].y, maxy = hole[0].y;
+        minx = hole[0].x;
+        maxx = hole[0].x;
+        miny = hole[0].y;
+        maxy = hole[0].y;
         for (const auto& p : hole) {
             minx = std::min(minx, p.x);
             maxx = std::max(maxx, p.x);
