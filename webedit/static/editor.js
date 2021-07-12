@@ -126,6 +126,16 @@ function refresh_svg(d, problem_id) {
         .attr("fill", "lightgray")
         .attr('d', line)
 
+    svg.selectAll("circle")
+        .data(problem.hole)
+        .enter()
+        .append("circle")
+        .style("stroke", "none")
+        .style("fill", "black")
+        .attr("r", 2)
+        .attr("cx", d => xScale(d[0]))
+        .attr("cy", d => yScale(d[1]));
+
     if (problem.bonuses) {
         problem.bonuses.forEach((bonus) => {
             var color = "lightblue";
