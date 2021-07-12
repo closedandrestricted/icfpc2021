@@ -240,7 +240,7 @@ function refresh_svg(d, problem_id) {
             .attr("class", "solution-v")
             .style("stroke", "none")
             .style("fill", "green")
-            .attr("r", 5)
+            .attr("r", 3)
             .attr("cx", d => xScale(d[0]))
             .attr("cy", d => yScale(d[1]))
             .call(drag);

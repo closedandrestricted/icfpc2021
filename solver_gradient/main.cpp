@@ -31,7 +31,11 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
 }
 
 double e(const Problem& p, const SolutionCandidate& sc) {
-    double result = 0;
+    static constexpr double INF = 1000000.0;
+    double result = (static_cast<double>(p.violationsBnd(sc) + violationsLenSoft(p, sc))) * INF;
+    if (result) {
+        return result + INF;
+    }
 
     for (size_t h = 0; h < p.hole.size(); ++h) {
         int mind = 1000000000;
@@ -41,7 +45,7 @@ double e(const Problem& p, const SolutionCandidate& sc) {
         result += mind;
     }
 
-    return result + (static_cast<double>(p.violationsBnd(sc) + violationsLenSoft(p, sc))) * 1000000.0;
+    return result;
 }
 
 int main(int argc, char* argv[]) {
@@ -183,7 +187,7 @@ int main(int argc, char* argv[]) {
             population.emplace_back(newC);
         }
 
-        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = edgeDistr(gen);
             Line l(p.pointsInside[p.edgeU[idx1]], p.pointsInside[p.edgeV[idx1]]);
             auto idx2 = candDistr(gen);
@@ -200,12 +204,27 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
+            newC.optE = e(p, newC);
+            population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+            auto idx3 = candDistr(gen);
+            SolutionCandidate newC = population[idx3];
+            auto idx1 = pointDistr(gen);
+            auto idx2 = pointDistr(gen);
+            if (idx1 != idx2) {
+                swap(newC.points[idx1], newC.points[idx2]);
+                newC.optE = e(p, newC);
+                population.emplace_back(newC);
+            }
         }
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
-             << p.violationsBnd(population.front()) << ", " << violationsLenSoft(p, population.front()) << "]" << endl;
+             << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
+             << violationsLenSoft(p, population.front()) << "]" << endl;
 
         if (population[0].optE < bestE) {
             bestE = population[0].optE;
