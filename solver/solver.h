@@ -223,7 +223,7 @@ struct Problem {
 
     std::vector<std::vector<double>> g;
 
-    void preprocess(bool calcVisibility = true) {
+    void preprocess(bool calcVisibility = true, bool onlyBorder = false) {
         fixed.assign(originalPoints.size(), 0);
         int sum = 0;
         for (size_t i = 0; i < hole.size(); ++i) {
@@ -250,9 +250,12 @@ struct Problem {
             for (int y = miny; y <= maxy; ++y) {
                 Point p(x, y);
                 if (inside(p, hole)) {
-                    pointInsideToIndex.emplace(p, pointsInside.size());
-                    pointsInside.push_back(p);
-                    pointsInsideIsCorner.push_back(std::find(hole.begin(), hole.end(), p) != hole.end());
+                    const bool corner = std::find(hole.begin(), hole.end(), p) != hole.end();
+                    if (!onlyBorder || corner || ((rand() % 10) == 0)) {
+                        pointInsideToIndex.emplace(p, pointsInside.size());
+                        pointsInside.push_back(p);
+                        pointsInsideIsCorner.push_back(corner);
+                    }
                 }
             }
         }
