@@ -126,6 +126,27 @@ function refresh_svg(d, problem_id) {
         .attr("fill", "lightgray")
         .attr('d', line)
 
+    if (problem.bonuses) {
+        problem.bonuses.forEach((bonus) => {
+            var color = "lightblue";
+            if (bonus.bonus == "GLOBALIST") {
+                color = "yellow";
+            } else if (bonus.bonus == "WALLHACK") {
+                color = "orange";
+            } else if (bonus.bonus == "BREAK_A_LEG") {
+                color = "blue";
+            }
+            var x = bonus.position[0];
+            var y = bonus.position[1];
+            svg.append("circle")
+                .style("stroke", "black")
+                .style("fill", color)
+                .attr("r", d => xScale(1) - xScale(0))
+                .attr("cx", d => xScale(x))
+                .attr("cy", d => yScale(y));
+        })
+    }
+
     function dist2(v1, v2) {
         return (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2
     }
