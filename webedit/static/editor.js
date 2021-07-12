@@ -222,7 +222,6 @@ function refresh_svg(d, problem_id) {
         })
         var frac = penalty / ((problem.epsilon + 1e-12) * n_edges / 1000000.0)
         d3.select("#globalist_id").property("value", frac.toFixed(4));
-        console.log(frac);
         if (frac <= 1) {
             d3.select("#globalist_id").style("background-color", "lightgreen");
         } else {
