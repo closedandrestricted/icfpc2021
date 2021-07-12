@@ -8,6 +8,7 @@
 #include <gflags/gflags.h>
 
 DEFINE_int32(test_idx, 1, "Test number");
+DEFINE_string(init, "", "file from initialization");
 
 using namespace std;
 
@@ -42,18 +43,30 @@ int main(int argc, char* argv[]) {
     std::vector<std::future<void>> jobs;
     auto genRandomCandidate = [&](size_t i) {
         auto& c = population[i];
-        vector<int> idxs(p.pointsInside.size());
-        for (int i = 0; i < p.pointsInside.size(); ++i) {
-            idxs[i] = i;
-        }
-        std::shuffle(idxs.begin(), idxs.end(), gen);
-        c.points.resize(p.originalPoints.size());
-        for (int i = 0; i < c.points.size(); ++i) {
-            c.points[i] = idxs[i];
-        }
         Initer init(p);
-        init.current.points = c.points;
-        while (!init.step()) {
+        if (FLAGS_init.size()) {
+            std::ifstream is(FLAGS_init);
+            json webedit_solution;
+            is >> webedit_solution;
+            std::vector<Point> initial;
+            initial.resize(webedit_solution["vertices"].size());
+            for (size_t i = 0; i < initial.size(); ++i) {
+                initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
+            }
+            init.set_initial_candidate(initial);
+        } else {
+            vector<int> idxs(p.pointsInside.size());
+            for (int i = 0; i < p.pointsInside.size(); ++i) {
+                idxs[i] = i;
+            }
+            std::shuffle(idxs.begin(), idxs.end(), gen);
+            c.points.resize(p.originalPoints.size());
+            for (int i = 0; i < c.points.size(); ++i) {
+                c.points[i] = idxs[i];
+            }
+            init.current.points = c.points;
+            while (!init.step()) {
+            }
         }
         c.points = init.current.points;
         c.optE = e(p, c);
@@ -66,6 +79,14 @@ int main(int argc, char* argv[]) {
         f.wait();
     }
 
+    sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+
+    auto save = [&]() {
+        std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
+        f << p.exportSol(population[0].points);
+    };
+
+    double bestE = 1e100;
     const int numPoints = population[0].points.size();
     std::uniform_int_distribution<int> deltaDistr10(-10, 10);
     std::uniform_int_distribution<int> pointDistr(0, numPoints - 1);
@@ -124,10 +145,13 @@ int main(int argc, char* argv[]) {
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << endl;
+
+        if (population[0].optE < bestE) {
+            bestE = population[0].optE;
+            save();
+        }
     }
 
-    std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
-    f << p.exportSol(population[0].points);
 
     /*
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
