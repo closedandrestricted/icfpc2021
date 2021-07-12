@@ -19,6 +19,7 @@ try:
     parser = argparse.ArgumentParser()
     parser.add_argument('problem')
     parser.add_argument('solution')
+    parser.add_argument('--ignore_dist', default=False, action='store_true')
 
     args = parser.parse_args()
 
