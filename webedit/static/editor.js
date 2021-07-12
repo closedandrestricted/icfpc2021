@@ -211,19 +211,19 @@ function refresh_svg(d, problem_id) {
             return;
         }
         var n_edges = 0;
-        var old_dist = 0;
-        var new_dist = 0;
+        var penalty = 0;
         figure.edges.forEach(uv => {
             const oldV1 = figure.vertices[uv[0]];
             const oldV2 = figure.vertices[uv[1]];
             const newV1 = solution[uv[0]];
             const newV2 = solution[uv[1]];
-            old_dist += dist2(oldV1, oldV2);
-            new_dist += dist2(newV1, newV2);
+            penalty += Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0);
             n_edges += 1;
         })
-        console.log(new_dist, old_dist, (problem.epsilon + 1e-12) * n_edges / 1000000.0);
-        if (Math.abs(1.0 * new_dist / old_dist - 1.0) <= (problem.epsilon + 1e-12) * n_edges / 1000000.0) {
+        var frac = penalty / ((problem.epsilon + 1e-12) * n_edges / 1000000.0)
+        d3.select("#globalist_id").property("value", frac.toFixed(4));
+        console.log(frac);
+        if (frac <= 1) {
             d3.select("#globalist_id").style("background-color", "lightgreen");
         } else {
             d3.select("#globalist_id").style("background-color", "red");
