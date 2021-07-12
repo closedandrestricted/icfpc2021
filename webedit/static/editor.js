@@ -120,21 +120,20 @@ function refresh_svg(d, problem_id) {
 
     const svg = d3.select("#svg");
 
+    function dist2(v1, v2) {
+        return (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2
+    }
+
+    function dist_ok(newV1, newV2, oldV1, oldV2) {
+        return Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0) <= (problem.epsilon + 1e-12) / 1000000.0
+    }
+
     svg.append('path')
         .datum(figdata)
         .attr("stroke", "black")
         .attr("fill", "lightgray")
         .attr('d', line)
 
-    svg.selectAll("circle")
-        .data(problem.hole)
-        .enter()
-        .append("circle")
-        .style("stroke", "none")
-        .style("fill", "black")
-        .attr("r", 2)
-        .attr("cx", d => xScale(d[0]))
-        .attr("cy", d => yScale(d[1]));
 
     if (problem.bonuses) {
         problem.bonuses.forEach((bonus) => {
@@ -157,9 +156,8 @@ function refresh_svg(d, problem_id) {
         })
     }
 
-    function dist2(v1, v2) {
-        return (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2
-    }
+
+
     function plot_figure(vertices, cls, color, mark_bad) {
         svg.selectAll("." + cls + "-e").remove()
         function get_edge(uv) {
@@ -174,7 +172,7 @@ function refresh_svg(d, problem_id) {
                 const newV2 = vertices[uv[1]];
                 const oldV1 = figure.vertices[uv[0]];
                 const oldV2 = figure.vertices[uv[1]];
-                if (Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0) > (problem.epsilon + 1e-12) / 1000000.0) {
+                if (!dist_ok(newV1, newV2, oldV1, oldV2)) {
                     actualColor = "red";
                 } else if (isect(newV1, newV2, problem.hole)) {
                     actualColor = "orange";
@@ -285,6 +283,63 @@ function refresh_svg(d, problem_id) {
             .call(drag);
     }
 
+    svg.selectAll(".circle-hole")
+        .data(problem.hole)
+        .enter()
+        .append("circle")
+        .attr("class", "circle-hole")
+        .style("stroke", "none")
+        .style("fill", "black")
+        .attr("r", 4)
+        .attr("cx", d => xScale(d[0]))
+        .attr("cy", d => yScale(d[1]))
+        .on("mouseout", () => svg.selectAll(".diff-hint").remove())
+        .on("mouseover", (ev, d) => {
+            const i = problem.hole.indexOf(d);
+            const imns1 = i == 0 ? problem.hole.length - 1 : i - 1;
+            const ipls1 = i == problem.hole.length - 1 ? 0 : i + 1;
+            const oldVm = problem.hole[imns1];
+            const oldV0 = problem.hole[i];
+            const oldVp = problem.hole[ipls1];
+            var okM = {};
+            var okP = {};
+            figure.edges.forEach(uv => {
+                const newV1 = figure.vertices[uv[0]];
+                const newV2 = figure.vertices[uv[1]];
+                if (dist_ok(newV1, newV2, oldV0, oldVm)) {
+                    okM.push(uv);
+                }
+                if (dist_ok(newV1, newV2, oldV0, oldVp)) {
+                    okP.push(uv);
+                }
+            });
+            // for (var i = 0; i < figure.vertices.length; i++) {
+
+            // }
+            // var coords = [solution[uv[0]], solution[uv[1]], problem.hole[iplus1]];
+            //         coords.forEach(xy => {
+            //             svg.append("circle")
+            //                 .attr("class", "diff-hint")
+            //                 .style("stroke", "none")
+            //                 .attr("fill-opacity", "0.7")
+            //                 .style("fill", "red")
+            //                 .attr("r", 5)
+            //                 .attr("cx", d => xScale(xy[0]))
+            //                 .attr("cy", d => yScale(xy[1]))
+            //         });
+            //         var line_coords = coords.slice(0, 2).map(to_obj);
+            //         console.log(line_coords)
+            //         svg.append('path')
+            //             .datum(line_coords)
+            //             .attr("class", "diff-hint")
+            //             .attr("stroke", "red")
+            //             .attr("fill", "none")
+            //             .attr("stroke-width", "2")
+            //             .attr("stroke-opacity", "0.8")
+            //             .attr('d', line);
+        });
+
+
     draw_solution();
 
     d3.select('#export').on('click', function (e) {
@@ -327,6 +382,23 @@ function refresh_svg(d, problem_id) {
         } else {
             svg.selectAll(".initial-e").remove()
         }
+    })
+
+    d3.select('#v_flip').on('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const ymin = d3.min(solution, x => x[1]);
+        const ymax = d3.max(solution, x => x[1]);
+        solution.forEach((d, i) => { solution[i][1] = ymax - (d[1] - ymin) });
+        draw_solution();
+    })
+    d3.select('#h_flip').on('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const xmin = d3.min(solution, x => x[0]);
+        const xmax = d3.max(solution, x => x[0]);
+        solution.forEach((d, i) => { solution[i][0] = xmax - (d[0] - xmin) });
+        draw_solution();
     })
 }
 
