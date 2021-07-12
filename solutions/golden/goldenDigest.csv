@@ -61,7 +61,7 @@
 61,suboptimal_mcmc,24827
 62,staging,15038
 63,soptimal,0
-64,feasible,627415
+64,manual,0
 65,soptimal,0
 66,suboptimal_mcmc,10155
 67,optimal,0
@@ -73,7 +73,7 @@
 73,soptimal,0
 74,staging,78069
 75,staging,581334
-76,suboptimal_mcmc,9431
+76,suboptimal_mcmc,4742
 77,optimal,0
 78,staging,3444
 79,suboptimal_mcmc,39098
