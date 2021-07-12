@@ -109,6 +109,7 @@ class TaskCache {
     for (auto p : valid_points) {
       I2ClosedSegment stest(p, p);
       if (segments_hole_distance.find(stest) != segments_hole_distance.end()) continue;
+      gh.ClearEdges(hsize);
       for (unsigned u = 0; u < hsize; ++u) {
         I2ClosedSegment s(hole[u], p);
         if (CheckSegmentI(s)) gh.AddBaseEdge(hsize, u, USqrt(SquaredDistanceL2(p, hole[u])));
