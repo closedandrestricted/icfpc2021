@@ -58,8 +58,8 @@
 58,gradient,4234
 59,optimal,0
 60,gradient,986
-61,suboptimal_mcmc,24827
-62,gradient,11819
+61,suboptimal_mcmc,15345
+62,gradient,11783
 63,soptimal,0
 64,manual,0
 65,soptimal,0
@@ -71,8 +71,8 @@
 71,gradient,34955
 72,optimal,0
 73,soptimal,0
-74,gradient,59197
-75,gradient,581334
+74,gradient,59182
+75,suboptimal_mcmc,484139
 76,gradient,4139
 77,optimal,0
 78,gradient,3444
@@ -99,11 +99,11 @@
 99,suboptimal_mcmc,11048
 100,suboptimal_mcmc,9100
 101,suboptimal_mcmc,9957
-102,gradient,104724
+102,gradient,104686
 103,gradient,105250
 104,gradient,21548
 105,manual,0
-106,move,4161842
+106,gradient,4157303
 107,suboptimal_mcmc,63605
 108,gradient,35383
 109,gradient,4439
