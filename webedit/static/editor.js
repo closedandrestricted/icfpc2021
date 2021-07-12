@@ -303,40 +303,50 @@ function refresh_svg(d, problem_id) {
             const oldVp = problem.hole[ipls1];
             var okM = {};
             var okP = {};
+            function add(di, k, v) {
+                if (di[k]) {
+                    di[k].push(v)
+                } else {
+                    di[k] = [v]
+                }
+            }
             figure.edges.forEach(uv => {
                 const newV1 = figure.vertices[uv[0]];
                 const newV2 = figure.vertices[uv[1]];
                 if (dist_ok(newV1, newV2, oldV0, oldVm)) {
-                    okM.push(uv);
+                    add(okM, uv[0], uv[1]);
+                    add(okM, uv[1], uv[0]);
                 }
                 if (dist_ok(newV1, newV2, oldV0, oldVp)) {
-                    okP.push(uv);
+                    add(okP, uv[0], uv[1]);
+                    add(okP, uv[1], uv[0]);
                 }
             });
-            // for (var i = 0; i < figure.vertices.length; i++) {
-
-            // }
-            // var coords = [solution[uv[0]], solution[uv[1]], problem.hole[iplus1]];
-            //         coords.forEach(xy => {
-            //             svg.append("circle")
-            //                 .attr("class", "diff-hint")
-            //                 .style("stroke", "none")
-            //                 .attr("fill-opacity", "0.7")
-            //                 .style("fill", "red")
-            //                 .attr("r", 5)
-            //                 .attr("cx", d => xScale(xy[0]))
-            //                 .attr("cy", d => yScale(xy[1]))
-            //         });
-            //         var line_coords = coords.slice(0, 2).map(to_obj);
-            //         console.log(line_coords)
-            //         svg.append('path')
-            //             .datum(line_coords)
-            //             .attr("class", "diff-hint")
-            //             .attr("stroke", "red")
-            //             .attr("fill", "none")
-            //             .attr("stroke-width", "2")
-            //             .attr("stroke-opacity", "0.8")
-            //             .attr('d', line);
+            for (const [k, vs] of Object.entries(okP)) {
+                if (!okM[k]) {
+                    continue;
+                }
+                vs.concat(okM[k]).forEach(vidx => {
+                    var line_coords = [solution[k], solution[vidx]].map(to_obj);
+                    svg.append('path')
+                        .datum(line_coords)
+                        .attr("class", "diff-hint")
+                        .attr("stroke", "red")
+                        .attr("fill", "none")
+                        .attr("stroke-width", "2")
+                        .attr("stroke-opacity", "0.8")
+                        .attr('d', line);
+                })
+                var xy = solution[k];
+                svg.append("circle")
+                    .attr("class", "diff-hint")
+                    .style("stroke", "none")
+                    .attr("fill-opacity", "0.7")
+                    .style("fill", "red")
+                    .attr("r", 5)
+                    .attr("cx", d => xScale(xy[0]))
+                    .attr("cy", d => yScale(xy[1]));
+            } 
         });
 
 
