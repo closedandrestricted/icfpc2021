@@ -162,6 +162,8 @@ struct Line {
 struct SolutionCandidate {
     std::vector<int> points;
     double constE = 0.0, optE = 0.0;
+
+    bool operator==(const SolutionCandidate& rhs) const { return points == rhs.points; }
 };
 
 Point massCenter(const Poly& poly) {

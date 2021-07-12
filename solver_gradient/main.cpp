@@ -9,6 +9,7 @@
 
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_string(init, "", "file from initialization");
+DEFINE_bool(corner, false, "file from initialization");
 
 using namespace std;
 
@@ -33,8 +34,10 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
 double e(const Problem& p, const SolutionCandidate& sc) {
     static constexpr double INF = 1000000.0;
     double result = (static_cast<double>(p.violationsBnd(sc) + violationsLenSoft(p, sc))) * INF;
-    if (result) {
-        return result + INF;
+    if (!FLAGS_corner) {
+        if (result) {
+            return result + INF;
+        }
     }
 
     for (size_t h = 0; h < p.hole.size(); ++h) {
