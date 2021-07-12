@@ -13,7 +13,7 @@ using namespace std;
 
 using json = nlohmann::json;
 
-double e(const Problem& p, SolutionCandidate& sc) {
+double e(const Problem& p, const SolutionCandidate& sc) {
     double result = 0;
 
     for (size_t h = 0; h < p.hole.size(); ++h) {
@@ -24,7 +24,7 @@ double e(const Problem& p, SolutionCandidate& sc) {
         result += mind;
     }
 
-    return result;
+    return result + (p.violationsBnd(sc) + p.violationsLen(sc)) * 10000000;
 }
 
 int main(int argc, char* argv[]) {
@@ -56,6 +56,57 @@ int main(int argc, char* argv[]) {
         c.points = init.current.points;
         c.optE = e(p, c);
         cerr << c.optE << endl;
+    }
+    const int numPoints = population[0].points.size();
+
+    std::uniform_int_distribution<int> deltaDistr(-10, 10);
+    std::uniform_int_distribution<int> pointDistr(0, numPoints - 1);
+    std::uniform_int_distribution<int> candDistr(0, NUM_CANDIDATES);
+    std::uniform_int_distribution<int> distr100(0, 100);
+    std::uniform_int_distribution<int> insideDistr(0, p.pointsInside.size() - 1);
+    for (int iGen = 0; iGen < 1000; ++iGen) {
+        for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+            for (size_t j = 0; j < 10; ++j) {
+                int dx = deltaDistr(gen);
+                int dy = deltaDistr(gen);
+                int idxPoint = pointDistr(gen);
+                Point newPoint(p.pointsInside[population[i].points[idxPoint]]);
+                newPoint.x += dx;
+                newPoint.y += dy;
+                auto toNewPoint = p.pointInsideToIndex.find(newPoint);
+                if (toNewPoint != p.pointInsideToIndex.end()) {
+                    SolutionCandidate newC = population[i];
+                    newC.points[idxPoint] = toNewPoint->second;
+                    newC.optE = e(p, newC);
+                    population.emplace_back(newC);
+                }
+            }
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+            auto idx1 = candDistr(gen);
+            auto idx2 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+            for (size_t j = 0; j < numPoints; ++i) {
+                if (distr100(gen) < 20) {
+                    newC.points[j] = population[idx2].points[j];
+                }
+            }
+            newC.optE = e(p, newC);
+            population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+            auto idx1 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+            newC.points[pointDistr(gen)] = insideDistr(gen);
+            newC.optE = e(p, newC);
+            population.emplace_back(newC);
+        }
+
+        sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+        population.erase(population.begin() + NUM_CANDIDATES, population.end());
+        cerr << population.front().optE << " - " << population.back().optE << endl;
     }
 
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");

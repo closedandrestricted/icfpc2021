@@ -14,7 +14,7 @@ using json = nlohmann::json;
 namespace {
 std::random_device r;
 std::mt19937 gen(r());
-}
+}  // namespace
 
 struct Point {
     int x, y;
