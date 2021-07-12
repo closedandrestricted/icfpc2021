@@ -35,20 +35,17 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < c.points.size(); ++i) {
             c.points[i] = idxs[i];
         }
+        Initer init(p, 0.8);
+        init.current.points = c.points;
+        while (!init.step()) {
+        }
+        c.points = init.current.points;
+        p.updateE(c);
+        cerr << c.optE << endl;
     }
-
-    Initer init(p, 0.8);
-    cerr << "points1: " << init.current.points.size() << endl;
-    while (!init.step()) {
-
-    }
-
-    cerr << "points2: " << init.current.points.size() << endl;
 
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
-    f << p.exportSol(init.current.points);
-
-    population[0].points = init.current.points;
+    f << p.exportSol(population[0].points);
 
     /*
     std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
