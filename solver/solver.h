@@ -142,13 +142,20 @@ struct Line {
         a = x.y - y.y;
         b = y.x - x.x;
         c = -a * x.x - b * x.y;
+        norm = sqrt(a*a + b*b);
     }
 
     long long int sdist(const Point& x) const { return a * static_cast<long long int>(x.x) + b * static_cast<long long int>(x.y) + c; }
 
+    Point reflect(const Point& x) const {
+        const auto d = sdist(x);
+        return {x.x - 2 * static_cast<double>(d) * a / norm, x.y - 2 * static_cast<double>(d) * b / norm};
+    }
+
     long long int a;
     long long int b;
     long long int c;
+    double norm;
 };
 
 struct SolutionCandidate {

@@ -22,6 +22,8 @@ void test_isect() {
     assert(isect({20, 0}, {18, -2}, poly));
     assert(isect({20, 0}, {22, -2}, poly));
     assert(isect({20, 0}, {22, 2}, poly));
+
+    // std::cerr << Line({0, 0}, {0, 1}).reflect({1, 0}) << std::endl;
 }
 
 void CommonSolve(unsigned index) {
