@@ -53,11 +53,11 @@
 53,optimal,0
 54,optimal,0
 55,soptimal,0
-56,suboptimal_backtracking,3681
+56,gradient,3528
 57,suboptimal_backtracking,6871
-58,suboptimal_backtracking,5040
+58,gradient,4234
 59,optimal,0
-60,suboptimal_mcmc,2641
+60,gradient,986
 61,suboptimal_mcmc,24827
 62,suboptimal_mcmc,125269
 63,soptimal,0
@@ -100,7 +100,7 @@
 107,suboptimal_mcmc,63605
 108,suboptimal_mcmc,35590
 114,gradient,2475620
-118,staging,26549
+118,staging,26184
 120,suboptimal_mcmc,76139
 121,suboptimal_mcmc,39503
 123,suboptimal_mcmc,17832
