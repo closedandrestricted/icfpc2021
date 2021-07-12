@@ -60,6 +60,12 @@ function isect(ua, ub, poly) {
     return false;
 }
 
+d3.selection.prototype.moveToFront = function () {
+    return this.each(function () {
+        this.parentNode.appendChild(this);
+    });
+};
+
 function refresh_svg(d, problem_id) {
     const DIM = 700;
     const AREA = DIM * DIM;
@@ -116,9 +122,40 @@ function refresh_svg(d, problem_id) {
 
     svg.append('path')
         .datum(figdata)
-        .attr("stroke", "purple")
+        .attr("stroke", "black")
         .attr("fill", "lightgray")
         .attr('d', line)
+
+    svg.selectAll("circle")
+        .data(problem.hole)
+        .enter()
+        .append("circle")
+        .style("stroke", "none")
+        .style("fill", "black")
+        .attr("r", 2)
+        .attr("cx", d => xScale(d[0]))
+        .attr("cy", d => yScale(d[1]));
+
+    if (problem.bonuses) {
+        problem.bonuses.forEach((bonus) => {
+            var color = "lightblue";
+            if (bonus.bonus == "GLOBALIST") {
+                color = "yellow";
+            } else if (bonus.bonus == "WALLHACK") {
+                color = "orange";
+            } else if (bonus.bonus == "BREAK_A_LEG") {
+                color = "blue";
+            }
+            var x = bonus.position[0];
+            var y = bonus.position[1];
+            svg.append("circle")
+                .style("stroke", "black")
+                .style("fill", color)
+                .attr("r", d => xScale(1) - xScale(0))
+                .attr("cx", d => xScale(x))
+                .attr("cy", d => yScale(y));
+        })
+    }
 
     function dist2(v1, v2) {
         return (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2
@@ -140,7 +177,7 @@ function refresh_svg(d, problem_id) {
                 if (Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0) > (problem.epsilon + 1e-12) / 1000000.0) {
                     actualColor = "red";
                 } else if (isect(newV1, newV2, problem.hole)) {
-                    actualColor = "yellow";
+                    actualColor = "orange";
                 }
             }
             svg.append('path')
@@ -151,6 +188,7 @@ function refresh_svg(d, problem_id) {
                 .attr("stroke-opacity", "0.8")
                 .attr('d', line);
         });
+        svg.selectAll("." + cls + "-v").moveToFront();
     }
 
 
@@ -239,6 +277,7 @@ function refresh_svg(d, problem_id) {
             .join("circle")
             .attr("class", "solution-v")
             .style("stroke", "none")
+            .attr("fill-opacity", "0.7")
             .style("fill", "green")
             .attr("r", 3)
             .attr("cx", d => xScale(d[0]))
