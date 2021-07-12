@@ -326,6 +326,9 @@ function refresh_svg(d, problem_id) {
                 if (!okM[k]) {
                     continue;
                 }
+                if (okM[k].length == 1 && okP[k].length == 1 && okM[k][0] == okP[k][0]) {
+                    return
+                }
                 vs.concat(okM[k]).forEach(vidx => {
                     var line_coords = [solution[k], solution[vidx]].map(to_obj);
                     svg.append('path')
@@ -346,7 +349,7 @@ function refresh_svg(d, problem_id) {
                     .attr("r", 5)
                     .attr("cx", d => xScale(xy[0]))
                     .attr("cy", d => yScale(xy[1]));
-            } 
+            }
         });
 
 
