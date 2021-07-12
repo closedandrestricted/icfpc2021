@@ -45,6 +45,14 @@ int main(int argc, char* argv[]) {
                     }
                 }
 
+                if (p.violationsBnd(sc)) {
+                    return false;
+                }
+
+                if (p.violationsLen(sc)) {
+                    return false;
+                }
+
                 cerr << "found " << dx << " " << dy << endl;
                 std::ofstream f("../solutions/move/" + std::to_string(FLAGS_test_idx) + ".json");
                 f << p.exportSol(sc.points);
