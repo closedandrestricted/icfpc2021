@@ -60,6 +60,12 @@ function isect(ua, ub, poly) {
     return false;
 }
 
+d3.selection.prototype.moveToFront = function () {
+    return this.each(function () {
+        this.parentNode.appendChild(this);
+    });
+};
+
 function refresh_svg(d, problem_id) {
     const DIM = 700;
     const AREA = DIM * DIM;
@@ -116,7 +122,7 @@ function refresh_svg(d, problem_id) {
 
     svg.append('path')
         .datum(figdata)
-        .attr("stroke", "purple")
+        .attr("stroke", "black")
         .attr("fill", "lightgray")
         .attr('d', line)
 
@@ -140,7 +146,7 @@ function refresh_svg(d, problem_id) {
                 if (Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0) > (problem.epsilon + 1e-12) / 1000000.0) {
                     actualColor = "red";
                 } else if (isect(newV1, newV2, problem.hole)) {
-                    actualColor = "yellow";
+                    actualColor = "orange";
                 }
             }
             svg.append('path')
@@ -151,6 +157,7 @@ function refresh_svg(d, problem_id) {
                 .attr("stroke-opacity", "0.8")
                 .attr('d', line);
         });
+        svg.selectAll("." + cls + "-v").moveToFront();
     }
 
 
@@ -239,6 +246,7 @@ function refresh_svg(d, problem_id) {
             .join("circle")
             .attr("class", "solution-v")
             .style("stroke", "none")
+            .attr("fill-opacity", "0.7")
             .style("fill", "green")
             .attr("r", 5)
             .attr("cx", d => xScale(d[0]))
