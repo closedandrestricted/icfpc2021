@@ -33,6 +33,10 @@ struct Point {
     bool operator==(const Point& o) const {
         return x == o.x && y == o.y;
     }
+
+    int sqrabs() {
+        return x * x + y * y;
+    }
 };
 
 inline std::ostream& operator<<(std::ostream& o, const Point& p) {
@@ -550,31 +554,32 @@ struct GibbsChain {
 
 struct Initer {
     Problem& problem;
-    double invT;
     SolutionCandidate current;
     int step_i = 0;
     std::vector<int> holePoints;
 
-    Initer(Problem& p, double invT): problem(p), invT(invT) {
+    Initer(Problem& p): problem(p) {
         for (int i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
             if (problem.pointsInsideIsCorner[i]) {
                 holePoints.push_back(i);
             }
         }
-        for (int i = 0; i < p.originalPoints.size(); i++) {
-            bool ok = false;
-            for (int j = 0; j < p.pointsInside.size(); j++) {
-                if (p.originalPoints[i] == p.pointsInside[j]) {
-                    current.points.push_back(j);
-                    ok = true;
-                    break;
+        step_i = 0;
+    }
+
+    void set_initial_candidate(std::vector<Point> candidate) {
+        for (int i = 0; i < candidate.size(); i++) {
+            int min_j = -1;
+            int min_dist = 0;
+            for (int j = 0; j < problem.pointsInside.size(); j++) {
+                int dist = (candidate[i] - problem.pointsInside[j]).sqrabs();
+                if (min_j == -1 || dist < min_dist) {
+                    min_j = j;
+                    min_dist = dist;
                 }
             }
-            if (!ok) {
-                current.points.push_back(holePoints[std::uniform_int_distribution()(gen) % holePoints.size()]);
-            }
+            current.points.push_back(min_j);
         }
-        step_i = 0;
     }
 
     int violations_bnd() {
