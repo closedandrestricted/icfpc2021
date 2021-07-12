@@ -308,6 +308,14 @@ struct Problem {
         return sol;
     }
 
+    json exportPoly(const Poly& ps) {
+        json sol;
+        for (auto p : ps) {
+            sol["vertices"].push_back({p.x, p.y});
+        }
+        return sol;
+    }
+
     void rec(std::vector<int>& ps, int& minOpt) {
         size_t bestAt = ps.size(), bestAtCnt = pointsInside.size() + 1;
         for (size_t at = 0; at < ps.size(); ++at) {
