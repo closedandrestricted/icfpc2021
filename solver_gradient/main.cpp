@@ -171,6 +171,9 @@ int main(int argc, char* argv[]) {
         if (population[0].optE < bestE) {
             bestE = population[0].optE;
             save();
+            if (!bestE) {
+                return 0;
+            }
         }
     }
 
