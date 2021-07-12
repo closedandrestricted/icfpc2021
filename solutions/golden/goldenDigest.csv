@@ -3,7 +3,7 @@
 3,suboptimal_mcmc,333
 4,suboptimal_mcmc,0
 5,gradient,170
-6,gradient,6215
+6,gradient,6212
 7,gradient,257
 8,gradient,1040
 9,gradient,2365
@@ -87,7 +87,7 @@
 87,suboptimal_mcmc,53279
 88,gradient,11860
 89,suboptimal_mcmc,86706
-90,gradient,2900441
+90,gradient,2893879
 91,gradient,23739
 92,gradient,60956
 93,gradient,0
@@ -115,6 +115,7 @@
 116,gradient,28756
 117,gradient,40685
 118,gradient,23711
+119,move,55273
 120,gradient,67633
 121,suboptimal_mcmc,39503
 123,gradient,17569
