@@ -65,7 +65,7 @@
 65,soptimal,0
 66,suboptimal_mcmc,10155
 67,optimal,0
-68,gradient,1834471
+68,optimal_with_bonus,0
 69,gradient,1976
 70,soptimal,0
 71,gradient,34955
