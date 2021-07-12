@@ -6,7 +6,7 @@
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_bool(webedit_result, false, "Start from webedit result");
 DEFINE_bool(alex, false, "Alex mode");
-
+DEFINE_string(init, "", "file from initialization");
 
 void test_isect() {
     std::vector<Point> poly = {{0, 0}, {-2, -4}, {20, 0}, {-2, 4}};
@@ -60,9 +60,8 @@ int main(int argc, char** argv) {
 
         Initer z(p);
 
-        if (FLAGS_webedit_result) {
-            auto sol_file = "solutions/webedit/" + std::to_string(FLAGS_test_idx) + ".json";
-            std::ifstream is(sol_file);
+        auto readIniterFromFile = [&](const std::string& file) {
+            std::ifstream is(file);
             json webedit_solution;
             is >> webedit_solution;
             std::vector<Point> initial;
@@ -71,7 +70,15 @@ int main(int argc, char** argv) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
             z.set_initial_candidate(initial);
-        } else {
+        };
+
+        if (FLAGS_webedit_result) {
+            auto sol_file = "solutions/webedit/" + std::to_string(FLAGS_test_idx) + ".json";
+            readIniterFromFile(sol_file);
+        } else if (FLAGS_init.size()) {
+            readIniterFromFile(FLAGS_init);
+        }
+        else {
             z.set_initial_candidate(p.originalPoints);
             while (!z.step());
         }
