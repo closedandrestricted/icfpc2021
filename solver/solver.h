@@ -149,7 +149,8 @@ struct Line {
 
     Point reflect(const Point& x) const {
         const auto d = sdist(x);
-        return {x.x - 2 * static_cast<double>(d) * a / norm, x.y - 2 * static_cast<double>(d) * b / norm};
+        return {static_cast<int>(x.x - 2 * static_cast<double>(d) * a / norm),
+                static_cast<int>(x.y - 2 * static_cast<double>(d) * b / norm)};
     }
 
     long long int a;

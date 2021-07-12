@@ -220,7 +220,17 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+        sort(population.begin(), population.end(), [](const auto& a, const auto& b) {
+            if (a.optE != b.optE) {
+                return a.optE < b.optE;
+            }
+            return a.points < b.points;
+        });
+        auto toUnique = unique(population.begin(), population.end());
+        if (toUnique < population.begin() + NUM_CANDIDATES) {
+            toUnique = population.begin() + NUM_CANDIDATES;
+        }
+        population.erase(toUnique, population.end());
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
              << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
