@@ -4,6 +4,7 @@
 #include <fstream>
 #include <future>
 #include <random>
+#include <map>
 
 #include <boost/dynamic_bitset.hpp>
 #include <nlohmann/json.hpp>
@@ -34,8 +35,15 @@ struct Point {
         return x == o.x && y == o.y;
     }
 
-    int sqrabs() {
+    int sqrabs() const {
         return x * x + y * y;
+    }
+
+    bool operator<(const Point& p) const {
+        if (x != p.x) {
+            return x < p.x;
+        }
+        return y < p.y;
     }
 };
 
@@ -167,6 +175,7 @@ struct Problem {
     }
 
     std::vector<Point> pointsInside;
+    std::map<Point, int> pointInsideToIndex;
     std::vector<uint8_t> pointsInsideIsCorner;
     std::vector<boost::dynamic_bitset<>> visibility;
 
@@ -202,6 +211,7 @@ struct Problem {
             for (int y = miny; y <= maxy; ++y) {
                 Point p(x, y);
                 if (inside(p, hole)) {
+                    pointInsideToIndex.emplace(p, pointsInside.size());
                     pointsInside.push_back(p);
                     pointsInsideIsCorner.push_back(std::find(hole.begin(), hole.end(), p) != hole.end());
                 }
