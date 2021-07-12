@@ -89,6 +89,7 @@ int main(int argc, char** argv) {
             std::ofstream f("solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json");
             f << p.exportSol(z.current.points);
         }
+        std::cout << "INITIALIZED" << std::endl;
         // exit(0);
 
         SolutionCandidate sol0 = z.current;
