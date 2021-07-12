@@ -72,8 +72,8 @@ int main(int argc, char* argv[]) {
 
     if (FLAGS_test_idx == 122) {
         swapXY();
-        shiftX(-40);
-        shiftY(-40);
+        // shiftX(-40);
+        // shiftY(-40);
     }
 
     if (FLAGS_test_idx == 132) {
