@@ -137,6 +137,20 @@ inline bool isect(Point ua, Point ub, Poly poly) {
     return false;
 }
 
+struct Line {
+    Line(const Point& x, const Point& y) {
+        a = x.y - y.y;
+        b = y.x - x.x;
+        c = -a * x.x - b * x.y;
+    }
+
+    long long int sdist(const Point& x) const { return a * static_cast<long long int>(x.x) + b * static_cast<long long int>(x.y) + c; }
+
+    long long int a;
+    long long int b;
+    long long int c;
+};
+
 struct SolutionCandidate {
     std::vector<int> points;
     double constE = 0.0, optE = 0.0;
