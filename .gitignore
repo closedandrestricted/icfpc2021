@@ -32,3 +32,4 @@
 *.app
 
 bazel-*
+solutions/staging/*.json
