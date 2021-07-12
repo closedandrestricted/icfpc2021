@@ -118,6 +118,28 @@ int main(int argc, char* argv[]) {
         shake(deltaDistr10);
         shake(deltaDistr3);
 
+        auto move = [&](int dx, int dy) {
+            for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+                SolutionCandidate newC = population[i];
+                for (size_t j = 0; j < numPoints; ++j) {
+                    Point newPoint(p.pointsInside[population[i].points[j]]);
+                    newPoint.x += dx;
+                    newPoint.y += dy;
+                    auto toNewPoint = p.pointInsideToIndex.find(newPoint);
+                    if (toNewPoint != p.pointInsideToIndex.end()) {
+                        newC.points[j] = toNewPoint->second;
+                    }
+                }
+                newC.optE = e(p, newC);
+                population.emplace_back(newC);
+            }
+        };
+
+        move(-1, 0);
+        move(1, 0);
+        move(0, -1);
+        move(0, 1);
+
         for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
             auto idx1 = candDistr(gen);
             auto idx2 = candDistr(gen);
