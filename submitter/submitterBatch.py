@@ -40,6 +40,9 @@ if os.path.exists(STATUS_FILENAME):
         status = json.load(fIn)
 
 for problem in range(args.begin, args.end + 1):
+    if problem in [10, 58, 60]:
+        continue
+
     problemFilename = "../problems/%d.json" % problem
     filename = "%s/%d.json" % (args.path, problem)
     if os.path.exists(filename):
