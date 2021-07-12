@@ -24,8 +24,9 @@ for idx, row in scores.iterrows():
             return 0
         return int(math.ceil(a * b))
 
-    gap = problem_score(row['best_score']) - problem_score(row['score'])
-    print(int(row['problem']), gap)
+    now = problem_score(row['score'])
+    gap = problem_score(row['best_score']) - now
+    print(int(row['problem']), gap, now)
     total_gap += gap
 
 print('TOTAL = ', total_gap)
