@@ -60,7 +60,7 @@ function refresh_svg(d, problem_id) {
 
     svg.append('path')
         .datum(figdata)
-        .attr("stroke", "red")
+        .attr("stroke", "purple")
         .attr("fill", "lightgray")
         .attr('d', line)
 
@@ -96,36 +96,98 @@ function refresh_svg(d, problem_id) {
 
 
     plot_figure(figure.vertices, "initial", "blue");
+    var solution = undefined;
 
-    var solution = clone(figure.vertices);
+    function set_solution(sol) {
+        solution = clone(sol);
+        solution.forEach((d, i) => d.idx = i);
+    }
+    set_solution(figure.vertices);
 
-    plot_figure(solution, "solution", "green", true);
-
-
-    var drag = d3.drag().subject(this)
-        .on('drag', function (evt, d) {
-            var newX = Math.round(xScale.invert(evt.x));
-            var newY = Math.round(yScale.invert(evt.y));
-            if (newX != d[0] || newY != d[1]) {
-                d3.select(this).attr("cx", xScale(newX));
-                d3.select(this).attr("cy", yScale(newY));
-                d[0] = newX;
-                d[1] = newY;
-                plot_figure(solution, "solution", "green", true);
-            }
-        });
-
-    svg.selectAll("solution-v")
-        .data(solution)
-        .join("circle")
-        .style("stroke", "none")
-        .style("fill", "green")
-        .attr("r", 5)
-        .attr("cx", d => xScale(d[0]))
-        .attr("cy", d => yScale(d[1]))
-        .call(drag);
+    function snap_to_corners_set() {
+        return d3.select("#check_snap").property("checked");
+    }
 
 
+    function draw_solution() {
+
+        plot_figure(solution, "solution", "green", true);
+
+        var drag = d3.drag().subject(this)
+            .on('start', function (evt, d) {
+                var circles = [];
+                figure.edges.forEach(uv => {
+                    var v = 0;
+                    if (uv[0] == d.idx) {
+                        v = uv[1];
+                    } else if (uv[1] == d.idx) {
+                        v = uv[0];
+                    } else {
+                        return;
+                    }
+                    const oldV1 = figure.vertices[uv[0]];
+                    const oldV2 = figure.vertices[uv[1]];
+                    const r = Math.sqrt(dist2(oldV1, oldV2));
+                    circles.push({ "x": solution[v][0], "y": solution[v][1], "r": r });
+                })
+                // console.log(circles);
+                svg.selectAll(".circle-hint")
+                    .data(circles)
+                    .enter()
+                    .append("circle")
+                    .attr("class", "circle-hint")
+                    .style("stroke", "black")
+                    .style("fill", "none")
+                    .attr("r", d => xScale(d.x + d.r) - xScale(d.x))
+                    .attr("cx", d => xScale(d.x))
+                    .attr("cy", d => yScale(d.y));
+            })
+            .on('end', function (evt, d) {
+                svg.selectAll(".circle-hint").remove();
+            })
+            .on('drag', function (evt, d) {
+                var newX = Math.round(xScale.invert(evt.x));
+                var newY = Math.round(yScale.invert(evt.y));
+                if (newX != d[0] || newY != d[1]) {
+                    if (snap_to_corners_set()) {
+                        var nearest = undefined;
+                        var best_dist = undefined;
+                        problem.hole.forEach((d) => {
+                            var dist = dist2([newX, newY], d);
+                            if (best_dist == undefined || dist < best_dist) {
+                                best_dist = dist;
+                                nearest = d;
+                            }
+                        });
+                        if (best_dist < 6) {
+                            newX = nearest[0];
+                            newY = nearest[1];
+                        }
+                    }
+                    if (newY < ymin || newY > ymax || newX < xmin || newX > xmax) {
+                        return;
+                    }
+                    d3.select(this).attr("cx", xScale(newX));
+                    d3.select(this).attr("cy", yScale(newY));
+                    d[0] = newX;
+                    d[1] = newY;
+                    plot_figure(solution, "solution", "green", true);
+                }
+            });
+
+        svg.selectAll(".solution-v")
+            .data(solution)
+            .join("circle")
+            .attr("class", "solution-v")
+            .style("stroke", "none")
+            .style("fill", "green")
+            .attr("r", 5)
+            .attr("cx", d => xScale(d[0]))
+            .attr("cy", d => yScale(d[1]))
+            .call(drag);
+    }
+
+    draw_solution();
 
     d3.select('#export').on('click', function (e) {
         e.stopPropagation();
@@ -142,6 +204,32 @@ function refresh_svg(d, problem_id) {
             }
         });
     });
+
+    d3.select('#solution_load').on('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var kind = d3.select("#solution_folder").node().value
+        d3.json("/solution?id=" + problem_id + "&kind=" + kind).then(function (data, error) {
+            if (error) {
+                d3.select("#export_response").text("Error!")
+            } else {
+                data.vertices.forEach((d, i) => {
+                    solution[i][0] = d[0];
+                    solution[i][1] = d[1];
+                });
+                draw_solution();
+            }
+        });
+    });
+
+    d3.select("#check_orig").on("change", function () {
+        if (d3.select(this).property("checked")) {
+            plot_figure(figure.vertices, "initial", "blue");
+            draw_solution();
+        } else {
+            svg.selectAll(".initial-e").remove()
+        }
+    })
 }
 
 
