@@ -94,6 +94,7 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> distr100(0, 100);
     std::uniform_int_distribution<int> insideDistr(0, p.pointsInside.size() - 1);
     std::uniform_int_distribution<int> deltaDistr3(-3, 3);
+    std::uniform_int_distribution<int> edgeDistr(0, p.edgeU.size() - 1);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
@@ -162,6 +163,25 @@ int main(int argc, char* argv[]) {
             newC.points[pointDistr(gen)] = insideDistr(gen);
             newC.optE = e(p, newC);
             population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES*10; ++i) {
+            auto idx1 = edgeDistr(gen);
+            Line l(p.pointsInside[p.edgeU[idx1]], p.pointsInside[p.edgeV[idx1]]);
+            auto idx2 = candDistr(gen);
+            SolutionCandidate newC = population[idx2];
+            for (size_t j = 0; j < numPoints; ++j) {
+                const Point oldPoint = p.pointsInside[newC.points[j]];
+                if (l.sdist(oldPoint) > 0) {
+                    Point newPoint(l.reflect(oldPoint));
+                    auto toNewPoint = p.pointInsideToIndex.find(newPoint);
+                    if (toNewPoint != p.pointInsideToIndex.end()) {
+                        newC.points[j] = toNewPoint->second;
+                    } else {
+                        newC.points[j] = population[idx2].points[j];
+                    }
+                }
+            }
         }
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
