@@ -4,6 +4,62 @@ function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
+function sub(p1, p2) {
+    return [p1[0] - p2[0], p1[1] - p2[1]];
+}
+
+
+function vmul(v1, v2) {
+    return v1[0] * v2[1] - v1[1] * v2[0]
+}
+
+function smul(v1, v2) {
+    return v1[0] * v2[0] + v1[1] * v2[1]
+}
+
+function isect2(ua, ub, va, vb) {
+    return vmul(sub(ub, ua), sub(va, ua)) * vmul(sub(ub, ua), sub(vb, ua)) < 0 && vmul(sub(vb, va), sub(ua, va)) * vmul(sub(vb, va), sub(ub, va)) < 0;
+}
+
+function between(a, mid, b) {
+    var v1 = sub(a, mid);
+    var v2 = sub(b, mid);
+    return vmul(v1, v2) == 0 && smul(v1, v2) <= 0;
+}
+
+function isect(ua, ub, poly) {
+    for (var i = 0; i < poly.length; ++i) {
+        var a = poly[i];
+        var b = poly[i + 1 == poly.length ? 0 : i + 1];
+        if (between(ua, b, ub)) {
+            var c = poly[i + 2 >= poly.length ? i + 2 - poly.length : i + 2];
+            var interior = function (p) {
+                if (vmul(sub(c, b), sub(a, b)) >= 0) {
+                    return vmul(sub(c, b), sub(p, b)) >= 0 && vmul(sub(p, b), sub(a, b)) >= 0;
+                } else {
+                    return vmul(sub(c, b), sub(p, b)) >= 0 || vmul(sub(p, b), sub(a, b)) >= 0;
+                }
+            };
+            if (!interior(ua) || !interior(ub)) {
+                return true;
+            }
+        } else if (between(ua, a, ub)) {
+            continue;
+        } else if (between(a, ua, b)) {
+            if (vmul(sub(a, b), sub(ub, b)) >= 0) {
+                return true;
+            }
+        } else if (between(a, ub, b)) {
+            if (vmul(sub(a, b), sub(ua, b)) >= 0) {
+                return true;
+            }
+        } else if (isect2(ua, ub, a, b)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function refresh_svg(d, problem_id) {
     const DIM = 700;
     const AREA = DIM * DIM;
@@ -67,14 +123,14 @@ function refresh_svg(d, problem_id) {
     function dist2(v1, v2) {
         return (v1[0] - v2[0]) ** 2 + (v1[1] - v2[1]) ** 2
     }
-
     function plot_figure(vertices, cls, color, mark_bad) {
         svg.selectAll("." + cls + "-e").remove()
         function get_edge(uv) {
             return [vertices[uv[0]], vertices[uv[1]]]
         }
         figure.edges.forEach(uv => {
-            var edge = get_edge(uv).map(to_obj);
+            var edge_as_array = get_edge(uv);
+            var edge = edge_as_array.map(to_obj);
             var actualColor = color;
             if (mark_bad) {
                 const newV1 = vertices[uv[0]];
@@ -83,6 +139,8 @@ function refresh_svg(d, problem_id) {
                 const oldV2 = figure.vertices[uv[1]];
                 if (Math.abs(1.0 * dist2(newV1, newV2) / dist2(oldV1, oldV2) - 1.0) > (problem.epsilon + 1e-12) / 1000000.0) {
                     actualColor = "red";
+                } else if (isect(newV1, newV2, problem.hole)) {
+                    actualColor = "yellow";
                 }
             }
             svg.append('path')
@@ -90,6 +148,7 @@ function refresh_svg(d, problem_id) {
                 .attr("class", cls + "-e")
                 .attr("stroke", actualColor)
                 .attr("fill", "none")
+                .attr("stroke-opacity", "0.8")
                 .attr('d', line);
         });
     }
