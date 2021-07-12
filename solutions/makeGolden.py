@@ -52,6 +52,10 @@ class ProblemState:
 
 improvements = 0
 for problem in range(args.begin, args.end + 1):
+    # with bonuses
+    if problem in [10, 58, 60]:
+        continue
+
     problemFilename = "../problems/%d.json" % problem
     
     state = ProblemState(problemFilename)
