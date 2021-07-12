@@ -3,11 +3,11 @@
 3,suboptimal_mcmc,333
 4,suboptimal_mcmc,0
 5,gradient,170
-6,gradient,6220
-7,feasible,8089
-8,suboptimal_mcmc,1120
-9,feasible,6321
-10,suboptimal_mcmc,200
+6,gradient,6215
+7,gradient,257
+8,gradient,1040
+9,gradient,2365
+10,gradient,185
 11,feasible,0
 12,manual,0
 13,manual,0
