@@ -77,10 +77,9 @@ for problem in range(args.begin, args.end + 1):
         print("%s for %d = %d" % (state.best, problem, state.bestScore))
         print("%d,%s,%d" % (problem, state.best, state.bestScore), file=digest)
         if state.bestScore < currentGoldenScore:
-            improvements += 1
-        if state.bestScore <= currentGoldenScore:
             shutil.copyfile(state.bestFilename, goldenFilename)
-        else:
+            improvements += 1
+        elif state.bestScore > currentGoldenScore:
             print("!Current golden result is better for %d" % problem)
 
 print("Total improvements: %d" % improvements)
