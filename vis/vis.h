@@ -70,10 +70,11 @@ struct Vis {
     std::vector<Point> points;
     std::vector<double> tx, ty, holex, holey;
     Problem p;
+    int snapFrom = 0, snapTo = 0;
 
     Vis() {
         if (FLAGS_solution_file == "") {
-            FLAGS_solution_file = "solutions/staging/" + std::to_string(FLAGS_test_idx) + ".json";
+            FLAGS_solution_file = "solutions/manual_staging/" + std::to_string(FLAGS_test_idx) + ".json";
         }
         auto fn = "problems/" + std::to_string(FLAGS_test_idx) + ".json";
         p.parseJson(fn);
@@ -120,7 +121,14 @@ struct Vis {
     void loop() {
         save();
         bool always_show = ImGui::IsKeyDown(ImGui::GetKeyIndex(ImGuiKey_Space));
+
+        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBringToFrontOnFocus);
         if (ImPlot::BeginPlot("", nullptr, nullptr, ImVec2(-1, -1), ImPlotFlags_Equal | ImPlotFlags_Crosshairs)) {
+            ImPlot::PlotLine("hole", &holex[0], &holey[0], holex.size());
+            for (size_t i = 0; i <= p.hole.size(); ++i) {
+                double x = p.hole[i].x, y = p.hole[i].y;
+                Vertex(("H(" + std::to_string(i) + ")").c_str(), &x, &y, false, true, always_show, ImVec4(0.0, 0.0, 1.0, 0.5), 3.0);
+            }
             for (size_t e = 0; e < p.edgeU.size(); ++e) {
                 int u = p.edgeU[e], v = p.edgeV[e];
                 auto col = ImVec4(0.0, 1.0, 0.0, 0.5);
@@ -144,12 +152,18 @@ struct Vis {
                     points[i].y = int(ty[i]);
                 }
             }
-            ImPlot::PlotLine("hole", &holex[0], &holey[0], holex.size());
-            for (size_t i = 0; i <= p.hole.size(); ++i) {
-                double x = p.hole[i].x, y = p.hole[i].y;
-                Vertex(("H(" + std::to_string(i) + ")").c_str(), &x, &y, false, true, always_show, ImVec4(0.0, 0.0, 1.0, 0.5), 3.0);
-            }
             ImPlot::EndPlot();
+        }
+        ImGui::End();
+        ImGui::Begin("Snap", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::InputInt("A", &snapFrom);
+        ImGui::InputInt("B", &snapTo);
+        if (ImGui::Button("do")) {
+            if (snapFrom < points.size() && snapTo < p.hole.size()) {
+                points[snapFrom] = p.hole[snapTo];
+                tx[snapFrom] = points[snapFrom].x;
+                ty[snapFrom] = points[snapFrom].y;
+            }
         }
         ImGui::End();
     }
