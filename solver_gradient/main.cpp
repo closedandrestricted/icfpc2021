@@ -120,6 +120,8 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> xDistr(p.minx, p.maxx);
     std::uniform_int_distribution<int> yDistr(p.miny, p.maxy);
     std::uniform_int_distribution<int> cornersDistr(0, p.corners.size() - 1);
+    std::uniform_int_distribution<int> distrRadius(5, 100);
+    std::uniform_int_distribution<int> distr10(1, 10);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
@@ -198,6 +200,33 @@ int main(int argc, char* argv[]) {
             newC.optE = e(p, newC);
             population.emplace_back(newC);
         }
+
+        auto groupMove = [&](int rad, int dx, int dy) {
+            for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+                auto idx1 = candDistr(gen);
+                SolutionCandidate newC = population[idx1];
+                auto idx2 = pointDistr(gen);
+                const Point center = p.pointsInside[idx2];
+                for (auto& point : newC.points) {
+                    auto d2 = dist2(center, p.pointsInside[point]);
+                    if (d2 < rad * rad) {
+                        Point np = p.pointsInside[point];
+                        np.x += dx;
+                        np.y += dy;
+                        auto toNewPoint = p.pointInsideToIndex.find(np);
+                        if (toNewPoint != p.pointInsideToIndex.end()) {
+                            point = toNewPoint->second;
+                        }
+                    }
+                }
+                newC.optE = e(p, newC);
+                population.emplace_back(newC);
+            }
+        };
+        groupMove(distrRadius(gen), -distr10(gen), 0);
+        groupMove(distrRadius(gen), distr10(gen), 0);
+        groupMove(distrRadius(gen), 0, -distr10(gen));
+        groupMove(distrRadius(gen), 0, distr10(gen));
 
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = edgeDistr(gen);
