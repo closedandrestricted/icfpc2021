@@ -66,6 +66,16 @@ inline int dist2(Point a, Point b) {
     return smul(a - b, a - b);
 }
 
+template<typename T>
+T sqr(T x) {
+    return x*x;
+}
+
+template<typename TPoint>
+inline double dist(TPoint a, TPoint b) {
+    return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
+}
+
 inline int signum(int a) {
     return a > 0 ? 1 : a == 0 ? 0 : -1;
 }

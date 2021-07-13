@@ -50,7 +50,140 @@ double e(const Problem& p, const SolutionCandidate& sc) {
     return result;
 }
 
+struct PhysicalWorld {
+    struct Ball {
+        double x;
+        double y;
+        double vx;
+        double vy;
+        double fx;
+        double fy;
+
+        Ball() {
+            x = 0;
+            y = 0;
+            vx = 0;
+            vy = 0;
+            fx = 0;
+            fy = 0;
+        }
+
+        void step(double dt) {
+            vx += fx*dt;
+            vy += fy*dt;
+            x += vx*dt;
+            y += vy*dt;
+        }
+
+        Point toPoint() const {
+            return Point(x, y);
+        }
+    };
+
+    struct Spring {
+        int idx1;
+        int idx2;
+        double length0;
+    };
+
+    const Problem& p;
+    vector<Ball> balls;
+    vector<Spring> springs;
+
+    PhysicalWorld(const Problem& p) : p(p) {
+        balls.resize(p.originalPoints.size());
+        for (size_t i = 0; i < balls.size(); ++i) {
+            balls[i].x = p.originalPoints[i].x;
+            balls[i].y = p.originalPoints[i].y;
+        }
+        springs.resize(p.edgeU.size());
+        for (size_t i = 0; i < springs.size(); ++i) {
+            auto& spring = springs[i];
+            spring.idx1 = p.edgeU[i];
+            spring.idx2 = p.edgeV[i];
+            spring.length0 = dist(p.originalPoints[spring.idx1], p.originalPoints[spring.idx2]);
+        }
+    }
+
+    void initFromCandidate(const SolutionCandidate& sc) {
+        for (size_t i = 0; i < balls.size(); ++i) {
+            auto& ball = balls[i];
+            const auto& pt = p.pointsInside[sc.points[i]];
+            ball.x = pt.x;
+            ball.y = pt.y;
+            ball.vx = 0;
+            ball.vy = 0;
+            ball.fx = 0;
+            ball.fy = 0;
+        }
+    }
+
+    void updateCandidate(SolutionCandidate& sc) {
+        for (size_t i = 0; i < balls.size(); ++i) {
+            const auto& ball = balls[i];
+            auto toPoint = p.pointInsideToIndex.find(ball.toPoint());
+            if (toPoint != p.pointInsideToIndex.end()) {
+                sc.points[i] = toPoint->second;
+            }
+        }
+    }
+
+    void step(double dt) {
+        for (auto& b: balls) {
+            b.fx = 0;
+            b.fy = 0;
+        }
+        for (size_t i = 0; i < springs.size(); ++i) {
+            const auto& spring = springs[i];
+            auto& ball1 = balls[spring.idx1];
+            auto& ball2 = balls[spring.idx2];
+            const double length = dist(ball1, ball2);
+            const double force = length - spring.length0;
+            const double px = (ball1.x - ball2.x) / length;
+            const double py = (ball1.y - ball2.y) / length;
+            ball1.fx += -px * force;
+            ball1.fy += -py * force;
+            ball2.fx +=  px * force;
+            ball2.fy +=  py * force;
+        }
+        for (auto& b: balls) {
+            b.step(dt);
+        }
+    }
+
+    void friction(double dt) {
+        double mul = exp(-dt);
+        for (auto& b: balls) {
+            b.vx *= mul;
+            b.vy *= mul;
+        }
+    }
+};
+
+ostream& operator<<(ostream& s, const PhysicalWorld::Ball& b) {
+    s << "(" << b.x << ", " << b.y << ")";
+    return s;
+}
+
+void testPsysics() {
+    Problem p;
+    p.originalPoints = {{-1, 0}, {1, 0}};
+    p.edgeU = {0};
+    p.edgeV = {1};
+    PhysicalWorld pw(p);
+    pw.balls[0].x = -2;
+    pw.balls[1].x = 2;
+    for (size_t i = 0; i < 100; ++i) {
+        pw.step(0.1);
+        cout << pw.balls[0] << " " << pw.balls[1] << endl;
+        pw.friction(0.1);
+    }
+}
+
 int main(int argc, char* argv[]) {
+    // testPsysics();
+    // return 0;
+
     gflags::ParseCommandLineFlags(&argc, &argv, true);
     Problem p;
     std::cerr << FLAGS_test_idx << " ";
@@ -107,6 +240,8 @@ int main(int argc, char* argv[]) {
         std::ofstream f("../solutions/gradient/" + std::to_string(FLAGS_test_idx) + ".json");
         f << p.exportSol(population[0].points);
     };
+
+    PhysicalWorld pw(p);
 
     double bestE = 1e100;
     const int numPoints = population[0].points.size();
@@ -260,6 +395,28 @@ int main(int argc, char* argv[]) {
                 population.emplace_back(newC);
             }
         }
+
+        auto addSpringSimulation = [&](double dt, int steps) {
+            for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+                auto idx3 = candDistr(gen);
+                SolutionCandidate newC = population[idx3];
+                pw.initFromCandidate(newC);
+
+                for (size_t j = 0; j < steps; ++j) {
+                    pw.step(dt);
+                }
+
+                pw.updateCandidate(newC);
+
+                newC.optE = e(p, newC);
+                population.emplace_back(newC);
+            }
+        };
+
+        addSpringSimulation(0.01, 5);
+        addSpringSimulation(0.1, 5);
+        addSpringSimulation(1, 5);
+        addSpringSimulation(10, 5);
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) {
             if (a.optE != b.optE) {
