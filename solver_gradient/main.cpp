@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
             for (size_t i = 0; i < initial.size(); ++i) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
-            init.set_initial_candidate(initial);
+            init.setInitialCandidate(initial);
         } else {
             vector<int> idxs(p.pointsInside.size());
             for (int i = 0; i < p.pointsInside.size(); ++i) {
