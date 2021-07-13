@@ -84,9 +84,9 @@ http_archive(
 
 http_archive(
     name = "implot",
-    urls = ["https://github.com/epezent/implot/archive/refs/tags/v0.10.tar.gz"],
-    sha256 = "f20d30623d6690d554257fe2d8119622143467d67bef1f1bd69e9618e9cc1566",
-    strip_prefix = "implot-0.10",
+    urls = ["https://github.com/epezent/implot/archive/refs/tags/v0.11.tar.gz"],
+    sha256 = "1ec4c8501f70901132a9f14409c956b508a8ea3fe457e8518325b156dceada00",
+    strip_prefix = "implot-0.11",
     build_file = "//deps:implot.BUILD",
 )
 
