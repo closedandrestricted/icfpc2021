@@ -84,8 +84,8 @@
 84,soptimal,0
 85,gradient,11509
 86,gradient,5715
-87,suboptimal_mcmc,53279
-88,gradient,11847
+87,gradient,53139
+88,gradient,11845
 89,suboptimal_mcmc,86706
 90,gradient,2892851
 91,gradient,23311
@@ -129,4 +129,4 @@
 129,suboptimal_mcmc,18546
 130,gradient,10347
 131,gradient,49521
-132,suboptimal_mcmc,87371
+132,gradient,80157
