@@ -659,7 +659,7 @@ struct Initer {
         step_i = 0;
     }
 
-    void set_initial_candidate(std::vector<Point> candidate) {
+    void setInitialCandidate(const std::vector<Point>& candidate) {
         for (int i = 0; i < candidate.size(); i++) {
             int min_j = -1;
             int min_dist = 0;
