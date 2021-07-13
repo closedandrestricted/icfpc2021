@@ -75,7 +75,7 @@ for problem in range(args.begin, args.end + 1):
 
     if state.best:
         print("%s for %d = %d" % (state.best, problem, state.bestScore))
-        print("%d,%s,%d" % (problem, state.best, state.bestScore), file=digest)
+        print("%d,%s,%d,%d" % (problem, state.best, state.bestScore, min(state.bestScore, goldenValidationResult[1])), file=digest)
         if state.bestScore < currentGoldenScore:
             shutil.copyfile(state.bestFilename, goldenFilename)
             improvements += 1
