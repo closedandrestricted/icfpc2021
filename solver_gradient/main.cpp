@@ -119,6 +119,7 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> edgeDistr(0, p.edgeU.size() - 1);
     std::uniform_int_distribution<int> xDistr(p.minx, p.maxx);
     std::uniform_int_distribution<int> yDistr(p.miny, p.maxy);
+    std::uniform_int_distribution<int> cornersDistr(0, p.corners.size() - 1);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
@@ -165,6 +166,7 @@ int main(int argc, char* argv[]) {
         move(0, -1);
         move(0, 1);
 
+        // crossingover
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = candDistr(gen);
             auto idx2 = candDistr(gen);
@@ -185,6 +187,14 @@ int main(int argc, char* argv[]) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
             newC.points[pointDistr(gen)] = insideDistr(gen);
+            newC.optE = e(p, newC);
+            population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+            auto idx1 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+            newC.points[pointDistr(gen)] = p.corners[cornersDistr(gen)];
             newC.optE = e(p, newC);
             population.emplace_back(newC);
         }
@@ -229,6 +239,7 @@ int main(int argc, char* argv[]) {
             return a.points < b.points;
         });
         auto toUnique = unique(population.begin(), population.end());
+        const size_t dups = population.end() - toUnique;
         if (toUnique < population.begin() + NUM_CANDIDATES) {
             toUnique = population.begin() + NUM_CANDIDATES;
         }
@@ -236,7 +247,8 @@ int main(int argc, char* argv[]) {
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
              << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
-             << violationsLenSoft(p, population.front()) << "]" << endl;
+             << violationsLenSoft(p, population.front()) << "] "
+             << " dups: " << dups << endl;
 
         if (population[0].optE < bestE) {
             bestE = population[0].optE;

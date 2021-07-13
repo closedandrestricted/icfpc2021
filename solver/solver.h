@@ -214,6 +214,7 @@ struct Problem {
     std::map<Point, int> pointInsideToIndex;
     std::vector<uint8_t> pointsInsideIsCorner;
     std::vector<boost::dynamic_bitset<>> visibility;
+    std::vector<int> corners;
 
     std::vector<uint8_t> fixed;
 
@@ -253,6 +254,7 @@ struct Problem {
                     const bool corner = std::find(hole.begin(), hole.end(), p) != hole.end();
                     if (!onlyBorder || corner || ((rand() % 10) == 0)) {
                         pointInsideToIndex.emplace(p, pointsInside.size());
+                        corners.emplace_back(pointsInside.size());
                         pointsInside.push_back(p);
                         pointsInsideIsCorner.push_back(corner);
                     }
