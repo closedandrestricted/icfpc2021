@@ -81,6 +81,8 @@ for problem in range(args.begin, args.end + 1):
             improvements += 1
         elif state.bestScore > currentGoldenScore:
             print("!Current golden result is better for %d" % problem)
+    else:
+        print("%d,none,-1,%d" % (problem, goldenValidationResult[1]), file=digest)
 
 print("Total improvements: %d" % improvements)
 
