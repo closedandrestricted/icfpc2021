@@ -2,6 +2,7 @@
 #include <gflags/gflags.h>
 
 #include "common/icfpc2021/solver/bonus_hunting.h"
+#include "common/icfpc2021/solver/mctp.h"
 
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_bool(webedit_result, false, "Start from webedit result");
@@ -33,6 +34,7 @@ void CommonSolve(unsigned index) {
   Task t;
   t.Load(input);
   solver::BonusHunting slvr(t, index);
+  // solver::MCTP slvr(t, index);
   slvr.Search();
 }
 
