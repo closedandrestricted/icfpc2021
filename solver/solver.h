@@ -35,6 +35,10 @@ struct Point {
         return x == o.x && y == o.y;
     }
 
+    bool operator!=(const Point& o) const {
+        return (x != o.x) || (y != o.y);
+    }
+
     int sqrabs() const {
         return x * x + y * y;
     }
@@ -570,9 +574,8 @@ struct Problem {
             int v = edgeV[i];
             auto p1 = pointsInside[current.points[u]];
             auto p2 = pointsInside[current.points[v]];
-            double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(originalPoints[u], originalPoints[v]) - 1.0);
-            distMeasure = std::max(0.0, distMeasure - eps - 1e-12);
-            if (distMeasure > 0) {
+            double distMeasure = std::abs(static_cast<double>(dist2(p1, p2)) / dist2(originalPoints[u], originalPoints[v]) - 1.0);
+            if (distMeasure > eps + 1e-12) {
                 ++n;
             }
         }
@@ -686,14 +689,8 @@ struct Initer {
     Problem& problem;
     SolutionCandidate current;
     int step_i = 0;
-    std::vector<int> holePoints;
 
     Initer(Problem& p): problem(p) {
-        for (size_t i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
-            if (problem.pointsInsideIsCorner[i]) {
-                holePoints.push_back(i);
-            }
-        }
         step_i = 0;
     }
 
@@ -706,9 +703,12 @@ struct Initer {
                 if (min_j == -1 || dist < min_dist) {
                     min_j = j;
                     min_dist = dist;
+                    if (dist == 0) {
+                        break;
+                    }
                 }
             }
-            if (fix_corners && min_dist == 0 && std::count(holePoints.begin(), holePoints.end(), min_j)) {
+            if (fix_corners && min_dist == 0 && std::count(problem.corners.begin(), problem.corners.end(), min_j)) {
                 problem.fixed[i] = true;
                 std::cout << "Fixing point " << i << std::endl;
             }

@@ -22,8 +22,7 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
         auto p1 = p.pointsInside[current.points[u]];
         auto p2 = p.pointsInside[current.points[v]];
         double distMeasure = std::abs(static_cast<double>(dist2(p1, p2)) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
-        distMeasure = std::max(0.0, distMeasure - p.eps);
-        if (distMeasure > 1e-8) {
+        if (distMeasure > p.eps + 1e-8) {
             n = n + 1.0 + distMeasure;
         }
     }
@@ -31,7 +30,7 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
 }
 
 double e(const Problem& p, const SolutionCandidate& sc) {
-    static constexpr double INF = 1000000.0;
+    static constexpr double INF = 10000000.0;
     double result = (static_cast<double>(10 * p.violationsBnd(sc) + violationsLenSoft(p, sc))) * INF;
     if (!FLAGS_corner) {
         if (result) {
@@ -214,6 +213,11 @@ int main(int argc, char* argv[]) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
             init.setInitialCandidate(initial, false);
+            for (size_t i = 0; i < initial.size(); ++i) {
+                if (p.pointsInside[init.current.points[i]] != initial[i]) {
+                    cerr << "Bad init: " << p.pointsInside[init.current.points[i]] << " " << initial[i] << endl;
+                }
+            }
         } else {
             vector<int> idxs(p.pointsInside.size());
             for (int i = 0; i < p.pointsInside.size(); ++i) {
