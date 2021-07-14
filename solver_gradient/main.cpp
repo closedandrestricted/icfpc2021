@@ -352,6 +352,7 @@ int main(int argc, char* argv[]) {
             population.emplace_back(newC);
         }
 
+        // collapse
         for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
@@ -360,6 +361,7 @@ int main(int argc, char* argv[]) {
             population.emplace_back(newC);
         }
 
+        // collapse group
         for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
@@ -372,6 +374,7 @@ int main(int argc, char* argv[]) {
             population.emplace_back(newC);
         }
 
+        // move to corner
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
@@ -386,6 +389,7 @@ int main(int argc, char* argv[]) {
                 SolutionCandidate newC = population[idx1];
                 auto idx2 = pointDistr(gen);
                 const Point center = p.pointsInside[idx2];
+                bool found = false;
                 for (auto& point : newC.points) {
                     auto d2 = dist2(center, p.pointsInside[point]);
                     if (d2 < rad * rad) {
@@ -395,11 +399,14 @@ int main(int argc, char* argv[]) {
                         auto toNewPoint = p.pointInsideToIndex.find(np);
                         if (toNewPoint != p.pointInsideToIndex.end()) {
                             point = toNewPoint->second;
+                            found = true;
                         }
                     }
                 }
-                newC.optE = INVALID_E;
-                population.emplace_back(newC);
+                if (found) {
+                    newC.optE = INVALID_E;
+                    population.emplace_back(newC);
+                }
             }
         };
         groupMove(distrRadius(gen), -distr10(gen), 0);
@@ -421,6 +428,7 @@ int main(int argc, char* argv[]) {
             auto sinAngle = std::sin(angle);
             auto cosAngle = std::cos(angle);
 
+            bool found = false;
             for (auto& point : newC.points) {
                 auto d2 = dist2(center, p.pointsInside[point]);
                 if (d2 < rad * rad) {
@@ -431,14 +439,18 @@ int main(int argc, char* argv[]) {
                     auto toNewPoint = p.pointInsideToIndex.find(np);
                     if (toNewPoint != p.pointInsideToIndex.end()) {
                         point = toNewPoint->second;
+                        found = true;
                     }
                 }
             }
 
-            newC.optE = INVALID_E;
-            population.emplace_back(newC);
+            if (found) {
+                newC.optE = INVALID_E;
+                population.emplace_back(newC);
+            }
         }
 
+        // reflection
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = edgeDistr(gen);
             Line l(p.pointsInside[p.edgeU[idx1]], p.pointsInside[p.edgeV[idx1]]);
@@ -491,10 +503,12 @@ int main(int argc, char* argv[]) {
 
         addSpringSimulation(0.01, 5, false);
         addSpringSimulation(0.1, 5, false);
+        addSpringSimulation(0.1, 50, false);
         addSpringSimulation(1, 5, false);
         addSpringSimulation(10, 5, false);
         addSpringSimulation(0.01, 5, true);
         addSpringSimulation(0.1, 5, true);
+        addSpringSimulation(0.1, 50, true);
         addSpringSimulation(1, 5, true);
         addSpringSimulation(10, 5, true);
 
