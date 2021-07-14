@@ -9,6 +9,7 @@
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_string(init, "", "file from initialization");
 DEFINE_bool(corner, false, "file from initialization");
+DEFINE_bool(initer, false, "use initer");
 
 using namespace std;
 
@@ -229,9 +230,11 @@ int main(int argc, char* argv[]) {
                 c.points[i] = idxs[i];
             }
             init.current.points = c.points;
-            size_t it = 0;
-            while ((it < 3000) && !init.step(false)) {
-                ++it;
+            if (FLAGS_initer) {
+                size_t it = 0;
+                while ((it < 3000) && !init.step(false)) {
+                    ++it;
+                }
             }
 
             if (i < 50) {
