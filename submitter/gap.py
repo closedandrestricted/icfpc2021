@@ -7,9 +7,15 @@ import os
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 
+tabltGoldenScores = pandas.read_csv("../solutions/golden/goldenDigest.csv")
+goldenScores = {}
+for idx, row in tabltGoldenScores.iterrows():
+    goldenScores[int(idx) + 1] = row['goldenScore']
+
 scores = pandas.read_csv("scores.csv")
 print(scores)
 total_gap = 0
+total_gap_golden = 0
 for idx, row in scores.iterrows():
     with open(os.path.join(this_dir, '../problems/%d.json' % row['problem'])) as f:
         problem = json.loads(f.read())
@@ -25,8 +31,13 @@ for idx, row in scores.iterrows():
         return int(math.ceil(a * b))
 
     now = problem_score(row['score'])
-    gap = problem_score(row['best_score']) - now
-    print(int(row['problem']), gap, now)
+    nowGolden = problem_score(goldenScores[int(row['problem'])])
+    best = problem_score(row['best_score'])
+    gap = best - now
+    gapGolden = best - nowGolden
+    print(int(row['problem']), gap, now, nowGolden)
     total_gap += gap
+    total_gap_golden += gapGolden
 
-print('TOTAL = ', total_gap)
+print('TOTAL = %d' % total_gap)
+print('TOTAL_GOLDEN = %d' % total_gap_golden)

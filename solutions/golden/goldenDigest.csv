@@ -1,6 +1,7 @@
+problem,solution,currentScore,goldenScore
 1,gradient,780,780
 2,staging,255,255
-3,staging,326,326
+3,gradient,324,324
 4,staging,0,0
 5,staging,103,103
 6,staging,5772,5772

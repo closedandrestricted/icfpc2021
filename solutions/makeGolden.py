@@ -36,6 +36,7 @@ solutions = ["feasible", "manual", "optimal", "staging", "suboptimal_backtrackin
 
 TMPDST = "golden/goldenDigest.tmp.csv"
 digest = open(TMPDST, "w")
+print("problem,solution,currentScore,goldenScore", file=digest)
 
 class ProblemState:
     def __init__(self, problemFilename):
