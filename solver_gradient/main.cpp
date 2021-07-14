@@ -21,9 +21,9 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
         int v = p.edgeV[i];
         auto p1 = p.pointsInside[current.points[u]];
         auto p2 = p.pointsInside[current.points[v]];
-        double distMeasure = std::abs(1.0 * dist2(p1, p2) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
-        distMeasure = std::max(0.0, distMeasure - p.eps - 1e-12);
-        if (distMeasure > 0) {
+        double distMeasure = std::abs(static_cast<double>(dist2(p1, p2)) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
+        distMeasure = std::max(0.0, distMeasure - p.eps);
+        if (distMeasure > 1e-8) {
             n = n + 1.0 + distMeasure;
         }
     }
@@ -140,7 +140,7 @@ struct PhysicalWorld {
             const double length = dist(ball1, ball2);
             double force = length - spring.length0;
             if (eps) {
-                if ((length >= (1.0 - p.epsSqrt) * spring.length0) && (length <= (1.0 + p.epsSqrt) * spring.length0)) {
+                if ((length >= p.epsSqrtMin * spring.length0) && (length <= p.epsSqrtMax * spring.length0)) {
                     force = 0.0;
                 }
             }
@@ -506,11 +506,13 @@ int main(int argc, char* argv[]) {
         addSpringSimulation(0.1, 50, false);
         addSpringSimulation(1, 5, false);
         addSpringSimulation(10, 5, false);
+        addSpringSimulation(10, 50, false);
         addSpringSimulation(0.01, 5, true);
         addSpringSimulation(0.1, 5, true);
         addSpringSimulation(0.1, 50, true);
         addSpringSimulation(1, 5, true);
         addSpringSimulation(10, 5, true);
+        addSpringSimulation(10, 50, true);
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.points < b.points; });
         auto toUnique = unique(population.begin(), population.end());

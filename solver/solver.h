@@ -193,7 +193,8 @@ struct Problem {
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
     double eps;
-    double epsSqrt;
+    double epsSqrtMax;
+    double epsSqrtMin;
     int minx, maxx, miny, maxy;
 
     void parseJson(const std::string& fn) {
@@ -201,7 +202,8 @@ struct Problem {
         json rawProblem;
         is >> rawProblem;
         eps = int(rawProblem["epsilon"]) / 1000000.0;
-        epsSqrt = std::sqrt(eps);
+        epsSqrtMax = std::sqrt(1.0 + eps);
+        epsSqrtMin = std::sqrt(1.0 - eps);
         hole.resize(rawProblem["hole"].size());
         for (size_t i = 0; i < hole.size(); ++i) {
             hole[i] = {rawProblem["hole"][i][0], rawProblem["hole"][i][1]};
