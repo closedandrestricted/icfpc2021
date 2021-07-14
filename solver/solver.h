@@ -671,7 +671,7 @@ struct Initer {
         step_i = 0;
     }
 
-    void setInitialCandidate(const std::vector<Point>& candidate) {
+    void setInitialCandidate(std::vector<Point>& candidate, bool fix_corners) {
         for (size_t i = 0; i < candidate.size(); i++) {
             int min_j = -1;
             int min_dist = 0;
@@ -681,6 +681,10 @@ struct Initer {
                     min_j = j;
                     min_dist = dist;
                 }
+            }
+            if (fix_corners && min_dist == 0 && std::count(holePoints.begin(), holePoints.end(), min_j)) {
+                problem.fixed[i] = true;
+                std::cout << "Fixing point " << i << std::endl;
             }
             current.points.push_back(min_j);
         }

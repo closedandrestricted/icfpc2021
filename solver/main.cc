@@ -5,6 +5,7 @@
 
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_bool(webedit_result, false, "Start from webedit result");
+DEFINE_bool(fix_corners, false, "Fix corners from webedit result");
 DEFINE_bool(alex, false, "Alex mode");
 DEFINE_string(init, "", "file from initialization");
 DEFINE_bool(only_border, false, "Only border");
@@ -72,7 +73,7 @@ int main(int argc, char** argv) {
             for (size_t i = 0; i < initial.size(); ++i) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
-            z.setInitialCandidate(initial);
+            z.setInitialCandidate(initial, FLAGS_fix_corners);
         };
 
         if (FLAGS_webedit_result) {
@@ -82,9 +83,8 @@ int main(int argc, char** argv) {
             readIniterFromFile(FLAGS_init);
         }
         else {
-            z.setInitialCandidate(p.originalPoints);
-            while (!z.step()) {
-            }
+            z.setInitialCandidate(p.originalPoints, false);
+            while (!z.step()){};
         }
 
         {
