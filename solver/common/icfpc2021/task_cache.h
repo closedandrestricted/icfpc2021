@@ -125,6 +125,14 @@ class TaskCache {
     // }
   }
 
+  unsigned MaxIndex() const {
+      return (box.p2.x - box.p1.x + 1) * (box.p2.y - box.p1.y + 1);
+  }
+
+  unsigned Index(const I2Point& p) const {
+      return (p.x - box.p1.x) + (box.p2.x - box.p1.x + 1) * (p.y - box.p1.y);
+  }
+
   bool CheckPoint(const I2Point& p) const {
     if (!box.Inside(p)) return false;
     return valid_points_map[p.x - box.p1.x][p.y - box.p1.y];

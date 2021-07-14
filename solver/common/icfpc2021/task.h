@@ -11,6 +11,7 @@
 #include "common/numeric/utils/abs.h"
 
 #include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -76,5 +77,11 @@ public:
       score += min_d;
     }
     return score;
+  }
+
+  // Raw points in [0, 1] scale without adjusting to best solution
+  // and numer of vertexes / edges.
+  double RawPoints(const Solution& s) const {
+    return IsValid(s) ? 1.0 / (sqrt(1.0 + Score(s))) : 0.0;
   }
 };
