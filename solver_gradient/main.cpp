@@ -265,6 +265,7 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> deltaDistr10(-10, 10);
     std::uniform_int_distribution<int> pointDistr(0, numPoints - 1);
     std::uniform_int_distribution<int> candDistr(0, NUM_CANDIDATES);
+    std::uniform_int_distribution<int> candDistr1(1, NUM_CANDIDATES);
     std::uniform_int_distribution<int> distr100(0, 100);
     std::uniform_int_distribution<int> insideDistr(0, p.pointsInside.size() - 1);
     std::uniform_int_distribution<int> deltaDistr3(-3, 3);
@@ -275,6 +276,7 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> distrRadius(5, 100);
     std::uniform_int_distribution<int> distr10(1, 10);
     std::uniform_real_distribution<double> distrAngle(0, 2.0 * M_PI);
+    std::uniform_real_distribution<double> distr01(0, 1);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
@@ -525,8 +527,17 @@ int main(int argc, char* argv[]) {
         }
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+        for (size_t i = NUM_CANDIDATES; i < population.size(); ++i) {
+            size_t j = candDistr1(gen);
+            double eDiff = population[i].optE - population[j].optE;
+            if (distr01(gen) < std::exp(-eDiff)) {
+                std::swap(population[i], population[j]);
+            }
+        }
 
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
+        sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
              << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
              << violationsLenSoft(p, population.front()) << "] "
