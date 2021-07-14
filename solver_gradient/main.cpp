@@ -244,6 +244,7 @@ int main(int argc, char* argv[]) {
     PhysicalWorld pw(p);
 
     double bestE = 1e100;
+    static constexpr double INVALID_E = -1;
     const int numPoints = population[0].points.size();
     std::uniform_int_distribution<int> deltaDistr10(-10, 10);
     std::uniform_int_distribution<int> pointDistr(0, numPoints - 1);
@@ -271,7 +272,7 @@ int main(int argc, char* argv[]) {
                     if (toNewPoint != p.pointInsideToIndex.end()) {
                         SolutionCandidate newC = population[i];
                         newC.points[idxPoint] = toNewPoint->second;
-                        newC.optE = e(p, newC);
+                        newC.optE = INVALID_E;
                         population.emplace_back(newC);
                     }
                 }
@@ -293,7 +294,7 @@ int main(int argc, char* argv[]) {
                         newC.points[j] = toNewPoint->second;
                     }
                 }
-                newC.optE = e(p, newC);
+                newC.optE = INVALID_E;
                 population.emplace_back(newC);
             }
         };
@@ -316,7 +317,7 @@ int main(int argc, char* argv[]) {
                     newC.points[j] = population[idx2].points[j];
                 }
             }
-            newC.optE = e(p, newC);
+            newC.optE = INVALID_E;
             population.emplace_back(newC);
         }
 
@@ -324,7 +325,7 @@ int main(int argc, char* argv[]) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
             newC.points[pointDistr(gen)] = insideDistr(gen);
-            newC.optE = e(p, newC);
+            newC.optE = INVALID_E;
             population.emplace_back(newC);
         }
 
@@ -332,7 +333,7 @@ int main(int argc, char* argv[]) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
             newC.points[pointDistr(gen)] = p.corners[cornersDistr(gen)];
-            newC.optE = e(p, newC);
+            newC.optE = INVALID_E;
             population.emplace_back(newC);
         }
 
@@ -354,7 +355,7 @@ int main(int argc, char* argv[]) {
                         }
                     }
                 }
-                newC.optE = e(p, newC);
+                newC.optE = INVALID_E;
                 population.emplace_back(newC);
             }
         };
@@ -380,7 +381,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
             }
-            newC.optE = e(p, newC);
+            newC.optE = INVALID_E;
             population.emplace_back(newC);
         }
 
@@ -391,7 +392,7 @@ int main(int argc, char* argv[]) {
             auto idx2 = pointDistr(gen);
             if (idx1 != idx2) {
                 swap(newC.points[idx1], newC.points[idx2]);
-                newC.optE = e(p, newC);
+                newC.optE = INVALID_E;
                 population.emplace_back(newC);
             }
         }
@@ -408,7 +409,7 @@ int main(int argc, char* argv[]) {
 
                 pw.updateCandidate(newC);
 
-                newC.optE = e(p, newC);
+                newC.optE = INVALID_E;
                 population.emplace_back(newC);
             }
         };
@@ -418,18 +419,36 @@ int main(int argc, char* argv[]) {
         addSpringSimulation(1, 5);
         addSpringSimulation(10, 5);
 
-        sort(population.begin(), population.end(), [](const auto& a, const auto& b) {
-            if (a.optE != b.optE) {
-                return a.optE < b.optE;
-            }
-            return a.points < b.points;
-        });
+        sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.points < b.points; });
         auto toUnique = unique(population.begin(), population.end());
         const size_t dups = population.end() - toUnique;
         if (toUnique < population.begin() + NUM_CANDIDATES) {
             toUnique = population.begin() + NUM_CANDIDATES;
         }
         population.erase(toUnique, population.end());
+
+        jobs.clear();
+        static const size_t NUM_THREADS = 16;
+
+        auto calcScores = [&](size_t iThread) {
+            size_t begin = (iThread * population.size()) / NUM_THREADS;
+            size_t end = ((iThread + 1) * population.size()) / NUM_THREADS;
+            for (size_t j = begin; j < end; ++j) {
+                if (population[j].optE == INVALID_E) {
+                    population[j].optE = e(p, population[j]);
+                }
+            }
+        };
+
+        for (size_t i = 0; i < NUM_THREADS; ++i) {
+            jobs.emplace_back(std::async(std::launch::async, calcScores, i));
+        }
+        for (auto& f : jobs) {
+            f.wait();
+        }
+
+        sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
+
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
              << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
