@@ -30,10 +30,10 @@ class MCTP {
   unsigned nruns;
   double best_score;
   Solution best_solution;
-  unsigned max_time_for_search = 60; // in seconds
+  unsigned max_time_for_search; // in seconds
 
  public:
-  MCTP(const Task& _task, unsigned _task_id) {
+  MCTP(const Task& _task, unsigned _task_id, unsigned max_time) {
     task = _task;
     task_id = _task_id;
     filename = "solutions/mctp/" + std::to_string(task_id) + ".json";
@@ -46,6 +46,7 @@ class MCTP {
       best_score = 1e-10;
     }
     InitSearch();
+    max_time_for_search = max_time;
   }
 
  protected:
