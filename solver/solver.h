@@ -303,16 +303,25 @@ struct Problem {
                     }
                 }
             };
-            constexpr int BLOCK_SIZE = 64;
-            for (size_t block = 0; block < pointsInside.size(); block += BLOCK_SIZE) {
-                std::vector<std::future<void>> jobs;
-                for (size_t i = block; i < pointsInside.size() && i < block + BLOCK_SIZE; ++i) {
-                    jobs.emplace_back(std::async(std::launch::async, dojob, i));
+
+            constexpr int NUM_THREADS = 64;
+
+            auto doThreadJob = [&](int iThread) {
+                size_t begin = (pointsInside.size() * iThread) / NUM_THREADS;
+                size_t end = (pointsInside.size() * (iThread + 1)) / NUM_THREADS;
+                for (size_t block = begin; block < end; ++block) {
+                    dojob(block);
                 }
-                for (auto& f : jobs) {
-                    f.wait();
-                }
+            };
+
+            std::vector<std::future<void>> jobs;
+            for (size_t iThread = 0; iThread < NUM_THREADS; ++iThread) {
+                jobs.emplace_back(std::async(std::launch::async, doThreadJob, iThread));
             }
+            for (auto& f : jobs) {
+                f.wait();
+            }
+
             std::cerr << pointsInside.size() << " " << edges << "\n";
         } else {
             std::cerr << pointsInside.size() << "\n";
