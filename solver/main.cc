@@ -34,9 +34,16 @@ void CommonSolve(unsigned index) {
   std::string input = "problems/" + std::to_string(index) + ".json";
   Task t;
   t.Load(input);
-  solver::BonusHunting slvr(t, index);
-  // solver::MCTP slvr(t, index);
+  // solver::BonusHunting slvr(t, index);
+  solver::MCTP slvr(t, index);
   slvr.Search();
+}
+
+void CommonSolve() {
+  for (unsigned i = 1; i <= 132; ++i) {
+    std::cout << "Solving problem " << i << std::endl;
+    CommonSolve(i);
+  }
 }
 
 int main(int argc, char** argv) {
@@ -45,7 +52,10 @@ int main(int argc, char** argv) {
     std::cerr << FLAGS_test_idx << " ";
     auto fn = "problems/" + std::to_string(FLAGS_test_idx) + ".json";
     if (FLAGS_alex) {
-        CommonSolve(FLAGS_test_idx);
+        if (FLAGS_test_idx)
+            CommonSolve(FLAGS_test_idx);
+        else
+            CommonSolve();
         return 0;
     } else {
         Problem p;

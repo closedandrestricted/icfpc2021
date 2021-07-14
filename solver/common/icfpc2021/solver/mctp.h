@@ -6,6 +6,7 @@
 #include "common/icfpc2021/task.h"
 #include "common/icfpc2021/task_cache.h"
 #include "common/icfpc2021/stat.h"
+#include "common/timer.h"
 
 #include <fstream>
 #include <iostream>
@@ -29,6 +30,7 @@ class MCTP {
   unsigned nruns;
   double best_score;
   Solution best_solution;
+  unsigned max_time_for_search = 60; // in seconds
 
  public:
   MCTP(const Task& _task, unsigned _task_id) {
@@ -37,7 +39,12 @@ class MCTP {
     filename = "solutions/mctp/" + std::to_string(task_id) + ".json";
     cache.Init(task);
     nruns = 0;
-    best_score = 0;
+    if (best_solution.Load(filename)) {
+      std::cout << "Found solution with score: " << task.Score(best_solution) << std::endl;
+      best_score = task.RawPoints(best_solution);
+    } else {
+      best_score = 1e-10;
+    }
     InitSearch();
   }
 
@@ -126,15 +133,15 @@ class MCTP {
     for (; used_vertices.Size() < gsize;) {
       unsigned best_u = gsize;
       I2Point pnext;
-      double best_score = 0.;
+      double best_stat_score = 0.;
       if (used_vertices.Size() == 0) {
         for (auto p : cache.GetValidPoints()) {
           auto index = cache.Index(p);
-          double d1 = location_stats[index].Score(logn);
+          double d1 = location_stats[index].Score(logn, best_score);
           for (unsigned u = 0; u < gsize; ++u) {
-            double d2 = points_stats[u][index].Score(logn);
-            if (best_score < d1 + d2) {
-              best_score = d1 + d2;
+            double d2 = points_stats[u][index].Score(logn, best_score);
+            if (best_stat_score < d1 + d2) {
+              best_stat_score = d1 + d2;
               best_u = u;
               pnext = p;
             }
@@ -152,9 +159,9 @@ class MCTP {
         if (min_size == 0) break;
         for (auto p : valid_candidates[best_u][valid_candidates_index[best_u]]) {
           auto index = cache.Index(p);
-          double d = points_stats[best_u][index].Score(logn);
-          if (best_score < d) {
-              best_score = d;
+          double d = points_stats[best_u][index].Score(logn, best_score);
+          if (best_stat_score < d) {
+              best_stat_score = d;
               pnext = p;
           }
         }
@@ -180,7 +187,8 @@ class MCTP {
 
  public:
   void Search() {
-    for (;best_score < 1;) {
+    Timer t;
+    for (;(best_score < 1) && (t.GetSeconds() < max_time_for_search);) {
       Run();
     }
   }
