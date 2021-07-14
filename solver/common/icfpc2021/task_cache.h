@@ -27,12 +27,12 @@ class TaskCache {
   std::vector<std::vector<unsigned>> valid_points_map;
   std::vector<I2Point> valid_points;
   std::unordered_map<I2ClosedSegment, bool> valid_segments_map;
-  std::unordered_map<I2ClosedSegment, int64_t> segments_hole_distance;
+  // std::unordered_map<I2ClosedSegment, int64_t> segments_hole_distance;
 
  public:
   std::vector<std::vector<int64_t>> min_distance;
   std::vector<std::vector<int64_t>> max_distance;
-  std::vector<std::vector<int64_t>> min_hole_distance;
+  // std::vector<std::vector<int64_t>> min_hole_distance;
 
  public:
   const std::vector<I2Point>& GetValidPoints() const {
@@ -81,48 +81,48 @@ class TaskCache {
         max_distance[u][e.to] = e.info.second;
       }
     }
-    // Init 'hole-distance' from vertexes in the hole
-    UndirectedGraphEI<int64_t> gh(hsize + 1);
-    for (unsigned u = 0; u < hsize; ++u) {
-      for (unsigned v = 0; v < hsize; ++v) {
-        I2ClosedSegment s(hole[u], hole[v]);
-        if (CheckSegmentI(s)) {
-          gh.AddEdge(u, v, USqrt(SquaredDistanceL2(s.p1, s.p2)));
-        }
-      }
-    }
-    auto vvd2 = DistanceAllPairsPositiveCost(gh, static_cast<int64_t>(1ll << 30));
-    min_hole_distance.resize(hsize);
-    for (unsigned u = 0; u < hsize; ++u) {
-      min_hole_distance[u].resize(hsize);
-      for (unsigned v = 0; v < hsize; ++v) {
-        I2ClosedSegment s(hole[u], hole[v]);
-        if (CheckSegmentI(s)) {
-          min_hole_distance[u][v] = SquaredDistanceL2(s.p1, s.p2);
-        } else {
-          min_hole_distance[u][v] = vvd2[u][v] * vvd2[u][v];
-        }
-        segments_hole_distance.insert({s, min_hole_distance[u][v]});
-      }
-    }
-    // Init 'hole-distance' from vertexes in the the hole to other vertexes
-    for (auto p : valid_points) {
-      I2ClosedSegment stest(p, p);
-      if (segments_hole_distance.find(stest) != segments_hole_distance.end()) continue;
-      gh.ClearEdges(hsize);
-      for (unsigned u = 0; u < hsize; ++u) {
-        I2ClosedSegment s(hole[u], p);
-        if (CheckSegmentI(s)) gh.AddBaseEdge(hsize, u, USqrt(SquaredDistanceL2(p, hole[u])));
-      }
-      auto vd = DistanceFromSourcePositiveCost(gh, hsize, int64_t(1ll << 60));
-      for (unsigned u = 0; u < hsize; ++u) {
-        int64_t d = vd[u];
-        int64_t d2 = std::max(d * d, SquaredDistanceL2(p, hole[u]));
-        I2ClosedSegment s1(p, hole[u]), s2(hole[u], p);
-        segments_hole_distance.insert({s1, d2});
-        segments_hole_distance.insert({s2, d2});
-      }
-    }
+    // // Init 'hole-distance' from vertexes in the hole
+    // UndirectedGraphEI<int64_t> gh(hsize + 1);
+    // for (unsigned u = 0; u < hsize; ++u) {
+    //   for (unsigned v = 0; v < hsize; ++v) {
+    //     I2ClosedSegment s(hole[u], hole[v]);
+    //     if (CheckSegmentI(s)) {
+    //       gh.AddEdge(u, v, USqrt(SquaredDistanceL2(s.p1, s.p2)));
+    //     }
+    //   }
+    // }
+    // auto vvd2 = DistanceAllPairsPositiveCost(gh, static_cast<int64_t>(1ll << 30));
+    // min_hole_distance.resize(hsize);
+    // for (unsigned u = 0; u < hsize; ++u) {
+    //   min_hole_distance[u].resize(hsize);
+    //   for (unsigned v = 0; v < hsize; ++v) {
+    //     I2ClosedSegment s(hole[u], hole[v]);
+    //     if (CheckSegmentI(s)) {
+    //       min_hole_distance[u][v] = SquaredDistanceL2(s.p1, s.p2);
+    //     } else {
+    //       min_hole_distance[u][v] = vvd2[u][v] * vvd2[u][v];
+    //     }
+    //     segments_hole_distance.insert({s, min_hole_distance[u][v]});
+    //   }
+    // }
+    // // Init 'hole-distance' from vertexes in the the hole to other vertexes
+    // for (auto p : valid_points) {
+    //   I2ClosedSegment stest(p, p);
+    //   if (segments_hole_distance.find(stest) != segments_hole_distance.end()) continue;
+    //   gh.ClearEdges(hsize);
+    //   for (unsigned u = 0; u < hsize; ++u) {
+    //     I2ClosedSegment s(hole[u], p);
+    //     if (CheckSegmentI(s)) gh.AddBaseEdge(hsize, u, USqrt(SquaredDistanceL2(p, hole[u])));
+    //   }
+    //   auto vd = DistanceFromSourcePositiveCost(gh, hsize, int64_t(1ll << 60));
+    //   for (unsigned u = 0; u < hsize; ++u) {
+    //     int64_t d = vd[u];
+    //     int64_t d2 = std::max(d * d, SquaredDistanceL2(p, hole[u]));
+    //     I2ClosedSegment s1(p, hole[u]), s2(hole[u], p);
+    //     segments_hole_distance.insert({s1, d2});
+    //     segments_hole_distance.insert({s2, d2});
+    //   }
+    // }
   }
 
   bool CheckPoint(const I2Point& p) const {
@@ -142,28 +142,28 @@ class TaskCache {
     return CheckPoint(s.p1) && CheckPoint(s.p2) && CheckSegmentI(s);
   }
 
-  int64_t SegmentHoleDistance(const I2ClosedSegment& s) {
-    auto it = segments_hole_distance.find(s);
-    if (it != segments_hole_distance.end())
-      return it->second;
-    int64_t min_distance = (1ll << 60);
-    if (CheckSegmentI(s)) {
-      min_distance = SquaredDistanceL2(s.p1, s.p2);
-    } else {
-      for (unsigned i = 0; i < hole.Size(); ++i) {
-        I2ClosedSegment s1(hole[i], s.p1);
-        I2ClosedSegment s2(hole[i], s.p2);
-        auto it1 = segments_hole_distance.find(s1), it2 = segments_hole_distance.find(s2);
-        assert(it1 != segments_hole_distance.end());
-        assert(it2 != segments_hole_distance.end());
-        auto d = USqrt(it1->second) + USqrt(it2->second);
-        auto dd = d * d;
-        if (min_distance > dd) min_distance = dd;
-      }
-      auto cap = SquaredDistanceL2(s.p1, s.p2);
-      if (min_distance < cap) min_distance = cap;
-    }
-    segments_hole_distance.insert({s, min_distance});
-    return min_distance;
-  }
+//   int64_t SegmentHoleDistance(const I2ClosedSegment& s) {
+//     auto it = segments_hole_distance.find(s);
+//     if (it != segments_hole_distance.end())
+//       return it->second;
+//     int64_t min_distance = (1ll << 60);
+//     if (CheckSegmentI(s)) {
+//       min_distance = SquaredDistanceL2(s.p1, s.p2);
+//     } else {
+//       for (unsigned i = 0; i < hole.Size(); ++i) {
+//         I2ClosedSegment s1(hole[i], s.p1);
+//         I2ClosedSegment s2(hole[i], s.p2);
+//         auto it1 = segments_hole_distance.find(s1), it2 = segments_hole_distance.find(s2);
+//         assert(it1 != segments_hole_distance.end());
+//         assert(it2 != segments_hole_distance.end());
+//         auto d = USqrt(it1->second) + USqrt(it2->second);
+//         auto dd = d * d;
+//         if (min_distance > dd) min_distance = dd;
+//       }
+//       auto cap = SquaredDistanceL2(s.p1, s.p2);
+//       if (min_distance < cap) min_distance = cap;
+//     }
+//     segments_hole_distance.insert({s, min_distance});
+//     return min_distance;
+//   }
 };

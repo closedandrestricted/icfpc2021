@@ -42,8 +42,8 @@ class PerfectScore : public FullSearch {
         auto& vnext = valid_candidates[u][++valid_candidates_index[u]];
         vnext.clear();
         for (auto p1 : vcurrent) {
-          // auto d = SquaredDistanceL2(p, p1);
-          auto d = cache.SegmentHoleDistance({p, p1});
+          auto d = SquaredDistanceL2(p, p1);
+          // auto d = cache.SegmentHoleDistance({p, p1});
           if (d <= cache.max_distance[index][u]) {
         //   if ((d >= cache.min_distance[index][u]) && (d <= cache.max_distance[index][u])) {
             vnext.push_back(p1);
@@ -76,7 +76,8 @@ class PerfectScore : public FullSearch {
         auto p = vertexes_to_cover[ik];
         int64_t sd = 0;
         for (unsigned j = 0; j < vertexes_to_cover.size(); ++j)
-          sd += cache.SegmentHoleDistance({p, vertexes_to_cover[j]});
+          //   sd += cache.SegmentHoleDistance({p, vertexes_to_cover[j]});
+          sd += SquaredDistanceL2(p, vertexes_to_cover[j]);
         if (max_distance < sd) {
           max_distance = sd;
           bestk = ik;
