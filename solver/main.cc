@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
             for (size_t i = 0; i < initial.size(); ++i) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
-            z.set_initial_candidate(initial, FLAGS_fix_corners);
+            z.setInitialCandidate(initial, FLAGS_fix_corners);
         };
 
         if (FLAGS_webedit_result) {
@@ -83,8 +83,8 @@ int main(int argc, char** argv) {
             readIniterFromFile(FLAGS_init);
         }
         else {
-            z.set_initial_candidate(p.originalPoints, false);
-            while (!z.step());
+            z.setInitialCandidate(p.originalPoints, false);
+            while (!z.step()){};
         }
 
         {

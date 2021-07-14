@@ -503,8 +503,6 @@ int main(int argc, char** argv)
         ImGui::SetNextWindowPos(ImVec2(.0f, .0f), ImGuiCond_Always);
         ImGui::SetNextWindowSize(ImVec2(width+2, height+2), ImGuiCond_Always);
 
-        ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoDecoration);
-
         vis.loop();
 
         // Rendering

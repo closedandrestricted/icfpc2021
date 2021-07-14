@@ -42,7 +42,8 @@ class PerfectScore : public FullSearch {
         auto& vnext = valid_candidates[u][++valid_candidates_index[u]];
         vnext.clear();
         for (auto p1 : vcurrent) {
-          auto d = SquaredDistanceL2(p, p1);
+          // auto d = SquaredDistanceL2(p, p1);
+          auto d = cache.SegmentHoleDistance({p, p1});
           if (d <= cache.max_distance[index][u]) {
         //   if ((d >= cache.min_distance[index][u]) && (d <= cache.max_distance[index][u])) {
             vnext.push_back(p1);
@@ -69,26 +70,41 @@ class PerfectScore : public FullSearch {
   bool SearchI(unsigned k) {
     if (k == vertexes_to_cover.size()) return TBase::Search();
     unsigned bestk = vertexes_to_cover.size(), bestkvalue = used_vertices.SetSize() + 1;
-    for (unsigned ik = 0; ik < vertexes_to_cover.size(); ++ik) {
-      if (covered_vertexes.HasKey(ik)) continue;
-      auto p = vertexes_to_cover[ik];
-      unsigned count = 0;
-      for (unsigned i = 0; i < used_vertices.SetSize(); ++i) {
-        if (used_vertices.HasKey(i)) continue;
-        auto& v = valid_candidates[i][valid_candidates_index[i]];
-        if (v.size() == 0) return false;
-        bool is_valid = false;
-        for (auto& vp : v) {
-          if (vp == p) {
-            is_valid = true;
-            break;
-          }
+    if (k == 0) {
+      int64_t max_distance = 0;
+      for (unsigned ik = 0; ik < vertexes_to_cover.size(); ++ik) {
+        auto p = vertexes_to_cover[ik];
+        int64_t sd = 0;
+        for (unsigned j = 0; j < vertexes_to_cover.size(); ++j)
+          sd += cache.SegmentHoleDistance({p, vertexes_to_cover[j]});
+        if (max_distance < sd) {
+          max_distance = sd;
+          bestk = ik;
         }
-        if (is_valid) ++count;
       }
-      if (count < bestkvalue) {
-        bestkvalue = count;
-        bestk = ik;
+    } else 
+    {
+      for (unsigned ik = 0; ik < vertexes_to_cover.size(); ++ik) {
+        if (covered_vertexes.HasKey(ik)) continue;
+        auto p = vertexes_to_cover[ik];
+        unsigned count = 0;
+        for (unsigned i = 0; i < used_vertices.SetSize(); ++i) {
+          if (used_vertices.HasKey(i)) continue;
+          auto& v = valid_candidates[i][valid_candidates_index[i]];
+          if (v.size() == 0) return false;
+          bool is_valid = false;
+          for (auto& vp : v) {
+            if (vp == p) {
+              is_valid = true;
+              break;
+            }
+          }
+          if (is_valid) ++count;
+        }
+        if (count < bestkvalue) {
+          bestkvalue = count;
+          bestk = ik;
+        }
       }
     }
     // std::cout << "Best k\t" << bestk << "\t" << bestkvalue << std::endl;

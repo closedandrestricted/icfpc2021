@@ -67,9 +67,27 @@ http_archive(
 )
 
 http_archive(
+    name = "sdl",
+    urls = ["https://github.com/libsdl-org/SDL/archive/refs/tags/release-2.0.14.tar.gz"],
+    sha256 = "f85233bc8d4f30a7caa5aea7de0f95b8f4b1f7272473aea4b3ec4ede0a27357f",
+    strip_prefix = "SDL-release-2.0.14",
+    build_file = "//deps:sdl.BUILD",
+)
+
+http_archive(
     name = "imgui",
-    urls = ["https://github.com/ocornut/imgui/archive/refs/tags/v1.83.tar.gz"],
-    strip_prefix = "imgui-1.83",
+    urls = ["https://github.com/ocornut/imgui/archive/5dd1e38b7a5a6ed6c6d94c54c6eb54ba3a88ed81.zip"],
+    sha256 = "882942803136880804a84290e08decb5e9f59a4d2c1208b4ccb88c8ed2bac1fa",
+    strip_prefix = "imgui-5dd1e38b7a5a6ed6c6d94c54c6eb54ba3a88ed81",
+    build_file = "//deps:imgui.BUILD",
+)
+
+http_archive(
+    name = "implot",
+    urls = ["https://github.com/epezent/implot/archive/refs/tags/v0.11.tar.gz"],
+    sha256 = "1ec4c8501f70901132a9f14409c956b508a8ea3fe457e8518325b156dceada00",
+    strip_prefix = "implot-0.11",
+    build_file = "//deps:implot.BUILD",
 )
 
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")

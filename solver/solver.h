@@ -66,6 +66,16 @@ inline int dist2(Point a, Point b) {
     return smul(a - b, a - b);
 }
 
+template<typename T>
+T sqr(T x) {
+    return x*x;
+}
+
+template<typename TPoint>
+inline double dist(TPoint a, TPoint b) {
+    return sqrt(sqr(a.x - b.x) + sqr(a.y - b.y));
+}
+
 inline int signum(int a) {
     return a > 0 ? 1 : a == 0 ? 0 : -1;
 }
@@ -183,6 +193,7 @@ struct Problem {
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
     double eps;
+    double epsSqrt;
     int minx, maxx, miny, maxy;
 
     void parseJson(const std::string& fn) {
@@ -190,6 +201,7 @@ struct Problem {
         json rawProblem;
         is >> rawProblem;
         eps = int(rawProblem["epsilon"]) / 1000000.0;
+        epsSqrt = std::sqrt(eps);
         hole.resize(rawProblem["hole"].size());
         for (size_t i = 0; i < hole.size(); ++i) {
             hole[i] = {rawProblem["hole"][i][0], rawProblem["hole"][i][1]};
@@ -214,6 +226,7 @@ struct Problem {
     std::map<Point, int> pointInsideToIndex;
     std::vector<uint8_t> pointsInsideIsCorner;
     std::vector<boost::dynamic_bitset<>> visibility;
+    std::vector<int> corners;
 
     std::vector<uint8_t> fixed;
 
@@ -253,6 +266,7 @@ struct Problem {
                     const bool corner = std::find(hole.begin(), hole.end(), p) != hole.end();
                     if (!onlyBorder || corner || ((rand() % 10) == 0)) {
                         pointInsideToIndex.emplace(p, pointsInside.size());
+                        corners.emplace_back(pointsInside.size());
                         pointsInside.push_back(p);
                         pointsInsideIsCorner.push_back(corner);
                     }
@@ -657,7 +671,7 @@ struct Initer {
         step_i = 0;
     }
 
-    void set_initial_candidate(std::vector<Point> candidate, bool fix_corners) {
+    void setInitialCandidate(std::vector<Point>& candidate, bool fix_corners) {
         for (int i = 0; i < candidate.size(); i++) {
             int min_j = -1;
             int min_dist = 0;
@@ -676,13 +690,15 @@ struct Initer {
         }
     }
 
-    bool step() {
+    bool step(bool debug = true) {
         int pt = std::uniform_int_distribution()(gen) % current.points.size();
         int newp = std::uniform_int_distribution()(gen) % problem.pointsInside.size();
         int old_violations = problem.violationsBnd(current) + problem.violationsLen(current);
         int oldp = current.points[pt];
-        if (step_i++ % 100 == 0) {
-            std::cerr << "cur bad: " << old_violations << std::endl;
+        if (debug) {
+            if (step_i++ % 100 == 0) {
+                std::cerr << "cur bad: " << old_violations << std::endl;
+            }
         }
         current.points[pt] = newp;
         int new_violations = problem.violationsBnd(current);

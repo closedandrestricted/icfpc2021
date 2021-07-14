@@ -9,7 +9,7 @@ pybind_library(
 pybind_library(
     name = "solver_common",
     hdrs = [
-    "common/icfpc2021/solver/full_search.h",
+        "common/icfpc2021/solver/full_search.h",
     ],
     deps = [
         ":solver_common_lib",
@@ -29,6 +29,7 @@ pybind_library(
         "@xtensor//:xtensor",
         "@boost//:container",
     ],
+    visibility = ["//visibility:public"],
 )
 
 cc_binary(
