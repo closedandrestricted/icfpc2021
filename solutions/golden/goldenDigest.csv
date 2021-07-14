@@ -4,11 +4,11 @@ problem,solution,currentScore,goldenScore
 3,staging,242,242
 4,staging,0,0
 5,staging,103,103
-6,gradient,5739,5739
-7,staging,189,189
-8,gradient,1040,1040
-9,gradient,2360,2360
-10,gradient,116,116
+6,staging,5635,5635
+7,staging,182,182
+8,staging,1040,1040
+9,staging,2283,2283
+10,staging,114,114
 11,feasible,0,0
 12,manual,0,0
 13,manual,0,0
