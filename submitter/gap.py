@@ -35,7 +35,7 @@ for idx, row in scores.iterrows():
     best = problem_score(row['best_score'])
     gap = best - now
     gapGolden = best - nowGolden
-    print(int(row['problem']), gap, now, nowGolden)
+    print(int(row['problem']), gap, now, nowGolden - now)
     total_gap += gap
     total_gap_golden += gapGolden
 

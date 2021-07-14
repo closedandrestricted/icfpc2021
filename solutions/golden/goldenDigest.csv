@@ -4,7 +4,7 @@ problem,solution,currentScore,goldenScore
 3,gradient,324,324
 4,staging,0,0
 5,staging,103,103
-6,staging,5772,5772
+6,gradient,5739,5739
 7,staging,189,189
 8,gradient,1040,1040
 9,gradient,2360,2360
@@ -104,7 +104,7 @@ problem,solution,currentScore,goldenScore
 103,gradient,105250,105250
 104,staging,20905,20905
 105,manual,0,0
-106,gradient,4160066,4157303
+106,gradient,4077806,4077806
 107,gradient,61840,61840
 108,staging,25333,25333
 109,staging,3732,3732
