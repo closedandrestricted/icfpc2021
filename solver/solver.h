@@ -398,7 +398,7 @@ struct Problem {
             }
         }
         std::vector<int> cs;
-        for (int i = candidates.find_first(); i != candidates.npos; i = candidates.find_next(i)) {
+        for (auto i = candidates.find_first(); i != candidates.npos; i = candidates.find_next(i)) {
             cs.push_back(i);
         }
         std::shuffle(cs.begin(), cs.end(), gen);
@@ -525,7 +525,7 @@ struct Problem {
 
     int violationsBnd(const SolutionCandidate& current) const {
         int n = 0;
-        for (int i = 0; i < edgeU.size(); ++i) {
+        for (size_t i = 0; i < edgeU.size(); ++i) {
             int u = edgeU[i];
             int v = edgeV[i];
             auto p1 = pointsInside[current.points[u]];
@@ -539,7 +539,7 @@ struct Problem {
 
     int violationsLen(const SolutionCandidate& current) const {
         int n = 0;
-        for (int i = 0; i < edgeU.size(); ++i) {
+        for (size_t i = 0; i < edgeU.size(); ++i) {
             int u = edgeU[i];
             int v = edgeV[i];
             auto p1 = pointsInside[current.points[u]];
@@ -663,7 +663,7 @@ struct Initer {
     std::vector<int> holePoints;
 
     Initer(Problem& p): problem(p) {
-        for (int i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
+        for (size_t i = 0; i < problem.pointsInsideIsCorner.size(); i++) {
             if (problem.pointsInsideIsCorner[i]) {
                 holePoints.push_back(i);
             }
@@ -671,16 +671,20 @@ struct Initer {
         step_i = 0;
     }
 
-    void setInitialCandidate(const std::vector<Point>& candidate) {
-        for (int i = 0; i < candidate.size(); i++) {
+    void setInitialCandidate(std::vector<Point>& candidate, bool fix_corners) {
+        for (size_t i = 0; i < candidate.size(); i++) {
             int min_j = -1;
             int min_dist = 0;
-            for (int j = 0; j < problem.pointsInside.size(); j++) {
+            for (size_t j = 0; j < problem.pointsInside.size(); j++) {
                 int dist = (candidate[i] - problem.pointsInside[j]).sqrabs();
                 if (min_j == -1 || dist < min_dist) {
                     min_j = j;
                     min_dist = dist;
                 }
+            }
+            if (fix_corners && min_dist == 0 && std::count(holePoints.begin(), holePoints.end(), min_j)) {
+                problem.fixed[i] = true;
+                std::cout << "Fixing point " << i << std::endl;
             }
             current.points.push_back(min_j);
         }

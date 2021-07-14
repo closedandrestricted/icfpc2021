@@ -32,7 +32,7 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
 
 double e(const Problem& p, const SolutionCandidate& sc) {
     static constexpr double INF = 1000000.0;
-    double result = (static_cast<double>(p.violationsBnd(sc) + violationsLenSoft(p, sc))) * INF;
+    double result = (static_cast<double>(10 * p.violationsBnd(sc) + violationsLenSoft(p, sc))) * INF;
     if (!FLAGS_corner) {
         if (result) {
             return result + INF;
@@ -229,6 +229,15 @@ int main(int argc, char* argv[]) {
             while ((it < 3000) && !init.step(false)) {
                 ++it;
             }
+
+            if (i < 50) {
+                for (int i = 0; i < p.originalPoints.size(); ++i) {
+                    auto toPoint = p.pointInsideToIndex.find(p.originalPoints[i]);
+                    if (toPoint != p.pointInsideToIndex.end()) {
+                        init.current.points[i] = toPoint->second;
+                    }
+                }
+            }
         }
         c.points = init.current.points;
         c.optE = e(p, c);
@@ -336,6 +345,26 @@ int main(int argc, char* argv[]) {
             auto idx1 = candDistr(gen);
             SolutionCandidate newC = population[idx1];
             newC.points[pointDistr(gen)] = insideDistr(gen);
+            newC.optE = INVALID_E;
+            population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+            auto idx1 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+            newC.points[pointDistr(gen)] = newC.points[pointDistr(gen)];
+            newC.optE = INVALID_E;
+            population.emplace_back(newC);
+        }
+
+        for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
+            auto idx1 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+            auto target = newC.points[pointDistr(gen)];
+            size_t count = pointDistr(gen);
+            for (size_t j = 0; j < count; ++j) {
+                newC.points[pointDistr(gen)] = target;
+            }
             newC.optE = INVALID_E;
             population.emplace_back(newC);
         }
