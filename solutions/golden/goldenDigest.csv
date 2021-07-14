@@ -93,7 +93,7 @@ problem,solution,currentScore,goldenScore
 92,gradient,52778,52778
 93,gradient,0,0
 94,staging,3680,3680
-95,gradient,15479,15479
+95,gradient,15318,15318
 96,gradient,16139,16139
 97,soptimal,0,0
 98,gradient,55411,55411
@@ -124,7 +124,7 @@ problem,solution,currentScore,goldenScore
 123,gradient,17445,17445
 124,gradient,47319,47319
 125,webedit,0,0
-126,gradient,810571,810571
+126,gradient,810432,810432
 127,staging,18665,18665
 128,suboptimal_mcmc,40214,40214
 129,suboptimal_mcmc,18546,18546
