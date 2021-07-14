@@ -54,7 +54,7 @@
 54,optimal,0,0
 55,staging,0,0
 56,staging,3220,3220
-57,staging,6635,6635
+57,gradient,6635,6635
 58,staging,3347,3347
 59,optimal,0,0
 60,staging,918,918
@@ -63,7 +63,7 @@
 63,staging,0,0
 64,manual,0,0
 65,soptimal,0,0
-66,staging,9718,9718
+66,staging,9004,9004
 67,optimal,0,0
 68,optimal_with_bonus,0,0
 69,staging,1906,1906
@@ -111,7 +111,7 @@
 111,gradient,37726,37726
 112,staging,32108,32108
 113,gradient,17639,17639
-114,gradient,2452479,2338739
+114,staging,2338739,2338739
 115,gradient,76408,76408
 116,gradient,28712,28712
 117,gradient,40523,40523
