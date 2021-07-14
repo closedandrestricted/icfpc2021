@@ -10,6 +10,7 @@ DEFINE_bool(fix_corners, false, "Fix corners from webedit result");
 DEFINE_bool(alex, false, "Alex mode");
 DEFINE_string(init, "", "file from initialization");
 DEFINE_bool(only_border, false, "Only border");
+DEFINE_bool(lazy, false, "Lazy visibility calculation");
 
 void test_isect() {
     std::vector<Point> poly = {{0, 0}, {-2, -4}, {20, 0}, {-2, 4}};
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
     } else {
         Problem p;
         p.parseJson(fn);
-        p.preprocess(true, FLAGS_only_border);
+        p.preprocess(!FLAGS_lazy, FLAGS_only_border);
         // p.recSolve2();
         std::vector<double> invTs{0.0, 2.2, 5.0, 10.0, 20.0, 40.0, 100.0, 300.0, 50000.0};
         // std::vector<double> invTs{0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.9, 1.5, 2.5, 5.0, 10.0};

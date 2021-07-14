@@ -227,8 +227,34 @@ struct Problem {
     std::vector<Point> pointsInside;
     std::map<Point, int> pointInsideToIndex;
     std::vector<uint8_t> pointsInsideIsCorner;
-    std::vector<boost::dynamic_bitset<>> visibility;
     std::vector<int> corners;
+
+    bool hasVisibility;
+    std::vector<boost::dynamic_bitset<>> visibility;
+    std::atomic<int> edges = 0;
+
+    void calcVisibility(size_t i) {
+        boost::dynamic_bitset<> bs;
+        bs.resize(pointsInside.size());
+        const auto p = pointsInside[i];
+        for (size_t j = 0; j < pointsInside.size(); ++j) {
+            const auto q = pointsInside[j];
+            if (!isect(p, q, hole)) {
+                bs.set(j);
+                edges++;
+            }
+        }
+        visibility[i].swap(bs);
+    }
+
+    const boost::dynamic_bitset<>& getVisibility(size_t index) {
+        if (!hasVisibility) {
+            if (visibility[index].size() == 0) {
+                calcVisibility(index);
+            }
+        }
+        return visibility[index];
+    }
 
     std::vector<uint8_t> fixed;
 
@@ -238,7 +264,7 @@ struct Problem {
 
     std::vector<std::vector<double>> g;
 
-    void preprocess(bool calcVisibility = true, bool onlyBorder = false) {
+    void preprocess(bool preCalcVisibility = true, bool onlyBorder = false) {
         fixed.assign(originalPoints.size(), 0);
         int sum = 0;
         for (size_t i = 0; i < hole.size(); ++i) {
@@ -291,28 +317,17 @@ struct Problem {
                 }
             }
         }
-        if (calcVisibility) {
-            visibility.assign(pointsInside.size(), {});
-            std::atomic<int> edges = 0;
-            auto dojob = [&](int i) {
-                visibility[i].resize(pointsInside.size());
-                auto p = pointsInside[i];
-                for (size_t j = 0; j < pointsInside.size(); ++j) {
-                    auto q = pointsInside[j];
-                    if (!isect(p, q, hole)) {
-                        visibility[i].set(j);
-                        edges++;
-                    }
-                }
-            };
 
+        hasVisibility = preCalcVisibility;
+        visibility.assign(pointsInside.size(), {});
+        if (preCalcVisibility) {
             constexpr int NUM_THREADS = 64;
 
             auto doThreadJob = [&](int iThread) {
                 size_t begin = (pointsInside.size() * iThread) / NUM_THREADS;
                 size_t end = (pointsInside.size() * (iThread + 1)) / NUM_THREADS;
                 for (size_t block = begin; block < end; ++block) {
-                    dojob(block);
+                    calcVisibility(block);
                 }
             };
 
@@ -359,7 +374,7 @@ struct Problem {
             for (auto e : adjEdgeIds[at]) {
                 int j = edgeU[e] ^ edgeV[e] ^ at;
                 if (ps[j] != -1) {
-                    candidates &= visibility[ps[j]];
+                    candidates &= getVisibility(ps[j]);
                 }
             }
             for (ps[at] = candidates.find_first(); ps[at] != candidates.npos; ps[at] = candidates.find_next(ps[at])) {
@@ -405,7 +420,7 @@ struct Problem {
         for (auto e : adjEdgeIds[at]) {
             int j = edgeU[e] ^ edgeV[e] ^ at;
             if (ps[j] != -1) {
-                candidates &= visibility[ps[j]];
+                candidates &= getVisibility(ps[j]);
             }
         }
         std::vector<int> cs;
@@ -442,7 +457,7 @@ struct Problem {
         //             edgeV[e] != at && (mask & (1ULL << edgeV[e])) == 0) {
         //             continue;
         //         }
-        //         good &= visibility[ps[edgeU[e]]][ps[edgeV[e]]];
+        //         good &= getVisibility(ps[edgeU[e]]][ps[edgeV[e]]);
         //         good &= std::abs(1.0 * dist2(pointsInside[ps[edgeU[e]]], pointsInside[ps[edgeV[e]]]) / dist2(originalPoints[edgeU[e]], originalPoints[edgeV[e]]) - 1.0) <= eps;
         //     }
         //     if (good) {
@@ -488,7 +503,7 @@ struct Problem {
                 if (p2c[u] != -1 && p2c[v] != -1) {
                     double d1 = dist2(hole[p2c[u]], hole[p2c[v]]);
                     double d2 = dist2(originalPoints[u], originalPoints[v]);
-                    good &= visibility[c2i[p2c[u]]][c2i[p2c[v]]] && std::abs(d1 / d2 - 1.0) <= eps + 1e-8;
+                    good &= getVisibility(c2i[p2c[u]])[c2i[p2c[v]]] && std::abs(d1 / d2 - 1.0) <= eps + 1e-8;
                 }
             }
             for (size_t j = 0; j < i; ++j) {
@@ -609,7 +624,7 @@ struct GibbsChain {
             candidates.resize(problem.pointsInside.size(), true);
             for (auto e : problem.adjEdgeIds[i]) {
                 int j = problem.edgeU[e] ^ problem.edgeV[e] ^ i;
-                candidates &= problem.visibility[current.points[j]];
+                candidates &= problem.getVisibility(current.points[j]);
             }
             if (candidates.count() == 0) {
                 continue;
