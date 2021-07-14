@@ -193,6 +193,7 @@ struct Problem {
     std::vector<std::vector<int>> adjEdgeIds;
     std::vector<int> edgeU, edgeV;
     double eps;
+    double epsSqrt;
     int minx, maxx, miny, maxy;
 
     void parseJson(const std::string& fn) {
@@ -200,6 +201,7 @@ struct Problem {
         json rawProblem;
         is >> rawProblem;
         eps = int(rawProblem["epsilon"]) / 1000000.0;
+        epsSqrt = std::sqrt(eps);
         hole.resize(rawProblem["hole"].size());
         for (size_t i = 0; i < hole.size(); ++i) {
             hole[i] = {rawProblem["hole"][i][0], rawProblem["hole"][i][1]};
@@ -684,13 +686,15 @@ struct Initer {
         }
     }
 
-    bool step() {
+    bool step(bool debug = true) {
         int pt = std::uniform_int_distribution()(gen) % current.points.size();
         int newp = std::uniform_int_distribution()(gen) % problem.pointsInside.size();
         int old_violations = problem.violationsBnd(current) + problem.violationsLen(current);
         int oldp = current.points[pt];
-        if (step_i++ % 100 == 0) {
-            std::cerr << "cur bad: " << old_violations << std::endl;
+        if (debug) {
+            if (step_i++ % 100 == 0) {
+                std::cerr << "cur bad: " << old_violations << std::endl;
+            }
         }
         current.points[pt] = newp;
         int new_violations = problem.violationsBnd(current);

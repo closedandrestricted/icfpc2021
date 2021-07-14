@@ -128,7 +128,7 @@ struct PhysicalWorld {
         }
     }
 
-    void step(double dt) {
+    void step(double dt, bool eps) {
         for (auto& b: balls) {
             b.fx = 0;
             b.fy = 0;
@@ -138,7 +138,12 @@ struct PhysicalWorld {
             auto& ball1 = balls[spring.idx1];
             auto& ball2 = balls[spring.idx2];
             const double length = dist(ball1, ball2);
-            const double force = length - spring.length0;
+            double force = length - spring.length0;
+            if (eps) {
+                if ((length >= (1.0 - p.epsSqrt) * spring.length0) && (length <= (1.0 + p.epsSqrt) * spring.length0)) {
+                    force = 0.0;
+                }
+            }
             const double px = (ball1.x - ball2.x) / length;
             const double py = (ball1.y - ball2.y) / length;
             ball1.fx += -px * force;
@@ -174,7 +179,7 @@ void testPsysics() {
     pw.balls[0].x = -2;
     pw.balls[1].x = 2;
     for (size_t i = 0; i < 100; ++i) {
-        pw.step(0.1);
+        pw.step(0.1, false);
         cout << pw.balls[0] << " " << pw.balls[1] << endl;
         pw.friction(0.1);
     }
@@ -220,7 +225,9 @@ int main(int argc, char* argv[]) {
                 c.points[i] = idxs[i];
             }
             init.current.points = c.points;
-            while (!init.step()) {
+            size_t it = 0;
+            while ((it < 3000) && !init.step(false)) {
+                ++it;
             }
         }
         c.points = init.current.points;
@@ -299,10 +306,14 @@ int main(int argc, char* argv[]) {
             }
         };
 
-        move(-1, 0);
-        move(1, 0);
-        move(0, -1);
-        move(0, 1);
+        for (ssize_t i = 1; i < 20; ++i) {
+            move(-i, 0);
+            move(i, 0);
+            move(0, -i);
+            move(0, i);
+            move(-i, -i);
+            move(i, i);
+        }
 
         // crossingover
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
@@ -397,14 +408,14 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        auto addSpringSimulation = [&](double dt, int steps) {
-            for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+        auto addSpringSimulation = [&](double dt, int steps, bool eps) {
+            for (size_t i = 0; i < NUM_CANDIDATES * 5; ++i) {
                 auto idx3 = candDistr(gen);
                 SolutionCandidate newC = population[idx3];
                 pw.initFromCandidate(newC);
 
                 for (size_t j = 0; j < steps; ++j) {
-                    pw.step(dt);
+                    pw.step(dt, eps);
                 }
 
                 pw.updateCandidate(newC);
@@ -414,10 +425,14 @@ int main(int argc, char* argv[]) {
             }
         };
 
-        addSpringSimulation(0.01, 5);
-        addSpringSimulation(0.1, 5);
-        addSpringSimulation(1, 5);
-        addSpringSimulation(10, 5);
+        addSpringSimulation(0.01, 5, false);
+        addSpringSimulation(0.1, 5, false);
+        addSpringSimulation(1, 5, false);
+        addSpringSimulation(10, 5, false);
+        addSpringSimulation(0.01, 5, true);
+        addSpringSimulation(0.1, 5, true);
+        addSpringSimulation(1, 5, true);
+        addSpringSimulation(10, 5, true);
 
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.points < b.points; });
         auto toUnique = unique(population.begin(), population.end());
