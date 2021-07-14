@@ -213,7 +213,7 @@ int main(int argc, char* argv[]) {
             for (size_t i = 0; i < initial.size(); ++i) {
                 initial[i] = {webedit_solution["vertices"][i][0], webedit_solution["vertices"][i][1]};
             }
-            init.setInitialCandidate(initial);
+            init.setInitialCandidate(initial, false);
         } else {
             vector<int> idxs(p.pointsInside.size());
             for (int i = 0; i < p.pointsInside.size(); ++i) {
@@ -274,6 +274,7 @@ int main(int argc, char* argv[]) {
     std::uniform_int_distribution<int> cornersDistr(0, p.corners.size() - 1);
     std::uniform_int_distribution<int> distrRadius(5, 100);
     std::uniform_int_distribution<int> distr10(1, 10);
+    std::uniform_real_distribution<double> distrAngle(0, 2.0 * M_PI);
     for (int iGen = 0; iGen < 1000; ++iGen) {
         auto shake = [&](auto& distr) {
             for (size_t i = 0; i < NUM_CANDIDATES; ++i) {
@@ -403,6 +404,38 @@ int main(int argc, char* argv[]) {
         groupMove(distrRadius(gen), distr10(gen), 0);
         groupMove(distrRadius(gen), 0, -distr10(gen));
         groupMove(distrRadius(gen), 0, distr10(gen));
+
+        // group rotation
+        for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
+            auto idx1 = candDistr(gen);
+            SolutionCandidate newC = population[idx1];
+
+            int x0 = xDistr(gen);
+            int y0 = yDistr(gen);
+            Point center(x0, y0);
+            int rad = distrRadius(gen);
+
+            auto angle = distrAngle(gen);
+            auto sinAngle = std::sin(angle);
+            auto cosAngle = std::cos(angle);
+
+            for (auto& point : newC.points) {
+                auto d2 = dist2(center, p.pointsInside[point]);
+                if (d2 < rad * rad) {
+                    Point np = p.pointsInside[point];
+                    Point d(np.x - center.x, np.y - center.y);
+                    np.x = center.x + sinAngle * d.x + cosAngle * d.y;
+                    np.y = center.y - cosAngle * d.x + sinAngle * d.y;
+                    auto toNewPoint = p.pointInsideToIndex.find(np);
+                    if (toNewPoint != p.pointInsideToIndex.end()) {
+                        point = toNewPoint->second;
+                    }
+                }
+            }
+
+            newC.optE = INVALID_E;
+            population.emplace_back(newC);
+        }
 
         for (size_t i = 0; i < NUM_CANDIDATES * 10; ++i) {
             auto idx1 = edgeDistr(gen);

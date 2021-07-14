@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 
+import sys
 import os
 import argparse
 import subprocess
 import shutil
+
+sys.path.append("../solver")
+import validator
 
 maxProblem = int(open("../max_problem", "r").read().strip())
 
@@ -16,6 +20,8 @@ parser.add_argument('--end', type=int, default=maxProblem,
 args = parser.parse_args()
 
 def validate(problem, solution):
+    return validator.validate(problem, solution, False)
+
     process = subprocess.run(["../solver/validator.py", problem, solution], capture_output=True)
     # print(process)
     if process.returncode == 42:
