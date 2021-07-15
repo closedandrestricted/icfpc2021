@@ -402,6 +402,12 @@ function refresh_svg(d, problem_id) {
         });
     });
 
+    d3.select('#stop').on('click', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        d3.text("/stop", {method: "GET"});
+    });
+
     d3.select('#solution_load').on('click', function (e) {
         e.stopPropagation();
         e.preventDefault();

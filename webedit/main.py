@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+
+import sys
 import json
 import os
 from posixpath import join
@@ -57,13 +59,24 @@ class SolutionSaveHandler(tornado.web.RequestHandler):
             f.write(json.dumps(sol))
 
 
+class StopHandler(tornado.web.RequestHandler):
+
+    def get(self):
+        tornado.ioloop.IOLoop.current().stop()
+        sys.exit(0)
+
+class NoCacheStaticFileHandler(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/problem", ProblemHandler),
         (r"/solution", SolutionHandler),
         (r"/save_sol", SolutionSaveHandler),
-        (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.join(this_dir, "static")}),
+        (r"/stop", StopHandler),
+        (r"/static/(.*)", NoCacheStaticFileHandler, {"path": os.path.join(this_dir, "static")}),
     ], debug=True)
 
 
