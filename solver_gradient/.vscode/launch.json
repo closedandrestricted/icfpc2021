@@ -9,7 +9,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "solver_gradient.exe",
-            "args": [],
+            "args": ["-test_idx", "1"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}\\..\\..\\bazel-bin\\solver_gradient",
             "environment": [],

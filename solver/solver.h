@@ -205,6 +205,10 @@ struct Problem {
 
     void parseJson(const std::string& fn) {
         std::ifstream is(fn);
+        if (!is) {
+            std::cerr << "File " << fn << " not found." << std::endl;
+            throw std::exception();
+        }
         json rawProblem;
         is >> rawProblem;
         eps = int(rawProblem["epsilon"]) / 1000000.0;
