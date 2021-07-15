@@ -11,5 +11,5 @@ cc_binary(
         "@json//:json",
         "@boost//:container",
     ],
-    copts = ["/std:c++17"],
+    copts = select({"@bazel_tools//src/conditions:windows": ["/std:c++17"], "//conditions:default": []}),
 )
