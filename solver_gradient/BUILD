@@ -6,7 +6,8 @@ cc_binary(
         "main.cpp",
     ],
     deps = [
-        "@solver//:solver",
+        "//solver:solver",
         "@gflags//:gflags",
+        "@json//:json",
     ]
 )

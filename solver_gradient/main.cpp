@@ -3,8 +3,9 @@
 #include <iostream>
 #include <random>
 
+#include "nlohmann/json.hpp"
+
 #include "../solver/solver.h"
-#include "json.hpp"
 
 DEFINE_int32(test_idx, 1, "Test number");
 DEFINE_string(init, "", "file from initialization");
