@@ -1,3 +1,5 @@
+#include <cstddef>
+
 #include <vector>
 #include <string>
 #include <iostream>
@@ -297,8 +299,8 @@ struct Problem {
                 if (inside(p, hole)) {
                     const bool corner = std::find(hole.begin(), hole.end(), p) != hole.end();
                     if (!onlyBorder || corner || ((rand() % 10) == 0)) {
-                        pointInsideToIndex.emplace(p, pointsInside.size());
-                        corners.emplace_back(pointsInside.size());
+                        pointInsideToIndex.emplace(p, static_cast<int>(pointsInside.size()));
+                        corners.emplace_back(static_cast<int>(pointsInside.size()));
                         pointsInside.push_back(p);
                         pointsInsideIsCorner.push_back(corner);
                     }
@@ -327,7 +329,7 @@ struct Problem {
         if (preCalcVisibility) {
             constexpr int NUM_THREADS = 64;
 
-            auto doThreadJob = [&](int iThread) {
+            auto doThreadJob = [&](size_t iThread) {
                 size_t begin = (pointsInside.size() * iThread) / NUM_THREADS;
                 size_t end = (pointsInside.size() * (iThread + 1)) / NUM_THREADS;
                 for (size_t block = begin; block < end; ++block) {

@@ -1,9 +1,14 @@
-#include <gflags/gflags.h>
+#define _USE_MATH_DEFINES
+
+#include <cmath>
+#include <cstddef>
 
 #include <iostream>
 #include <random>
 
-#include "nlohmann/json.hpp"
+#include <gflags/gflags.h>
+
+#include <nlohmann/json.hpp>
 
 #include "../solver/solver.h"
 
@@ -326,7 +331,7 @@ int main(int argc, char* argv[]) {
             }
         };
 
-        for (ssize_t i = 1; i < 20; ++i) {
+        for (int i = 1; i < 20; ++i) {
             move(-i, 0);
             move(i, 0);
             move(0, -i);
