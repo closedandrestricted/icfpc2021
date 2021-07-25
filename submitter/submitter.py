@@ -14,7 +14,7 @@ parser.add_argument('--solution', type=str,
 
 args = parser.parse_args()
 
-apiKey = open("../api_key2", "r").read().strip()
+apiKey = open("../api_key3", "r").read().strip()
 
 with open(args.solution, "r") as fIn:
     response = requests.post("https://poses.live/api/problems/%d/solutions" % args.problem, data=fIn.read(), headers={"Authorization": "Bearer %s" % apiKey})

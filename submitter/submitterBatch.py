@@ -32,7 +32,7 @@ def validate(problem, solution):
         lines = list(filter(lambda x: x != "", process.stdout.decode().strip().split("\n")))
         return (True, int(lines[-1]))
 
-STATUS_FILENAME = "submitter_status.json"
+STATUS_FILENAME = "submitter_status_after.json"
 
 status = {}
 if os.path.exists(STATUS_FILENAME):
