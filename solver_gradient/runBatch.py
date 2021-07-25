@@ -26,6 +26,6 @@ args = parser.parse_args()
 
 for problem in range(args.begin, args.end + 1, args.step):
     try:
-        subprocess.check_output(["./build/solver", "-test-idx", str(problem), "-init", "../solutions/golden/%d.json" % problem], timeout=args.timeout)
+        subprocess.check_output(["./buildFiles/solver", "-test-idx", str(problem), "-init", "../solutions/golden/%d.json" % problem], timeout=args.timeout)
     except:
         pass

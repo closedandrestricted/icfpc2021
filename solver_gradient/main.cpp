@@ -1,14 +1,12 @@
 #define _USE_MATH_DEFINES
 
-#include <cmath>
-#include <cstddef>
-
-#include <iostream>
-#include <random>
-
 #include <gflags/gflags.h>
 
+#include <cmath>
+#include <cstddef>
+#include <iostream>
 #include <nlohmann/json.hpp>
+#include <random>
 
 #include "../solver/solver.h"
 
@@ -28,7 +26,8 @@ double violationsLenSoft(const Problem& p, const SolutionCandidate& current) {
         int v = p.edgeV[i];
         auto p1 = p.pointsInside[current.points[u]];
         auto p2 = p.pointsInside[current.points[v]];
-        double distMeasure = std::abs(static_cast<double>(dist2(p1, p2)) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
+        double distMeasure =
+            std::abs(static_cast<double>(dist2(p1, p2)) / dist2(p.originalPoints[u], p.originalPoints[v]) - 1.0);
         if (distMeasure > p.eps + 1e-8) {
             n = n + 1.0 + distMeasure;
         }
@@ -75,15 +74,13 @@ struct PhysicalWorld {
         }
 
         void step(double dt) {
-            vx += fx*dt;
-            vy += fy*dt;
-            x += vx*dt;
-            y += vy*dt;
+            vx += fx * dt;
+            vy += fy * dt;
+            x += vx * dt;
+            y += vy * dt;
         }
 
-        Point toPoint() const {
-            return Point(x, y);
-        }
+        Point toPoint() const { return Point(x, y); }
     };
 
     struct Spring {
@@ -135,7 +132,7 @@ struct PhysicalWorld {
     }
 
     void step(double dt, bool eps) {
-        for (auto& b: balls) {
+        for (auto& b : balls) {
             b.fx = 0;
             b.fy = 0;
         }
@@ -154,17 +151,17 @@ struct PhysicalWorld {
             const double py = (ball1.y - ball2.y) / length;
             ball1.fx += -px * force;
             ball1.fy += -py * force;
-            ball2.fx +=  px * force;
-            ball2.fy +=  py * force;
+            ball2.fx += px * force;
+            ball2.fy += py * force;
         }
-        for (auto& b: balls) {
+        for (auto& b : balls) {
             b.step(dt);
         }
     }
 
     void friction(double dt) {
         double mul = exp(-dt);
-        for (auto& b: balls) {
+        for (auto& b : balls) {
             b.vx *= mul;
             b.vy *= mul;
         }
@@ -201,8 +198,6 @@ int main(int argc, char* argv[]) {
     p.parseJson("../problems/" + std::to_string(FLAGS_test_idx) + ".json");
     p.preprocess(false);
     cerr << endl;
-
-    double minOptE = 1e100;
 
     static constexpr size_t NUM_CANDIDATES = 100;
     vector<SolutionCandidate> population(NUM_CANDIDATES);
@@ -296,16 +291,18 @@ int main(int argc, char* argv[]) {
                 for (size_t j = 0; j < 10; ++j) {
                     int dx = distr(gen);
                     int dy = distr(gen);
-                    int idxPoint = pointDistr(gen);
-                    Point newPoint(p.pointsInside[population[i].points[idxPoint]]);
-                    newPoint.x += dx;
-                    newPoint.y += dy;
-                    auto toNewPoint = p.pointInsideToIndex.find(newPoint);
-                    if (toNewPoint != p.pointInsideToIndex.end()) {
-                        SolutionCandidate newC = population[i];
-                        newC.points[idxPoint] = toNewPoint->second;
-                        newC.optE = INVALID_E;
-                        population.emplace_back(newC);
+                    if (dx || dy) {
+                        int idxPoint = pointDistr(gen);
+                        Point newPoint(p.pointsInside[population[i].points[idxPoint]]);
+                        newPoint.x += dx;
+                        newPoint.y += dy;
+                        auto toNewPoint = p.pointInsideToIndex.find(newPoint);
+                        if (toNewPoint != p.pointInsideToIndex.end()) {
+                            SolutionCandidate newC = population[i];
+                            newC.points[idxPoint] = toNewPoint->second;
+                            newC.optE = INVALID_E;
+                            population.emplace_back(newC);
+                        }
                     }
                 }
             }
@@ -446,13 +443,15 @@ int main(int argc, char* argv[]) {
                 auto d2 = dist2(center, p.pointsInside[point]);
                 if (d2 < rad * rad) {
                     Point np = p.pointsInside[point];
-                    Point d(np.x - center.x, np.y - center.y);
+                    Point d = np - center;
                     np.x = center.x + sinAngle * d.x + cosAngle * d.y;
                     np.y = center.y - cosAngle * d.x + sinAngle * d.y;
                     auto toNewPoint = p.pointInsideToIndex.find(np);
                     if (toNewPoint != p.pointInsideToIndex.end()) {
-                        point = toNewPoint->second;
-                        found = true;
+                        if (toNewPoint->second != point) {
+                            point = toNewPoint->second;
+                            found = true;
+                        }
                     }
                 }
             }
@@ -539,8 +538,8 @@ int main(int argc, char* argv[]) {
         static const size_t NUM_THREADS = 16;
 
         auto calcScores = [&](size_t iThread) {
-            size_t begin = (iThread * population.size()) / NUM_THREADS;
-            size_t end = ((iThread + 1) * population.size()) / NUM_THREADS;
+            const size_t begin = (iThread * population.size()) / NUM_THREADS;
+            const size_t end = ((iThread + 1) * population.size()) / NUM_THREADS;
             for (size_t j = begin; j < end; ++j) {
                 if (population[j].optE == INVALID_E) {
                     population[j].optE = e(p, population[j]);
@@ -564,13 +563,14 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        const size_t uniqueSize = population.size();
         population.erase(population.begin() + NUM_CANDIDATES, population.end());
         sort(population.begin(), population.end(), [](const auto& a, const auto& b) { return a.optE < b.optE; });
 
         cerr << iGen << ": " << population.front().optE << " - " << population.back().optE << "["
              << p.violationsBnd(population.front()) << ", " << p.violationsLen(population.front()) << ", "
              << violationsLenSoft(p, population.front()) << "] "
-             << " dups: " << dups << endl;
+             << " dups: " << dups << ", gen: " << uniqueSize << endl;
 
         if (population[0].optE < bestE) {
             bestE = population[0].optE;
