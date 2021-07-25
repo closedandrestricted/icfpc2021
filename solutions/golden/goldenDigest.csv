@@ -3,12 +3,12 @@ problem,solution,currentScore,goldenScore
 2,staging,233,233
 3,staging,242,242
 4,staging,0,0
-5,staging,103,103
+5,gradient,102,102
 6,gradient,5632,5632
-7,staging,182,182
+7,gradient,178,178
 8,staging,1040,1040
 9,gradient,2278,2278
-10,staging,114,114
+10,gradient,112,112
 11,feasible,0,0
 12,manual,0,0
 13,manual,0,0
